@@ -35,7 +35,8 @@
 | 12 | [Open questions](#open-questions) |
 | 13 | [Timeline and phasing](#timeline-considerations) |
 | A1 | [Appendix: awareness content library](#appendix-awareness-content-library-draft) |
-| A2 | [Appendix: offline activity prompts](#appendix-offline-activity-prompts-draft) |
+| A2 | [Appendix: named dark patterns field guide](#appendix-named-dark-patterns-field-guide) |
+| A3 | [Appendix: offline activity prompts](#appendix-offline-activity-prompts-draft) |
 
 ---
 
@@ -509,6 +510,16 @@ These are bundled with the app. Goal is 40+ at launch. This is a working draft �
 - The gap in trust between men and women, particularly among younger cohorts, has grown significantly over the past decade. This coincides exactly with the period of social media maturity. Researchers studying the data note the correlation. The platforms note the engagement.
 - A person who genuinely hates the other sex is a committed, emotional, high-engagement user. Platforms do not cause this outcome, but they do profit from it and they do optimize toward it.
 
+**Political polarization and algorithmic radicalization**
+
+*Same mechanism as gender conflict — points at the incentive structure, not at either side. Does not characterize either political direction as more extreme or more wrong than the other.*
+
+- The algorithm does not show you representative conservatives or representative progressives. It shows you the most outrageous available examples from each camp because those generate the most reaction from the other side. The person being presented to you as typical of the other political direction was selected specifically because they are atypical.
+- Political content that makes you angry at a specific group travels faster than content that helps you understand one. Outrage and contempt are the highest-engagement emotions on every major platform. The platform is paid the same whether you are outraged left or outraged right.
+- Most political issues have more than two coherent positions. Social media collapses them into binary conflict pairs — not because that reflects reality, but because conflict between two sides generates more engagement than a nuanced spectrum. The "two sides" you are being shown is a product of the medium, not of the issue.
+- Research on political content algorithms consistently shows a rabbit hole effect: users are served content slightly more extreme than what they just watched, because slightly more extreme content generates slightly more engagement. Over months, someone who started with mainstream political content ends up watching content far outside the mainstream — not because they sought it out, but because each step felt like a small continuation of the last.
+- The people you actually know who hold different political views from you are almost certainly less extreme than the people being presented to you as representatives of those views. The algorithm curates enemies, not neighbours.
+
 **Sleep and late-night use**
 - Blue light from screens suppresses melatonin production and delays sleep onset by up to 90 minutes. This is not a metaphor — it is a measured hormonal effect. The apps you use before bed are literally borrowing time from your sleep.
 - Social media companies know their peak engagement hours. Evening and late-night sessions are the most monetizable. The content served to you at 23:00 is optimized to keep you up, not to wrap things up.
@@ -541,6 +552,46 @@ These are bundled with the app. Goal is 40+ at launch. This is a working draft �
 - The "like" was originally called the "awesome" button at Facebook. It was renamed because "like" is more ambiguous — people give likes to things they don't endorse, which increases the signal volume and keeps you checking.
 - Instagram shows you who viewed your story in a specific order, optimized to keep you checking back to see if a particular person has viewed it yet.
 - Snapchat streaks have no value. They are an artificial social obligation — a daily compulsory action dressed as a friendship feature.
+
+---
+
+## Appendix: named dark patterns field guide
+
+These are established, named techniques from the deceptive design taxonomy (Brignull, deceptive.design). Unlike the neuroscience tidbits, these are more reference than awareness-seeding — they belong primarily in the "What we know about them" settings library rather than the rotating intent gate. Some work as tidbits too, framed as "that thing you just noticed has a name."
+
+The user's note is worth preserving: several of these are not subtle — they are overt manipulation dressed in plausible-deniability UI. That does not make them less worth naming. Things that have names are easier to resist than things that don't.
+
+---
+
+**Sneak into basket**
+An item — typically an insurance upsell, a donation, or an add-on — is pre-added to your cart without you selecting it. The default is paid; opting out requires active effort. The asymmetry is deliberate: most users don't check, and the ones who do can be dismissed as edge cases. Commonly found in travel booking, event ticketing, and software installers.
+
+**Confirmshaming**
+The opt-out option on a marketing prompt is phrased to make declining feel shameful or foolish. Classic examples: "No thanks, I prefer to pay full price" / "No thanks, I don't want to save money" / "I'll pass on exclusive offers." The technique exploits social identity — most people will choose a mildly unwanted subscription over the discomfort of appearing cheap or stupid to themselves. The UX designer who wrote the opt-out copy knew exactly what they were doing.
+
+**Fake friend request / desperate friend request**
+A notification or email formatted to look like a personal message from a contact — "Karin wants to connect with you!" — that is actually a bulk marketing send. The urgency framing ("Karin is waiting") is fabricated. Many people in Karin's contact list received the same email. The platform scraped contacts and generated these sends automatically, possibly without Karin knowing. This is the technique that made LinkedIn notorious in its early growth phase.
+
+**Fake notifications**
+Red badges or notification count indicators on app icons that do not correspond to real messages or activity. The badge exists to create an unresolved open loop in working memory — a sense that something is waiting — that drives the user to open the app. Upon opening, the "notification" turns out to be a suggested post, an algorithmic recommendation, or nothing traceable at all. The count was a fabrication in service of an open.
+
+**Segmented email list / roach motel unsubscribe**
+You unsubscribe from a mailing list. The confirmation page offers to "update your preferences" rather than confirming the unsubscribe. If you engage with the preferences page, you are re-enrolled in a subset of lists — often pre-ticked — and your original unsubscribe is treated as a preference change, not an exit. Alternatively: unsubscribing from one list leaves you subscribed to five others you didn't know existed, each requiring a separate action to exit.
+
+**Share the article / pay with social**
+Access to content is gated behind a share action on social media. The user is not paying money — they are paying with their social graph and their implicit endorsement. The content publisher gets distribution; the platform gets engagement. The user gets content they may not have read yet and cannot un-share. A variant: "Like our page to continue."
+
+**UI switcheroo**
+The interface changes at the last moment in a way that causes the user to take an action they didn't intend. Examples: a "free trial" button that becomes "subscribe" after entry of payment details; a confirm/cancel button pair that swaps position between screens; a checkbox that is ticked on one screen and unticked on the next with inverted meaning. The switcheroo exploits motor memory — users click where the button was, not where it is.
+
+**Agree and... (hidden subscription / bundled consent)**
+A single consent action — "Agree to terms" / "Accept and download" / "Continue" — bundles multiple agreements, some of which are not visible without reading the fine print. The user intends to agree to one thing and unknowingly agrees to others: email marketing, data sharing with third parties, automatic renewal of a free trial. The consent is technically present; the design ensures most users will never see what they consented to.
+
+**Contacts spam**
+An app requests access to your contacts during onboarding — framed as "find your friends." Once granted, it uses the contact list to send invitations, marketing emails, or friend requests to everyone in it, under your name, without further consent. Recipients receive a message that appears to come from you. You become an involuntary marketing channel. LinkedIn's early growth was substantially built on this technique; so was Clubhouse's.
+
+**Download ads**
+On a website offering a file to download, one or more buttons are styled to look like the download button but are in fact advertisements that trigger app installs, redirect to other sites, or download software bundles. The real download link is smaller, less prominent, or requires scrolling past the fake ones. The technique relies on the user's goal-directed attention making them click the most visually salient "download"-looking element without reading carefully. Particularly common on software download aggregator sites.
 
 ---
 
