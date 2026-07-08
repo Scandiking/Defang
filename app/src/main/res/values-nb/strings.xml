@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Norwegian (Bokmål) — smoke-test locale. Untranslated strings fall back to English. -->
+<resources>
+    <string name="app_name">Defang</string>
+    <string name="onboarding_skip">Hopp over</string>
+    <string name="onboarding_next">Neste →</string>
+    <string name="onboarding_continue">Fortsett til oppsett →</string>
+    <string name="onboarding_1_heading">Dette er en fartsdump. Ikke en vegg.</string>
+    <string name="gate_question">Hva skal du åpne denne appen for?</string>
+    <string name="gate_open_anyway">Åpne likevel</string>
+    <string name="gate_go_back">← Gå tilbake</string>
+    <string name="settings_title">Innstillinger</string>
+    <string name="tier_utility">Verktøy</string>
+    <string name="tier_watched">Overvåket</string>
+</resources>

@@ -1,0 +1,98 @@
+package com.defang.launcher.ui.settings.apptier
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.defang.launcher.R
+import com.defang.launcher.domain.model.AppTier
+
+@Composable
+fun AppTierScreen(
+    viewModel: AppTierViewModel = hiltViewModel(),
+) {
+    val apps by viewModel.apps.collectAsState()
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        Text(
+            text = stringResource(R.string.tier_config_subtitle),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
+        )
+
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+            items(apps, key = { it.packageName }) { item ->
+                AppTierRow(
+                    item = item,
+                    onTierChange = { tier -> viewModel.setTier(item.packageName, tier) },
+                )
+                HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
+            }
+        }
+    }
+}
+
+@Composable
+private fun AppTierRow(
+    item: AppTierItem,
+    onTierChange: (AppTier) -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = item.label,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+            Text(
+                text = item.packageName,
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+
+        // Utility radio
+        RadioButton(
+            selected = item.tier == AppTier.UTILITY,
+            onClick = { onTierChange(AppTier.UTILITY) },
+        )
+        Text(
+            text = stringResource(R.string.tier_utility),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(end = 16.dp),
+        )
+
+        // Watched radio
+        RadioButton(
+            selected = item.tier == AppTier.WATCHED,
+            onClick = { onTierChange(AppTier.WATCHED) },
+        )
+        Text(
+            text = stringResource(R.string.tier_watched),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}

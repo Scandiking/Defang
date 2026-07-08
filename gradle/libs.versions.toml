@@ -1,0 +1,64 @@
+[versions]
+kotlin = "2.0.21"
+agp = "8.7.0"
+compose-bom = "2024.12.01"
+hilt = "2.52"
+room = "2.6.1"
+datastore = "1.1.1"
+coroutines = "1.9.0"
+lifecycle = "2.8.7"
+ksp = "2.0.21-1.0.28"
+activity-compose = "1.9.3"
+navigation-compose = "2.8.4"
+
+[libraries]
+# Compose
+compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
+compose-ui = { group = "androidx.compose.ui", name = "ui" }
+compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
+compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation-compose" }
+compose-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+
+# Hilt
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version = "1.2.0" }
+
+# Room
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+
+# DataStore
+datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+
+# Coroutines + Flow
+coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+
+# Lifecycle / ViewModel
+lifecycle-viewmodel = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+lifecycle-runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
+
+# FreeDroidWarn — warns users about Google's September 2026 developer verification lockdown
+# JitPack coordinates: com.github.woheller69:FreeDroidWarn
+# Check https://github.com/woheller69/FreeDroidWarn/releases for the latest tag
+freedroidwarn = { group = "com.github.woheller69", name = "FreeDroidWarn", version = "V1.13" }
+
+# Core
+core-ktx = { group = "androidx.core", name = "core-ktx", version = "1.13.1" }
+
+# Testing
+junit = { group = "junit", name = "junit", version = "4.13.2" }
+android-junit = { group = "androidx.test.ext", name = "junit", version = "1.2.1" }
+espresso = { group = "androidx.test.espresso", name = "espresso-core", version = "3.6.1" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

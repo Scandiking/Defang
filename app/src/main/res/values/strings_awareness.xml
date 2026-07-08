@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Awareness content library.
+    Shown on: intent gate countdown, session end-card, cool-down lockout screen.
+    Three tracks: social, adult, general.
+    No "learn more" links. No clickable URLs. Ever.
+    Citations appear only in Settings > "What we know about them" — not here.
+    See PRD §7.7 for writing discipline rules.
+-->
+<resources>
+
+    <!-- ════════════════════════════════════════════
+         GENERAL TRACK
+         Shown for all watched apps and in default contexts.
+         ════════════════════════════════════════════ -->
+
+    <string-array name="tidbits_general">
+        <!-- Variable reward / slot machine mechanics -->
+        <item>Pull-to-refresh was deliberately modelled on a slot machine lever. The brief delay before content loads is engineered suspense, not a loading lag.</item>
+        <item>Infinite scroll was invented by Aza Raskin in 2006. He has publicly called it a mistake and estimates it costs humanity 200,000 hours of attention per day.</item>
+        <item>The unpredictability of what appears in your feed is the feature, not a side effect. Fixed rewards cause habituation. Variable rewards cause compulsion.</item>
+        <item>\"Suggested posts\" appear after you exhaust your actual social feed because an empty feed would end the session. There is no bottom.</item>
+
+        <!-- Color and visual design as manipulation -->
+        <item>The high saturation and contrast of social media UIs is calibrated to feel more vivid and rewarding than the physical world around you. This is why your phone looks more interesting than the room you\'re sitting in.</item>
+        <item>Grayscale mode reduces compulsive phone use in controlled studies — not because gray is boring, but because the color coding in social UIs carries emotional signals that gray removes.</item>
+        <item>Autoplay video starts moving before you consciously decide to watch it. Motion is a pre-conscious attention trigger; the decision to watch happens after your attention is already captured.</item>
+
+        <!-- Notifications as a mechanism -->
+        <item>Apps do not send notifications when things happen. They send notifications when their models predict you are most likely to open the app. The timing is optimised for re-engagement, not for your information.</item>
+        <item>The red badge on an app icon creates an open loop in working memory — an unresolved task. Humans are wired to resolve open loops. The badge exploits this at zero cost to the app.</item>
+        <item>Turning off notifications reduces passive phone pickup by around 30% in behavioural studies — not because the notifications were informative, but because they were triggers.</item>
+
+        <!-- Business model -->
+        <item>Social apps are free because making you pay would cap their revenue at what you\'re willing to pay. Selling your attention to advertisers has no such cap.</item>
+
+        <!-- FOMO and social anxiety engineering -->
+        <item>FOMO is not a personality trait. It is a response to a system designed to make you feel like the most important things are always happening somewhere you are not currently looking.</item>
+        <item>The phrase \"X people reacted to your post\" is phrased in terms of other people\'s behaviour, not your content. Other people\'s opinions are a stronger re-engagement trigger than your own actions.</item>
+
+        <!-- Neurological effects -->
+        <item>Repeated activation of the dopamine reward pathway by the same stimulus causes sensitisation (the craving gets stronger) while simultaneously causing desensitisation (the pleasure gets weaker). You need more to feel the same, but you also feel less when you get it.</item>
+        <item>The stress system and the reward system are linked. When a habitual reward is unavailable, the stress system activates. The discomfort of not checking is physiological, not a character flaw.</item>
+        <item>Every time you open a social app out of boredom, the neural pathway linking boredom → phone → app gets stronger. The behaviour becomes more automatic over time, not less, without deliberate interruption. (Hebb, 1949)</item>
+        <item>DeltaFosB accumulates in the brain\'s reward circuitry with repeated compulsive behaviour. Unlike other neurological markers it does not clear quickly — it persists for weeks. It drives craving even when the conscious motivation to stop is present.</item>
+
+        <!-- Dopamine and delayed gratification -->
+        <item>Dopamine is not a pleasure chemical. It is an anticipation chemical — it peaks before the reward, not during it. This is why scrolling feels compelling even when the content is not good.</item>
+        <item>Dopamine from completing something difficult — finishing a project, learning a skill — persists for hours. Dopamine from a notification peaks in seconds and drops below baseline when it fades.</item>
+        <item>The brain\'s reward system does not distinguish between a \"like\" on a photo and a piece of food. Both trigger the same pathway. The apps are feeding you in very small, unpredictable portions on purpose.</item>
+        <item>Deliberately delaying a reward strengthens the prefrontal cortex\'s ability to override impulse. The friction in this app is practice, not punishment.</item>
+
+        <!-- Epistemic honesty -->
+        <item>Several large studies claiming to show no meaningful harm from social media use were conducted in partnership with, or funded by, social media companies. This does not make them wrong. It is worth knowing when evaluating the evidence.</item>
+        <item>Studies on social media and mental health often rely on self-reported screen time, which users consistently underestimate by 30–50%. Research using objective usage data tends to find stronger effects.</item>
+
+        <!-- Reality check -->
+        <item>The median income in most Western countries is between $30,000 and $45,000 per year. The lifestyle presented as normal on social media requires multiples of that, typically sustained by generational wealth, debt, or a career built around performing the lifestyle for an audience.</item>
+        <item>Social media algorithms show you people selected for visual impact, at their most prepared, in their best light, filtered, retouched, and often surgically altered. Your reference point for what an ordinary attractive person looks like has been recalibrated by years of exposure to the top fraction of a percent.</item>
+
+        <!-- Algorithmic conflict and radicalization -->
+        <item>Content that makes men angry at women and content that makes women angry at men generate identical engagement signals. Outrage about the other sex travels faster than almost any other content category on every major platform. The conflict is the product.</item>
+        <item>The algorithm does not show you representative people. It shows you the most extreme, most provocative examples because those generate the most reaction. Both groups are being shown a caricature of the other.</item>
+        <item>Most political issues have more than two coherent positions. Social media collapses them into binary conflict pairs because conflict between two sides generates more engagement than a nuanced spectrum.</item>
+        <item>Research on political content algorithms consistently shows a rabbit hole effect: users are served content slightly more extreme than what they just watched. Over months, someone who started with mainstream content ends up far outside it — not because they sought it out, but because each step felt like a small continuation of the last.</item>
+
+        <!-- Sleep -->
+        <item>Blue light from screens suppresses melatonin production and delays sleep onset by up to 90 minutes. This is a measured hormonal effect, not a metaphor.</item>
+        <item>Sleep deprivation impairs the prefrontal cortex — the same region responsible for impulse control and the ability to resist opening the app in the first place. Late-night use makes the next day\'s use harder to resist.</item>
+
+        <!-- Social validation -->
+        <item>The \"like\" was originally called the \"awesome\" button at Facebook. It was renamed because \"like\" is more ambiguous — people give likes to things they don\'t endorse, which increases the signal volume and keeps you checking.</item>
+        <item>Snapchat streaks have no value. They are an artificial social obligation — a daily compulsory action dressed as a friendship feature.</item>
+    </string-array>
+
+
+    <!-- ════════════════════════════════════════════
+         SOCIAL TRACK
+         Shown for Instagram, Snapchat, TikTok, Reddit, and social browser domains.
+         Includes all general tidbits plus social-specific ones.
+         ════════════════════════════════════════════ -->
+
+    <string-array name="tidbits_social">
+        <!-- Same variable reward -->
+        <item>Pull-to-refresh was deliberately modelled on a slot machine lever. The brief delay before content loads is engineered suspense, not a loading lag.</item>
+        <item>Infinite scroll was invented by Aza Raskin in 2006. He has publicly called it a mistake and estimates it costs humanity 200,000 hours of attention per day.</item>
+        <item>The unpredictability of what appears in your feed is the feature, not a side effect. Fixed rewards cause habituation. Variable rewards cause compulsion.</item>
+        <item>\"Suggested posts\" appear after you exhaust your actual social feed because an empty feed would end the session. There is no bottom.</item>
+
+        <!-- Social-specific color -->
+        <item>Instagram\'s notification badge is red because red triggers faster involuntary attention capture than any other colour on the visible spectrum. This was tested and chosen deliberately.</item>
+        <item>Autoplay video starts moving before you consciously decide to watch it. Motion is a pre-conscious attention trigger; the decision to watch happens after your attention is already captured.</item>
+
+        <!-- Business model — specific -->
+        <item>Instagram, TikTok, and Snapchat are not social apps. They are advertising platforms. Every minute you spend in the app is inventory sold to brands. Your attention is the product.</item>
+        <item>The \"likes\" counter was hidden from public view in 2019 after internal research showed it was damaging mental health. It was restored after engagement metrics dropped. The research didn\'t change; the business decision did.</item>
+
+        <!-- FOMO — specific -->
+        <item>Instagram Stories expire after 24 hours. This is not a technical limitation. It is a designed urgency mechanism — a countdown clock on social participation.</item>
+        <item>Snapchat streaks weaponise FOMO by attaching a daily social obligation to friendship. Missing a day feels like failing the relationship. The relationship is with an app metric.</item>
+
+        <!-- Neurological -->
+        <item>Repeated activation of the dopamine reward pathway by the same stimulus causes sensitisation (the craving gets stronger) while simultaneously causing desensitisation (the pleasure gets weaker).</item>
+        <item>The prefrontal cortex is responsible for impulse control, long-term planning, and the ability to say no. Chronic compulsive phone use is associated with measurable reductions in prefrontal grey matter density.</item>
+        <item>Every time you open this app out of boredom, the neural pathway linking boredom → phone → app gets stronger. The behaviour becomes more automatic over time, not less, without deliberate interruption.</item>
+
+        <!-- Dopamine -->
+        <item>Dopamine is not a pleasure chemical. It is an anticipation chemical — it peaks before the reward, not during it. This is why scrolling feels compelling even when the content is not good.</item>
+        <item>Dopamine from completing something difficult persists for hours. Dopamine from a notification peaks in seconds and drops below baseline when it fades.</item>
+
+        <!-- Reality check -->
+        <item>The average height of a man in Western Europe is 5\'10\". Fewer than 15% of men are 6 feet or taller. The male body presented as normal on social media requires a height the overwhelming majority of men will never have, regardless of anything they do.</item>
+        <item>The beauty standards presented to women on social media require a combination of genetics, money, time, professional assistance, and image editing that is not available to most people and is not honestly disclosed.</item>
+        <item>The male physique presented as attainable through fitness content frequently involves pharmacological assistance that is not mentioned.</item>
+
+        <!-- Notification mechanics -->
+        <item>Apps do not send notifications when things happen. They send notifications when their models predict you are most likely to open the app.</item>
+        <item>The red badge on an app icon creates an open loop in working memory. Humans are wired to resolve open loops. The badge exploits this at zero cost to the app.</item>
+
+        <!-- Sleep -->
+        <item>Social media companies know their peak engagement hours. The content served to you at 23:00 is optimised to keep you up, not to wrap things up.</item>
+        <item>Sleep deprivation impairs the prefrontal cortex — the same region responsible for the ability to resist opening the app in the first place.</item>
+
+        <!-- Validation -->
+        <item>Instagram shows you who viewed your Story in a specific order, optimised to keep you checking back to see if a particular person has viewed it yet.</item>
+        <item>The \"like\" was originally called the \"awesome\" button at Facebook. It was renamed because \"like\" is more ambiguous — people give likes to things they don\'t endorse, which increases signal volume and keeps you checking.</item>
+    </string-array>
+
+
+    <!-- ════════════════════════════════════════════
+         ADULT TRACK
+         Shown for browser adult domain intent gates and end-cards only.
+         Tone: identical to other tracks — factual, specific, no moralising.
+         ════════════════════════════════════════════ -->
+
+    <string-array name="tidbits_adult">
+        <item>The Coolidge effect is a real neurological phenomenon: sexual arousal is dampened by the same stimulus but restored by novelty. Internet pornography provides infinite novelty at zero effort — a stimulus the brain did not evolve to encounter and has no natural defence against.</item>
+        <item>Pornography is a superstimulus — a stimulus that exceeds the parameters the human reward system evolved to respond to. Like food engineered to hit fat, salt, and sugar simultaneously, it triggers a response far stronger than anything it evolved alongside.</item>
+        <item>Food has a stop signal: you become full. Alcohol has a stop signal: you pass out or feel sick. Pornography has no equivalent physiological stop signal. Satiety from a meal is a feature; there is no equivalent architecture for visual sexual stimulation.</item>
+        <item>DeltaFosB accumulates in the brain\'s reward circuitry with repeated pornography use, just as it does with other compulsive behaviours. Its presence persists for weeks after behaviour stops. It drives the sensation of craving even when conscious motivation to stop is present.</item>
+        <item>PIED (porn-induced erectile dysfunction) is a documented clinical phenomenon in men without other risk factors, including young men. The mechanism is desensitisation: repeated exposure to superstimuli reduces the reward system\'s sensitivity to normal stimuli.</item>
+        <item>The escalation pattern in pornography consumption is the same mechanism as tolerance in substance use: the brain habituates to a stimulus and requires novelty to generate the same response. What the end point looks like is different for everyone; that the direction of travel exists is not.</item>
+        <item>The prefrontal cortex normally applies a brake to impulse. Chronic hyperstimulation of the reward system impairs this brake. Researchers call it hypofrontality. This is why people describe the behaviour feeling compulsive even when they consciously want to stop.</item>
+
+        <!-- Counter-research honesty -->
+        <item>Whether compulsive pornography use meets the clinical definition of addiction is genuinely debated. The subjective experience of loss of control, escalation, and impaired real-world relationships is not debated. The label is.</item>
+        <item>Some studies find no causal link between pornography use and erectile dysfunction in laboratory settings. These studies typically measure acute arousal response, not long-term habituation. The methodological gap is real and worth knowing about.</item>
+
+        <!-- Effects specific to women -->
+        <item>Research into compulsive pornography use in women is substantially less developed than research on male users, but the studies that exist show similar escalation patterns, similar desensitisation effects, and similar reports of impaired real-world sexual satisfaction.</item>
+        <item>The body standards in mainstream pornography for female performers involve surgery, grooming norms, and physical configurations that are not representative of the range of real bodies. This affects female viewers\' relationship with their own bodies and male viewers\' expectations of real partners — simultaneously, in opposite directions, from the same content.</item>
+        <item>Pornography shapes the sexual expectations that male partners bring into relationships, regardless of whether women themselves watch it. Women are affected by their partners\' pornography use whether or not they are users themselves.</item>
+    </string-array>
+
+
+    <!-- ════════════════════════════════════════════
+         OFFLINE ACTIVITY PROMPTS
+         ════════════════════════════════════════════ -->
+
+    <string-array name="offline_prompts_movement">
+        <item>Take a walk around the block.</item>
+        <item>Stand up and stretch for 30 seconds.</item>
+        <item>Do 10 slow squats.</item>
+        <item>Walk to the kitchen and drink a glass of water.</item>
+        <item>Step outside for 2 minutes. Just stand there.</item>
+        <item>Walk to a different room for no reason.</item>
+    </string-array>
+
+    <string-array name="offline_prompts_space">
+        <item>Tidy the coffee table.</item>
+        <item>Put one thing back where it belongs.</item>
+        <item>Throw away one piece of rubbish you\'ve been ignoring.</item>
+        <item>Make your bed (or straighten it).</item>
+        <item>Wipe the nearest surface.</item>
+        <item>Put your phone face-down on a different surface than where you usually leave it.</item>
+    </string-array>
+
+    <string-array name="offline_prompts_sensory">
+        <item>Look out the window. Name three things you can see.</item>
+        <item>Close your eyes and name five things you can hear right now.</item>
+        <item>Open a window and notice what the air smells like.</item>
+        <item>Make a cup of something hot and hold it with both hands.</item>
+        <item>Notice the temperature of the room. Is it comfortable?</item>
+    </string-array>
+
+    <string-array name="offline_prompts_social">
+        <item>Think of one person you haven\'t talked to in a while. You don\'t have to contact them — just think of them.</item>
+        <item>Write one sentence by hand. Anything.</item>
+        <item>If someone else is nearby, say something to them that isn\'t about logistics.</item>
+    </string-array>
+
+    <string-array name="offline_prompts_creative">
+        <item>Pick up a book — any book — and read one page.</item>
+        <item>Draw something badly. It doesn\'t matter what.</item>
+        <item>Hum or whistle something.</item>
+        <item>Rearrange one object on a shelf until it looks better to you.</item>
+    </string-array>
+
+</resources>

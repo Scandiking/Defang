@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Minimal "D" for Defang -->
+    <path
+        android:fillColor="#FFB07D4A"
+        android:pathData="M36,28 L52,28 C65,28 74,38 74,54 C74,70 65,80 52,80 L36,80 Z M46,40 L46,68 L51,68 C58,68 63,62 63,54 C63,46 58,40 51,40 Z" />
+</vector>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">Defang</string>
+
+    <!-- Accessibility service -->
+    <string name="accessibility_service_label">Defang launcher</string>
+    <string name="accessibility_service_description">Detects which app is in the foreground so Defang can show a pause screen before watched apps open and track how long you spend in them. Defang does not read screen content.</string>
+    <string name="notification_listener_label">Defang notification batching</string>
+
+    <!-- ── Onboarding ── -->
+    <string name="onboarding_skip">Skip</string>
+    <string name="onboarding_next">Next →</string>
+    <string name="onboarding_continue">Continue to setup →</string>
+
+    <!-- Screen 1 — What this is -->
+    <string name="onboarding_1_heading">This is a speed bump. Not a wall.</string>
+    <string name="onboarding_1_body">Some apps will block your phone completely. Some will go full grayscale through developer settings. This is not that. You can still open Instagram. You can still override the timer. Nothing here is impossible to bypass.\n\nThat is deliberate. A wall creates pressure. Pressure demands release. You\'ve seen this: Instagram\'s own time limit ships with a \"15 more minutes\" button that you tap without thinking. The limit exists, but the exit is so frictionless that it trains you to ignore the limit, not respect it.\n\nThis app puts a speed bump in front of the reflex. It makes the unconscious open a conscious one. What you do after that is up to you.</string>
+
+    <!-- Screen 2 — What this is not -->
+    <string name="onboarding_2_heading">Not a willpower app. Not a parental control.</string>
+    <string name="onboarding_2_body">You probably already know that Instagram is engineered to keep you scrolling. You probably already know that pull-to-refresh mimics a slot machine. Knowing this has not been enough, because the systems working against you are not aimed at your knowledge — they are aimed at the part of your brain that acts before you think.\n\nThis app is not asking you to try harder. It is inserting a small pause between the impulse and the action. That pause is where your prefrontal cortex lives.\n\nIt also does not touch your developer settings, does not require a rooted phone, and does not apply system-wide grayscale. Your camera, your maps, and your calculator work exactly as before.</string>
+
+    <!-- Screen 3 — The loop -->
+    <string name="onboarding_3_heading">Cue → routine → reward. They own the cue.</string>
+    <string name="onboarding_3_body">Every habit runs on a three-part loop: a cue triggers a routine that delivers a reward. Apps have industrialized the cue. The red badge, the notification at exactly the right moment, the muscle memory of unlocking your phone when you\'re bored — all of it is a designed cue that launches the routine before you\'ve decided anything.\n\nThis app targets two points in the loop. Before you open: it interrupts the cue with a pause and asks what you actually want. After you close: it tries to hand you a different reward — something real, physical, and yours — before the loop resets.\n\nIt cannot touch what\'s inside the app. But the cue and the landing are up for grabs.</string>
+
+    <!-- Screen 4 — Why small tasks -->
+    <string name="onboarding_4_heading">\"Tidy the coffee table\" is not a joke.</string>
+    <string name="onboarding_4_body">When you reach for your phone out of boredom or restlessness, you are in a low-energy, low-motivation state. A suggestion like \"clean the bathroom\" in that state does not create action. It creates a second reason to open Instagram.\n\nSmall tasks work because they are completable. Completing something — anything — produces real dopamine: the kind that persists, not the kind that fades in three seconds. \"Put one thing back where it belongs\" is achievable in 20 seconds. Once you\'ve done it, you\'re standing up, you\'ve moved, and the loop has been interrupted by something that required your body, not just your thumb.\n\nThe tasks are not there to make you productive. They are there to give the reward system something honest to work with.</string>
+
+    <!-- Screen 5 — Setup -->
+    <string name="onboarding_5_heading">Let\'s set it up. Two minutes.</string>
+    <string name="onboarding_5_body">Pick which apps get the speed bump. Set how long you want to spend in them before the timer kicks in. Choose when you want notifications from those apps to arrive.\n\nYou can change everything later. The defaults are reasonable starting points, not recommendations.\n\nIf you\'ve set a Bedtime or Do Not Disturb schedule on your phone, this app will automatically increase friction during those hours.</string>
+
+    <!-- ── Intent gate overlay ── -->
+    <string name="gate_question">What are you opening this for?</string>
+    <string name="gate_opening_in">Opening in %1$d…</string>
+    <string name="gate_open_anyway">Open anyway</string>
+    <string name="gate_go_back">← Go back</string>
+    <string name="gate_intent_post">Post something</string>
+    <string name="gate_intent_dm">Check a DM</string>
+    <string name="gate_intent_lookup">Look up something specific</string>
+
+    <!-- ── Session timer HUD ── -->
+    <string name="hud_time_remaining">%1$s left</string>
+    <string name="hud_tap_to_expand">Tap to see session</string>
+
+    <!-- ── End card ── -->
+    <string name="endcard_time_used">You spent %1$s in %2$s.</string>
+    <string name="endcard_intent_declared">You opened it to: %1$s</string>
+    <string name="endcard_intent_none">No intent declared.</string>
+    <string name="endcard_more_time">I need more time</string>
+    <string name="endcard_why_prompt">Why do you need more time?</string>
+    <string name="endcard_why_hint">Be specific (minimum 10 characters)</string>
+    <string name="endcard_why_confirm">Add 10 minutes</string>
+    <string name="endcard_extension_used">You\'ve used your one extension for today.</string>
+    <string name="endcard_go_home">Back to home</string>
+    <string name="endcard_another_prompt">Give me another one</string>
+
+    <!-- Cool-down lockout -->
+    <string name="cooldown_heading">Cool-down</string>
+    <string name="cooldown_available_in">%1$s available again in %2$s</string>
+    <string name="cooldown_go_home">Back to home</string>
+
+    <!-- ── Settings ── -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_watched_apps">Watched apps</string>
+    <string name="settings_watched_apps_desc">Apps that trigger the speed bump</string>
+    <string name="settings_session_limit">Session limit</string>
+    <string name="settings_session_limit_desc">Time before the end card appears</string>
+    <string name="settings_cooldown">Cool-down period</string>
+    <string name="settings_cooldown_desc">Time before the app can be reopened</string>
+    <string name="settings_awareness_library">What we know about them</string>
+    <string name="settings_awareness_library_desc">The full content library with sources</string>
+    <string name="settings_about">About Defang</string>
+    <string name="settings_distribution">Distribution &amp; install</string>
+    <string name="settings_onboarding_replay">Read the intro again</string>
+
+    <!-- App tier config -->
+    <string name="tier_config_title">App setup</string>
+    <string name="tier_config_subtitle">These apps are watched by default. Adjust if needed.</string>
+    <string name="tier_utility">Utility</string>
+    <string name="tier_watched">Watched</string>
+    <string name="tier_utility_desc">Opens instantly, no friction</string>
+    <string name="tier_watched_desc">Intent gate + session timer</string>
+    <string name="tier_save">Save</string>
+
+    <!-- Session limit options -->
+    <string name="limit_5_min">5 minutes</string>
+    <string name="limit_10_min">10 minutes</string>
+    <string name="limit_15_min">15 minutes</string>
+    <string name="limit_20_min">20 minutes</string>
+    <string name="limit_30_min">30 minutes</string>
+
+    <!-- Permission prompts -->
+    <string name="perm_overlay_title">Draw over other apps</string>
+    <string name="perm_overlay_body">Defang needs this to show the pause screen before watched apps open. Without it, the core feature doesn\'t work.</string>
+    <string name="perm_overlay_grant">Grant permission</string>
+    <string name="perm_accessibility_title">Accessibility permission</string>
+    <string name="perm_accessibility_body">Defang needs to know when a watched app opens. It does not read what\'s on your screen — only which app is in the foreground.</string>
+    <string name="perm_accessibility_grant">Open accessibility settings</string>
+    <string name="perm_battery_title">Battery optimisation</string>
+    <string name="perm_battery_body">Samsung\'s battery management can kill background services, which would stop the session timer working. Tap to exclude Defang from battery optimisation.</string>
+    <string name="perm_battery_grant">Exclude from optimisation</string>
+    <string name="perm_usage_stats_title">Usage access</string>
+    <string name="perm_usage_stats_body">Needed to show your time-in-app history.</string>
+    <string name="perm_usage_stats_grant">Grant usage access</string>
+
+    <!-- Launcher -->
+    <string name="launcher_all_apps">All apps</string>
+    <string name="launcher_search_hint">Search apps…</string>
+    <string name="launcher_settings">Settings</string>
+
+    <!-- Misc -->
+    <string name="minutes_short">%1$dm</string>
+    <string name="time_format_mm_ss">%1$d:%2$02d</string>
+</resources>

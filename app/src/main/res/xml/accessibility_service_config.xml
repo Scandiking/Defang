@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Defang accessibility service configuration.
+
+    Purpose: detect which app is in the foreground so we can show the intent gate
+    and session timer overlay for watched apps. We do NOT read window content —
+    canRetrieveWindowContent="false". We only watch for window state changes
+    (app switching). This description must be honest and specific to pass Play review
+    and to earn user trust.
+
+    Note: packageNames is intentionally omitted — omitting it means ALL packages.
+    Setting it to an empty string "" incorrectly filters to zero packages.
+-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeWindowStateChanged"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:canRetrieveWindowContent="false"
+    android:description="@string/accessibility_service_description"
+    android:notificationTimeout="100" />
