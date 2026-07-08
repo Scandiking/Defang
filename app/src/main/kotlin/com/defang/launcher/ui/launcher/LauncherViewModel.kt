@@ -9,6 +9,8 @@ import androidx.lifecycle.viewModelScope
 import com.defang.launcher.data.local.datastore.PreferencesDataStore
 import com.defang.launcher.data.repository.AppConfigRepository
 import com.defang.launcher.data.local.db.entity.AppConfigEntity
+import com.defang.launcher.domain.model.ContentTrack
+import com.defang.launcher.util.TidbitSelector
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,6 +28,7 @@ data class LauncherUiState(
     val apps: List<AppInfo> = emptyList(),
     val query: String = "",
     val needsOnboarding: Boolean = false,
+    val homeTidbit: String = "",
 )
 
 @HiltViewModel
@@ -33,6 +36,7 @@ class LauncherViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val prefs: PreferencesDataStore,
     private val appConfigRepo: AppConfigRepository,
+    private val tidbitSelector: TidbitSelector,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LauncherUiState())
@@ -46,6 +50,7 @@ class LauncherViewModel @Inject constructor(
             _uiState.value = LauncherUiState(
                 apps = allApps,
                 needsOnboarding = !onboardingDone,
+                homeTidbit = tidbitSelector.next(ContentTrack.GENERAL),
             )
         }
     }
@@ -104,6 +109,13 @@ class LauncherViewModel @Inject constructor(
             "com.match.android",
             "com.poc.happn",              // Happn
             "com.meetic.jconnecte",       // Meetic
+            // Adult content — sideloaded apps (not on Play Store)
+            "com.pornhub.pornhub",
+            "com.xvideos.app",
+            "com.xhamster.android",
+            "com.xnxx.app",
+            "com.onlyfans.app",
+            "com.fancentro.android",
         )
         val configs = apps.map { app ->
             AppConfigEntity(

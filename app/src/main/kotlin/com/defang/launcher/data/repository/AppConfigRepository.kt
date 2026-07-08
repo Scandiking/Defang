@@ -24,4 +24,7 @@ class AppConfigRepository @Inject constructor(
 
     suspend fun setCooldown(packageName: String, endsAtEpoch: Long) =
         dao.setCooldown(packageName, endsAtEpoch)
+
+    suspend fun applyDefaultsToAllWatched(gateDelay: Int, sessionLimit: Int, cooldown: Int) =
+        dao.applyDefaultsToAllWatched(gateDelay, sessionLimit, cooldown)
 }

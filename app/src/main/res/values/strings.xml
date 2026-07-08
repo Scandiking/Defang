@@ -5,7 +5,7 @@
 
     <!-- Accessibility service -->
     <string name="accessibility_service_label">Defang launcher</string>
-    <string name="accessibility_service_description">Detects which app is in the foreground so Defang can show a pause screen before watched apps open and track how long you spend in them. Defang does not read screen content.</string>
+    <string name="accessibility_service_description">Detects which app is in the foreground and reads the URL bar in your browser so Defang can show a pause screen before watched apps or adult websites open. Defang does not log, store, or transmit your browsing history.</string>
     <string name="notification_listener_label">Defang notification batching</string>
 
     <!-- ── Onboarding ── -->

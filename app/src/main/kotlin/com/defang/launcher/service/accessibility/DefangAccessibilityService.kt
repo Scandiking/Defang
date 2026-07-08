@@ -2,9 +2,9 @@ package com.defang.launcher.service.accessibility
 
 import android.accessibilityservice.AccessibilityService
 import android.content.Intent
-import android.provider.Settings
 import android.view.accessibility.AccessibilityEvent
 import com.defang.launcher.data.repository.AppConfigRepository
+import com.defang.launcher.domain.model.AppConfig
 import com.defang.launcher.domain.model.AppTier
 import com.defang.launcher.domain.model.ContentTrack
 import com.defang.launcher.domain.model.toDomain
@@ -15,12 +15,14 @@ import com.defang.launcher.service.overlay.EndCardOverlay
 import com.defang.launcher.service.overlay.IntentGateOverlay
 import com.defang.launcher.service.overlay.OverlayManager
 import com.defang.launcher.service.overlay.SessionTimerOverlay
+import com.defang.launcher.util.BrowserUrlExtractor
 import com.defang.launcher.util.OfflinePromptSelector
 import com.defang.launcher.util.TidbitSelector
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -29,16 +31,18 @@ import javax.inject.Inject
  * Core of Defang's Phase 1 behaviour.
  *
  * Lifecycle per watched-app open:
- * 1. TYPE_WINDOW_STATE_CHANGED fires for a watched package.
- * 2. If in cool-down → show cool-down lockout screen.
- * 3. Otherwise → show IntentGateOverlay.
+ * 1. TYPE_WINDOW_STATE_CHANGED fires for a watched package or a browser.
+ * 2. For browsers: URL is read from the address bar. If it matches an adult
+ *    domain the gate fires, same as for any other watched app.
+ * 3. If in cool-down → show cool-down lockout screen.
+ * 4. Otherwise → show IntentGateOverlay.
  *    a. User taps declared intent or waits out countdown → dismiss gate, launch app,
  *       start SessionTimerOverlay + record session in DB.
  *    b. User taps "Go back" → dismiss gate, go to launcher.
- * 4. When session timer expires → cancel HUD, show EndCardOverlay.
+ * 5. When session timer expires → cancel HUD, show EndCardOverlay.
  *    a. User requests extension (with friction) → add 10 min, mark extension used.
  *    b. User taps "Go home" → dismiss end card, go to launcher, start cool-down.
- * 5. User navigates away from watched app mid-session → end session in DB.
+ * 6. User navigates away from watched app mid-session → end session in DB.
  */
 @AndroidEntryPoint
 class DefangAccessibilityService : AccessibilityService() {
@@ -50,6 +54,7 @@ class DefangAccessibilityService : AccessibilityService() {
     @Inject lateinit var selectContentTrack: SelectContentTrackUseCase
     @Inject lateinit var tidbitSelector: TidbitSelector
     @Inject lateinit var offlinePromptSelector: OfflinePromptSelector
+    @Inject lateinit var browserUrlExtractor: BrowserUrlExtractor
 
     private val serviceScope = CoroutineScope(Dispatchers.Main + Job())
 
@@ -62,66 +67,105 @@ class DefangAccessibilityService : AccessibilityService() {
     private var currentEndCard: EndCardOverlay? = null
     private var extensionUsedThisSession = false
 
-    // Set of packages currently showing the intent gate (prevents re-trigger on internal windows)
+    // Packages currently showing the intent gate (prevents re-trigger on internal windows)
     private val pendingGate = mutableSetOf<String>()
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        if (event?.eventType != AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) return
-        val pkg = event.packageName?.toString() ?: return
-        if (pkg == packageName) return // our own overlays
+        val pkg = event?.packageName?.toString() ?: return
+        if (pkg == packageName) return // ignore our own overlays
 
-        serviceScope.launch {
-            handleForegroundChange(pkg)
+        when (event.eventType) {
+            AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
+                val isBrowser = pkg in browserUrlExtractor.browserPackages
+                // Extract URL synchronously while we still have the window context.
+                // Reset the throttle so a fresh navigation always gets checked immediately.
+                val browserUrl = if (isBrowser) {
+                    browserUrlExtractor.resetThrottle(pkg)
+                    browserUrlExtractor.extractUrl(this, pkg)
+                } else null
+
+                serviceScope.launch {
+                    handleForegroundChange(pkg, browserUrl)
+                    // If the URL bar wasn't populated yet (common — Chrome updates it
+                    // asynchronously after the state-change event), retry once after 400 ms.
+                    if (isBrowser && browserUrl == null) {
+                        delay(400)
+                        val retryUrl = browserUrlExtractor.extractUrl(
+                            this@DefangAccessibilityService, pkg
+                        )
+                        if (retryUrl != null) handleBrowserUrl(pkg, retryUrl)
+                    }
+                }
+            }
+
+            AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED -> {
+                if (pkg !in browserUrlExtractor.browserPackages) return
+                // event.source is null for most WebView content changes — don't filter on it.
+                // Instead, throttle: extract at most once per 600 ms.
+                event.source?.recycle() // recycle if non-null, ignore otherwise
+                if (browserUrlExtractor.isThrottled(pkg)) return
+
+                val url = browserUrlExtractor.extractUrl(this, pkg)
+                if (url != null) {
+                    serviceScope.launch { handleBrowserUrl(pkg, url) }
+                }
+            }
         }
     }
 
-    private suspend fun handleForegroundChange(pkg: String) {
-        // If user navigated away from a watched app mid-session, end it
+    // ── Foreground change ─────────────────────────────────────────────────────
+
+    private suspend fun handleForegroundChange(pkg: String, browserUrl: String?) {
+        // Navigating away from whatever we were watching — end that session
         if (pkg != currentWatchedPackage && currentWatchedPackage != null) {
             endCurrentSession()
         }
 
-        // Use DB config if available; fall back to hardcoded list to handle the case
-        // where LauncherViewModel hasn't seeded Room yet (e.g. first launch, cold start).
-        val config = appConfigRepo.getConfig(pkg)?.toDomain()
-            ?: if (pkg in DEFAULT_WATCHED_PACKAGES) {
-                com.defang.launcher.domain.model.AppConfig(
-                    packageName = pkg,
-                    appLabel = pkg,
-                    tier = AppTier.WATCHED,
-                    sessionLimitMinutes = 15,
-                    cooldownMinutes = 30,
-                    gateDelaySeconds = 8,
-                    cooldownEndsAt = 0L,
-                )
-            } else {
-                return
-            }
-        if (config.tier != AppTier.WATCHED) return
-        if (pkg in pendingGate) return // gate already showing for this package
+        // Browser: delegate to URL-based logic
+        if (pkg in browserUrlExtractor.browserPackages) {
+            if (browserUrl != null) handleBrowserUrl(pkg, browserUrl)
+            return
+        }
 
-        // Cool-down check
+        // Regular app: look up config in DB, fall back to hardcoded default list
+        val config = resolveConfig(pkg) ?: return
+        if (config.tier != AppTier.WATCHED) return
+        if (pkg in pendingGate) return
+
         if (config.isInCooldown) {
             showCooldownScreen(pkg, config.cooldownEndsAt)
             return
         }
 
-        // Intent gate
         pendingGate.add(pkg)
         val contentTrack = selectContentTrack.forPackage(pkg)
-        showIntentGate(pkg, contentTrack, config.gateDelaySeconds.toLong(),
-            config.sessionLimitMinutes, config.cooldownMinutes)
+        showIntentGate(pkg, contentTrack, config)
     }
 
-    private fun showIntentGate(
-        pkg: String,
-        contentTrack: ContentTrack,
-        gateDelaySeconds: Long,
-        sessionLimitMinutes: Int,
-        cooldownMinutes: Int,
-    ) {
+    // ── Browser URL handling ──────────────────────────────────────────────────
+
+    private suspend fun handleBrowserUrl(pkg: String, rawUrl: String) {
+        val hostname = browserUrlExtractor.extractHostname(rawUrl) ?: return
+        val track = selectContentTrack.forDomain(hostname)
+
+        if (track != ContentTrack.ADULT) {
+            // Non-adult page — end any active browser adult session
+            if (currentWatchedPackage == pkg) endCurrentSession()
+            return
+        }
+
+        // Adult domain detected
+        if (pkg in pendingGate) return           // gate already showing
+        if (currentWatchedPackage == pkg) return // already in an active browser adult session
+
+        pendingGate.add(pkg)
+        showIntentGate(pkg, ContentTrack.ADULT, defaultBrowserConfig(pkg))
+    }
+
+    // ── Intent gate ───────────────────────────────────────────────────────────
+
+    private fun showIntentGate(pkg: String, contentTrack: ContentTrack, config: AppConfig) {
         serviceScope.launch {
-            val config = appConfigRepo.getConfig(pkg)?.toDomain() ?: return@launch
             currentGateOverlay = IntentGateOverlay(
                 context = this@DefangAccessibilityService,
                 config = config,
@@ -132,7 +176,8 @@ class DefangAccessibilityService : AccessibilityService() {
                     currentGateOverlay?.cancel()
                     overlayManager.dismissFullscreen()
                     serviceScope.launch {
-                        startSession(pkg, intent, sessionLimitMinutes, cooldownMinutes, contentTrack)
+                        startSession(pkg, intent, config.sessionLimitMinutes,
+                            config.cooldownMinutes, contentTrack)
                     }
                 },
                 onGoBack = {
@@ -145,6 +190,8 @@ class DefangAccessibilityService : AccessibilityService() {
             overlayManager.showFullscreen(currentGateOverlay!!.view)
         }
     }
+
+    // ── Session ───────────────────────────────────────────────────────────────
 
     private suspend fun startSession(
         pkg: String,
@@ -159,11 +206,9 @@ class DefangAccessibilityService : AccessibilityService() {
         sessionStartMs = System.currentTimeMillis()
         extensionUsedThisSession = false
 
-        val limitMs = sessionLimitMinutes * 60_000L
-
         currentTimerOverlay = SessionTimerOverlay(
             context = this,
-            sessionLimitMs = limitMs,
+            sessionLimitMs = sessionLimitMinutes * 60_000L,
             onSessionExpired = {
                 serviceScope.launch {
                     onSessionExpired(pkg, sessionId, cooldownMinutes, contentTrack)
@@ -183,15 +228,15 @@ class DefangAccessibilityService : AccessibilityService() {
         overlayManager.dismissHud()
 
         val durationMs = System.currentTimeMillis() - sessionStartMs
-        val config = appConfigRepo.getConfig(pkg)?.toDomain()
+        val config = resolveConfig(pkg) ?: defaultBrowserConfig(pkg)
         val extensionAvailable = getDailyExtensionStatus.isExtensionAvailable()
         offlinePromptSelector.resetSession()
 
         currentEndCard = EndCardOverlay(
             context = this,
-            appLabel = config?.appLabel ?: pkg,
+            appLabel = config.appLabel,
             sessionDurationMs = durationMs,
-            intentDeclared = currentGateOverlay?.let { null }, // stored in session
+            intentDeclared = null,
             tidbit = tidbitSelector.next(contentTrack),
             offlinePrompt = offlinePromptSelector.next(),
             extensionAvailable = extensionAvailable,
@@ -213,8 +258,6 @@ class DefangAccessibilityService : AccessibilityService() {
             },
         )
         overlayManager.showFullscreen(currentEndCard!!.view)
-
-        // Move the app to background so the end card is fully visible
         goHome()
     }
 
@@ -228,7 +271,6 @@ class DefangAccessibilityService : AccessibilityService() {
         extensionUsedThisSession = true
         recordSession.end(sessionId, extensionUsed = true)
 
-        // Start a new session record for the extension period
         val newSessionId = recordSession.start(pkg, "Extension: $reason")
         currentSessionId = newSessionId
         sessionStartMs = System.currentTimeMillis()
@@ -236,13 +278,11 @@ class DefangAccessibilityService : AccessibilityService() {
         currentEndCard?.cancel()
         overlayManager.dismissFullscreen()
 
-        val extensionMs = 10 * 60_000L
         currentTimerOverlay = SessionTimerOverlay(
             context = this,
-            sessionLimitMs = extensionMs,
+            sessionLimitMs = 10 * 60_000L,
             onSessionExpired = {
                 serviceScope.launch {
-                    // No second extension — pass extensionAvailable = false
                     onSessionExpiredNoExtension(pkg, newSessionId, cooldownMinutes, contentTrack)
                 }
             },
@@ -259,18 +299,18 @@ class DefangAccessibilityService : AccessibilityService() {
         currentTimerOverlay?.cancel()
         overlayManager.dismissHud()
         val durationMs = System.currentTimeMillis() - sessionStartMs
-        val config = appConfigRepo.getConfig(pkg)?.toDomain()
+        val config = resolveConfig(pkg) ?: defaultBrowserConfig(pkg)
         offlinePromptSelector.resetSession()
 
         currentEndCard = EndCardOverlay(
             context = this,
-            appLabel = config?.appLabel ?: pkg,
+            appLabel = config.appLabel,
             sessionDurationMs = durationMs,
             intentDeclared = null,
             tidbit = tidbitSelector.next(contentTrack),
             offlinePrompt = offlinePromptSelector.next(),
-            extensionAvailable = false, // no second extension
-            onRequestExtension = {},    // unreachable
+            extensionAvailable = false,
+            onRequestExtension = {},
             onGoHome = {
                 serviceScope.launch {
                     endCurrentSession()
@@ -287,10 +327,42 @@ class DefangAccessibilityService : AccessibilityService() {
         goHome()
     }
 
-    private suspend fun endCurrentSession() {
-        currentSessionId?.let { id ->
-            recordSession.end(id, extensionUsedThisSession)
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    /**
+     * Looks up app config in Room; falls back to the hardcoded default watched list
+     * for packages not yet seeded (e.g. cold start before LauncherViewModel runs).
+     */
+    private suspend fun resolveConfig(pkg: String): AppConfig? {
+        val fromDb = appConfigRepo.getConfig(pkg)?.toDomain()
+        if (fromDb != null) return fromDb
+        if (pkg in DEFAULT_WATCHED_PACKAGES) {
+            return AppConfig(
+                packageName = pkg,
+                appLabel = pkg,
+                tier = AppTier.WATCHED,
+                sessionLimitMinutes = 15,
+                cooldownMinutes = 30,
+                gateDelaySeconds = 8,
+                cooldownEndsAt = 0L,
+            )
         }
+        return null
+    }
+
+    /** Synthetic config used when the "watched package" is a browser on an adult domain. */
+    private fun defaultBrowserConfig(pkg: String) = AppConfig(
+        packageName = pkg,
+        appLabel = "Browser",
+        tier = AppTier.WATCHED,
+        sessionLimitMinutes = 15,
+        cooldownMinutes = 30,
+        gateDelaySeconds = 8,
+        cooldownEndsAt = 0L,
+    )
+
+    private suspend fun endCurrentSession() {
+        currentSessionId?.let { id -> recordSession.end(id, extensionUsedThisSession) }
         currentSessionId = null
         currentWatchedPackage = null
         currentTimerOverlay?.cancel()
@@ -308,22 +380,18 @@ class DefangAccessibilityService : AccessibilityService() {
     }
 
     private fun showCooldownScreen(pkg: String, cooldownEndsAt: Long) {
-        // TODO Phase 2: show a proper cool-down lockout Compose screen.
-        // For now: just go home so the app is inaccessible.
+        // TODO Phase 2: proper cool-down screen. For now: go home.
         goHome()
     }
 
     private fun goHome() {
-        val homeIntent = Intent(Intent.ACTION_MAIN).apply {
+        startActivity(Intent(Intent.ACTION_MAIN).apply {
             addCategory(Intent.CATEGORY_HOME)
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        }
-        startActivity(homeIntent)
+        })
     }
 
-    override fun onInterrupt() {
-        overlayManager.dismissAll()
-    }
+    override fun onInterrupt() = overlayManager.dismissAll()
 
     override fun onDestroy() {
         super.onDestroy()
@@ -331,8 +399,6 @@ class DefangAccessibilityService : AccessibilityService() {
     }
 
     companion object {
-        // Mirrors the default watched set in LauncherViewModel.
-        // Used as a fallback when Room hasn't been seeded yet on first cold start.
         val DEFAULT_WATCHED_PACKAGES = setOf(
             "com.instagram.android",
             "com.snapchat.android",
@@ -353,6 +419,13 @@ class DefangAccessibilityService : AccessibilityService() {
             "com.match.android",
             "com.poc.happn",
             "com.meetic.jconnecte",
+            // Adult content (sideloaded)
+            "com.pornhub.pornhub",
+            "com.xvideos.app",
+            "com.xhamster.android",
+            "com.xnxx.app",
+            "com.onlyfans.app",
+            "com.fancentro.android",
         )
     }
 }

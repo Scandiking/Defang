@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -43,4 +44,17 @@ class PreferencesDataStore @Inject constructor(
     val lastForegroundPackage: Flow<String?> = store.data.map { it[KEY_LAST_FG_PKG] }
 
     suspend fun setLastForegroundPackage(pkg: String) = store.edit { it[KEY_LAST_FG_PKG] = pkg }
+
+    // ── Global defaults — apply to all watched apps ───────────────────────────
+    private val KEY_GATE_DELAY    = intPreferencesKey("gate_delay_seconds")
+    private val KEY_SESSION_LIMIT = intPreferencesKey("session_limit_minutes")
+    private val KEY_COOLDOWN      = intPreferencesKey("cooldown_minutes")
+
+    val gateDelaySeconds: Flow<Int>    = store.data.map { it[KEY_GATE_DELAY]    ?: 8  }
+    val sessionLimitMinutes: Flow<Int> = store.data.map { it[KEY_SESSION_LIMIT] ?: 15 }
+    val cooldownMinutes: Flow<Int>     = store.data.map { it[KEY_COOLDOWN]      ?: 30 }
+
+    suspend fun setGateDelay(seconds: Int)    = store.edit { it[KEY_GATE_DELAY]    = seconds }
+    suspend fun setSessionLimit(minutes: Int) = store.edit { it[KEY_SESSION_LIMIT] = minutes }
+    suspend fun setCooldown(minutes: Int)     = store.edit { it[KEY_COOLDOWN]      = minutes }
 }

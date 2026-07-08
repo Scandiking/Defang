@@ -4,12 +4,14 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.view.accessibility.AccessibilityManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.defang.launcher.ui.onboarding.OnboardingActivity
 import com.defang.launcher.ui.settings.SettingsActivity
 import com.defang.launcher.ui.theme.DefangTheme
@@ -20,8 +22,12 @@ class LauncherActivity : ComponentActivity() {
 
     private val viewModel: LauncherViewModel by viewModels()
 
+    // true = app drawer is visible, false = home screen is visible
+    private var showDrawer by mutableStateOf(false)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
         setContent {
             DefangTheme {
@@ -29,22 +35,31 @@ class LauncherActivity : ComponentActivity() {
 
                 if (state.needsOnboarding) {
                     startActivity(Intent(this, OnboardingActivity::class.java))
-                    // Don't finish — LauncherActivity remains the home
                 }
 
-                LauncherScreen(
-                    apps = viewModel.filteredApps,
-                    query = state.query,
-                    onQueryChange = { viewModel.onQueryChange(it) },
-                    onAppTap = { pkg -> launchApp(pkg) },
-                    onSettingsTap = {
-                        startActivity(Intent(this, SettingsActivity::class.java))
-                    },
-                )
+                if (showDrawer) {
+                    LauncherScreen(
+                        apps = viewModel.filteredApps,
+                        query = state.query,
+                        onQueryChange = { viewModel.onQueryChange(it) },
+                        onAppTap = { pkg -> launchApp(pkg) },
+                        onSettingsTap = {
+                            startActivity(Intent(this, SettingsActivity::class.java))
+                        },
+                        onClose = { showDrawer = false },
+                    )
+                } else {
+                    HomeScreen(
+                        tidbit = state.homeTidbit,
+                        onAppsTap = { showDrawer = true },
+                        onSettingsTap = {
+                            startActivity(Intent(this, SettingsActivity::class.java))
+                        },
+                    )
+                }
             }
         }
 
-        // Request SYSTEM_ALERT_WINDOW on first run if not granted
         if (!Settings.canDrawOverlays(this)) {
             startActivity(
                 Intent(
@@ -55,10 +70,17 @@ class LauncherActivity : ComponentActivity() {
         }
     }
 
+    /** Home button press while already in the launcher — return to home screen. */
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (intent.action == Intent.ACTION_MAIN) {
+            showDrawer = false
+            viewModel.onQueryChange("") // clear any active search
+        }
+    }
+
     override fun onResume() {
         super.onResume()
-        // Prompt for accessibility service every time the launcher comes to foreground
-        // until the user grants it. Without it, the intent gate never fires.
         if (!isAccessibilityServiceEnabled()) {
             startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         }
@@ -69,7 +91,6 @@ class LauncherActivity : ComponentActivity() {
             contentResolver,
             Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
         ) ?: return false
-        // Check if our specific service component is in the enabled list
         val component = "$packageName/com.defang.launcher.service.accessibility.DefangAccessibilityService"
         return enabledServices.split(":").any { it.equals(component, ignoreCase = true) }
     }
@@ -78,7 +99,5 @@ class LauncherActivity : ComponentActivity() {
         val intent = packageManager.getLaunchIntentForPackage(packageName) ?: return
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
-        // DefangAccessibilityService intercepts TYPE_WINDOW_STATE_CHANGED
-        // and shows the intent gate for watched apps.
     }
 }

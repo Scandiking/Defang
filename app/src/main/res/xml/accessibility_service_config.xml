@@ -2,18 +2,20 @@
 <!--
     Defang accessibility service configuration.
 
-    Purpose: detect which app is in the foreground so we can show the intent gate
-    and session timer overlay for watched apps. We do NOT read window content —
-    canRetrieveWindowContent="false". We only watch for window state changes
-    (app switching). This description must be honest and specific to pass Play review
-    and to earn user trust.
+    We listen for two event types:
+    - typeWindowStateChanged: detects app switches and browser page navigations
+    - typeWindowContentChanged: detects URL bar text changes within a browser
+      (needed for in-page navigation in SPAs / link clicks that don't fire STATE_CHANGED)
 
-    Note: packageNames is intentionally omitted — omitting it means ALL packages.
+    canRetrieveWindowContent="true" is required to read the URL bar node from the browser
+    window tree. We only read URL bar nodes — we do not read page content.
+
+    packageNames is intentionally omitted — omitting it means ALL packages.
     Setting it to an empty string "" incorrectly filters to zero packages.
 -->
 <accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
-    android:accessibilityEventTypes="typeWindowStateChanged"
+    android:accessibilityEventTypes="typeWindowStateChanged|typeWindowContentChanged"
     android:accessibilityFeedbackType="feedbackGeneric"
-    android:canRetrieveWindowContent="false"
+    android:canRetrieveWindowContent="true"
     android:description="@string/accessibility_service_description"
     android:notificationTimeout="100" />

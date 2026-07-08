@@ -20,6 +20,15 @@ class SelectContentTrackUseCase @Inject constructor() {
         "com.tumblr",
     )
 
+    private val adultPackages = setOf(
+        "com.pornhub.pornhub",
+        "com.xvideos.app",
+        "com.xhamster.android",
+        "com.xnxx.app",
+        "com.onlyfans.app",
+        "com.fancentro.android",
+    )
+
     private val socialDomains = setOf(
         "instagram.com", "www.instagram.com",
         "twitter.com", "x.com",
@@ -32,14 +41,21 @@ class SelectContentTrackUseCase @Inject constructor() {
         "tumblr.com", "www.tumblr.com",
     )
 
-    fun forPackage(packageName: String): ContentTrack =
-        if (packageName in socialPackages) ContentTrack.SOCIAL else ContentTrack.GENERAL
+    private val adultDomainKeywords = listOf(
+        "pornhub", "xvideos", "xhamster", "xnxx", "onlyfans",
+        "brazzers", "redtube", "youporn", "tube8", "spankbang",
+        "eporner", "thisvid", "porntrex", "tnaflix",
+    )
+
+    fun forPackage(packageName: String): ContentTrack = when {
+        packageName in adultPackages -> ContentTrack.ADULT
+        packageName in socialPackages -> ContentTrack.SOCIAL
+        else -> ContentTrack.GENERAL
+    }
 
     fun forDomain(domain: String): ContentTrack = when {
+        adultDomainKeywords.any { domain.contains(it) } -> ContentTrack.ADULT
         domain in socialDomains -> ContentTrack.SOCIAL
-        // Adult domains are user-configurable in Phase 2; hardcode a minimal default for now
-        domain.contains("pornhub") || domain.contains("xvideos") || domain.contains("xnxx") ->
-            ContentTrack.ADULT
         else -> ContentTrack.GENERAL
     }
 }

@@ -34,4 +34,14 @@ interface AppConfigDao {
 
     @Query("UPDATE app_config SET tier = :tier WHERE packageName = :pkg")
     suspend fun setTier(pkg: String, tier: Int)
+
+    /** Apply new global defaults to every watched app at once. */
+    @Query("""
+        UPDATE app_config
+        SET gateDelaySeconds = :gateDelay,
+            sessionLimitMinutes = :sessionLimit,
+            cooldownMinutes = :cooldown
+        WHERE tier = 1
+    """)
+    suspend fun applyDefaultsToAllWatched(gateDelay: Int, sessionLimit: Int, cooldown: Int)
 }

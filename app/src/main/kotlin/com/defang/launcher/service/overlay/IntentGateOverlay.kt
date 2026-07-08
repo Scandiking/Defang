@@ -1,33 +1,27 @@
 package com.defang.launcher.service.overlay
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.os.CountDownTimer
 import android.view.Gravity
-
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-
 import com.defang.launcher.domain.model.AppConfig
 import com.defang.launcher.domain.model.ContentTrack
 import com.defang.launcher.util.TidbitSelector
-import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
 
 /**
- * Full-screen interstitial that appears before a watched app launches.
+ * Full-screen interstitial that appears before a watched app opens.
  *
- * Behaviour:
- * - Shows "What are you opening this for?" with a countdown (default 8s).
- * - "Open anyway" button is visually disabled and unclickable during countdown.
- * - Three declared-intent cards that skip the countdown.
- * - "Go back" always available (returns to launcher).
- * - Static tidbit shown for the full duration of the countdown.
+ * Layout (top to bottom):
+ *   1. Tidbit — the awareness fact, shown large and prominent immediately.
+ *   2. Countdown label — small, dim, counts down the gate delay.
+ *   3. Button row — "Go back" | "Open anyway", equal weight.
+ *      "Open anyway" is disabled (alpha 0.3) until the countdown finishes.
  *
- * This is a View-based overlay (not Compose) because it runs in the
+ * This is a View-based overlay (not Compose) because it runs inside the
  * AccessibilityService process — there is no Activity lifecycle to host Compose.
  */
 class IntentGateOverlay(
@@ -43,7 +37,6 @@ class IntentGateOverlay(
 
     private lateinit var tvCountdown: TextView
     private lateinit var btnOpenAnyway: Button
-    private lateinit var tvTidbit: TextView
 
     private fun buildView(): View {
         val root = LinearLayout(context).apply {
@@ -53,69 +46,34 @@ class IntentGateOverlay(
             setPadding(64, 96, 64, 96)
         }
 
-        // "What are you opening this for?"
-        val tvQuestion = TextView(context).apply {
-            text = context.getString(com.defang.launcher.R.string.gate_question)
-            textSize = 22f
-            setTextColor(Color.rgb(224, 224, 224))
-            gravity = Gravity.CENTER
-            setPadding(0, 0, 0, 48)
-        }
-        root.addView(tvQuestion)
-
-        // Tidbit
-        tvTidbit = TextView(context).apply {
+        // Tidbit — first thing the user sees
+        val tvTidbit = TextView(context).apply {
             text = tidbitSelector.next(contentTrack)
-            textSize = 14f
-            setTextColor(Color.rgb(128, 128, 128))
+            textSize = 20f
+            setTextColor(Color.rgb(210, 210, 210))
             gravity = Gravity.CENTER
-            setPadding(0, 0, 0, 64)
+            setPadding(0, 0, 0, 80)
+            setLineSpacing(0f, 1.4f)
         }
         root.addView(tvTidbit)
 
-        // Intent cards
-        val intents = listOf(
-            context.getString(com.defang.launcher.R.string.gate_intent_post),
-            context.getString(com.defang.launcher.R.string.gate_intent_dm),
-            context.getString(com.defang.launcher.R.string.gate_intent_lookup),
-        )
-        intents.forEach { label ->
-            val btn = Button(context).apply {
-                text = label
-                textSize = 14f
-                setTextColor(Color.rgb(176, 125, 74))
-                setBackgroundColor(Color.argb(40, 176, 125, 74))
-                setPadding(48, 24, 48, 24)
-                val lp = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                )
-                lp.bottomMargin = 16
-                layoutParams = lp
-                setOnClickListener { onIntentDeclared(label) }
-            }
-            root.addView(btn)
-        }
-
-        // Countdown label
+        // Countdown — small, unobtrusive
         tvCountdown = TextView(context).apply {
             textSize = 13f
-            setTextColor(Color.rgb(96, 96, 96))
+            setTextColor(Color.rgb(80, 80, 80))
             gravity = Gravity.CENTER
-            setPadding(0, 32, 0, 8)
+            setPadding(0, 0, 0, 16)
         }
         root.addView(tvCountdown)
 
-        // Bottom row: "Go back" and "Open anyway" side by side, equal weight
+        // Button row — equal weight, no visual hierarchy between the two choices
         val buttonRow = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             gravity = Gravity.CENTER
-            val lp = LinearLayout.LayoutParams(
+            layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT,
             )
-            lp.topMargin = 8
-            layoutParams = lp
         }
 
         val btnBack = Button(context).apply {
@@ -123,9 +81,9 @@ class IntentGateOverlay(
             textSize = 14f
             setTextColor(Color.rgb(224, 224, 224))
             setBackgroundColor(Color.argb(60, 224, 224, 224))
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).also {
-                it.marginEnd = 8
-            }
+            layoutParams = LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f
+            ).also { it.marginEnd = 8 }
             setOnClickListener { onGoBack() }
         }
         buttonRow.addView(btnBack)
@@ -137,9 +95,9 @@ class IntentGateOverlay(
             setBackgroundColor(Color.argb(60, 224, 224, 224))
             isEnabled = false
             alpha = 0.3f
-            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f).also {
-                it.marginStart = 8
-            }
+            layoutParams = LinearLayout.LayoutParams(
+                0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f
+            ).also { it.marginStart = 8 }
             setOnClickListener { onIntentDeclared(null) }
         }
         buttonRow.addView(btnOpenAnyway)
