@@ -117,4 +117,4 @@ Defang is not a blocker. It does not stop you from using your phone the way you 
 
 ## License
 
-MIT
+GPLv3
