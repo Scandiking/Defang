@@ -1,7 +1,10 @@
 package com.defang.launcher.ui.launcher
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.ComponentActivity
@@ -15,6 +18,7 @@ import androidx.compose.runtime.setValue
 import com.defang.launcher.ui.onboarding.OnboardingActivity
 import com.defang.launcher.ui.settings.SettingsActivity
 import com.defang.launcher.ui.theme.DefangTheme
+import com.defang.launcher.util.AccessibilityServiceHelper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -43,18 +47,12 @@ class LauncherActivity : ComponentActivity() {
                         query = state.query,
                         onQueryChange = { viewModel.onQueryChange(it) },
                         onAppTap = { pkg -> launchApp(pkg) },
-                        onSettingsTap = {
-                            startActivity(Intent(this, SettingsActivity::class.java))
-                        },
                         onClose = { showDrawer = false },
                     )
                 } else {
                     HomeScreen(
                         tidbit = state.homeTidbit,
                         onAppsTap = { showDrawer = true },
-                        onSettingsTap = {
-                            startActivity(Intent(this, SettingsActivity::class.java))
-                        },
                     )
                 }
             }
@@ -67,6 +65,14 @@ class LauncherActivity : ComponentActivity() {
                     Uri.parse("package:$packageName"),
                 )
             )
+        }
+
+        // Needed to post the sanitized notification summaries on API 33+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 0)
         }
     }
 
@@ -81,21 +87,17 @@ class LauncherActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (!isAccessibilityServiceEnabled()) {
-            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
-        }
-    }
-
-    private fun isAccessibilityServiceEnabled(): Boolean {
-        val enabledServices = Settings.Secure.getString(
-            contentResolver,
-            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
-        ) ?: return false
-        val component = "$packageName/com.defang.launcher.service.accessibility.DefangAccessibilityService"
-        return enabledServices.split(":").any { it.equals(component, ignoreCase = true) }
+        // Self-enables silently if WRITE_SECURE_SETTINGS was granted via adb;
+        // otherwise opens accessibility settings with our row highlighted.
+        AccessibilityServiceHelper.ensureEnabled(this)
     }
 
     private fun launchApp(packageName: String) {
+        // Our own drawer entry opens settings — the launcher itself is already open
+        if (packageName == this.packageName) {
+            startActivity(Intent(this, SettingsActivity::class.java))
+            return
+        }
         val intent = packageManager.getLaunchIntentForPackage(packageName) ?: return
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)

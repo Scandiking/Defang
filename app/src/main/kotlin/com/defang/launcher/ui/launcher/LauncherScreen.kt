@@ -2,29 +2,30 @@ package com.defang.launcher.ui.launcher
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.defang.launcher.R
@@ -36,7 +37,6 @@ fun LauncherScreen(
     query: String,
     onQueryChange: (String) -> Unit,
     onAppTap: (String) -> Unit,
-    onSettingsTap: () -> Unit,
     onClose: () -> Unit,
 ) {
     var searchActive by remember { mutableStateOf(false) }
@@ -45,13 +45,45 @@ fun LauncherScreen(
     BackHandler(enabled = searchActive) { searchActive = false }
     BackHandler(enabled = !searchActive) { onClose() }
 
+    // Swipe down closes the drawer when the app list is at its top. We observe
+    // pointer events on the Initial pass, so we see the drag even though the
+    // list consumes it for scrolling — no consumption conflict.
+    val listState = rememberLazyListState()
+    val closeThresholdPx = with(LocalDensity.current) { 72.dp.toPx() }
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
     ) { padding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding),
+                .padding(padding)
+                .pointerInput(Unit) {
+                    awaitEachGesture {
+                        val down = awaitFirstDown(
+                            requireUnconsumed = false,
+                            pass = PointerEventPass.Initial,
+                        )
+                        // Only a drag that starts with the list at the top can close
+                        val startedAtTop = !listState.canScrollBackward
+                        var prevY = down.position.y
+                        var pulledDown = 0f
+                        while (true) {
+                            val event = awaitPointerEvent(PointerEventPass.Initial)
+                            val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                            if (!change.pressed) break
+                            pulledDown += change.position.y - prevY
+                            prevY = change.position.y
+                            if (pulledDown < 0f) pulledDown = 0f // moved up — start over
+                            if (pulledDown > closeThresholdPx &&
+                                startedAtTop && !searchActive
+                            ) {
+                                onClose()
+                                break
+                            }
+                        }
+                    }
+                },
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
                 SearchBar(
@@ -72,26 +104,11 @@ fun LauncherScreen(
                     }
                 }
 
-                LazyColumn(modifier = Modifier.weight(1f)) {
+                LazyColumn(state = listState, modifier = Modifier.weight(1f)) {
                     items(apps) { app ->
                         AppRow(app = app, onTap = { onAppTap(app.packageName) })
                     }
                 }
-            }
-
-            // Close / go back to home screen — above navigation bar
-            TextButton(
-                onClick = onClose,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .windowInsetsPadding(WindowInsets.navigationBars)
-                    .padding(bottom = 12.dp),
-            ) {
-                Text(
-                    text = "↓  Hjem",
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.35f),
-                )
             }
         }
     }

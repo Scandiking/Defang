@@ -16,6 +16,7 @@ import com.defang.launcher.service.overlay.IntentGateOverlay
 import com.defang.launcher.service.overlay.OverlayManager
 import com.defang.launcher.service.overlay.SessionTimerOverlay
 import com.defang.launcher.util.BrowserUrlExtractor
+import com.defang.launcher.util.GrayscaleController
 import com.defang.launcher.util.OfflinePromptSelector
 import com.defang.launcher.util.TidbitSelector
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,6 +56,7 @@ class DefangAccessibilityService : AccessibilityService() {
     @Inject lateinit var tidbitSelector: TidbitSelector
     @Inject lateinit var offlinePromptSelector: OfflinePromptSelector
     @Inject lateinit var browserUrlExtractor: BrowserUrlExtractor
+    @Inject lateinit var grayscale: GrayscaleController
 
     private val serviceScope = CoroutineScope(Dispatchers.Main + Job())
 
@@ -70,9 +72,36 @@ class DefangAccessibilityService : AccessibilityService() {
     // Packages currently showing the intent gate (prevents re-trigger on internal windows)
     private val pendingGate = mutableSetOf<String>()
 
+    // Package → when the user last passed the gate. Within REGATE_GRACE_MS a
+    // re-open starts the session directly instead of showing the gate again
+    // (in-app tab switches also fire TYPE_WINDOW_STATE_CHANGED).
+    private val lastGatePassedMs = mutableMapOf<String, Long>()
+
+    // Package → suppress-gate deadline set when the user taps "Go back" on the gate.
+    // Needed for browsers: the adult URL is still sitting in the URL bar after
+    // dismissal, so without this the very next content-changed event would
+    // re-fire the gate before the user can even clear the address bar.
+    private val gateSuppressedUntilMs = mutableMapOf<String, Long>()
+
+    override fun onServiceConnected() {
+        super.onServiceConnected()
+        // If we crashed mid-session with grayscale on, restore color now
+        serviceScope.launch { grayscale.recoverIfStale() }
+    }
+
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         val pkg = event?.packageName?.toString() ?: return
-        if (pkg == packageName) return // ignore our own overlays
+        if (pkg == packageName) {
+            // Ignore our own overlay windows — but when the *launcher activity*
+            // comes to the foreground (user pressed home mid-session), lift
+            // grayscale. The session itself keeps running.
+            if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
+                event.className?.toString()?.endsWith(".LauncherActivity") == true
+            ) {
+                serviceScope.launch { grayscale.disable() }
+            }
+            return
+        }
 
         when (event.eventType) {
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
@@ -131,15 +160,33 @@ class DefangAccessibilityService : AccessibilityService() {
         val config = resolveConfig(pkg) ?: return
         if (config.tier != AppTier.WATCHED) return
         if (pkg in pendingGate) return
+        if (pkg == currentWatchedPackage) {
+            // Session active — in-app navigation or return from home screen.
+            // Re-apply grayscale in case the launcher lifted it.
+            grayscale.enable()
+            return
+        }
 
         if (config.isInCooldown) {
             showCooldownScreen(pkg, config.cooldownEndsAt)
             return
         }
 
-        pendingGate.add(pkg)
         val contentTrack = selectContentTrack.forPackage(pkg)
-        showIntentGate(pkg, contentTrack, config)
+        // Adult content gets a hard short leash regardless of configured defaults
+        val effectiveConfig = if (contentTrack == ContentTrack.ADULT) {
+            config.copy(sessionLimitMinutes = ADULT_SESSION_LIMIT_MINUTES)
+        } else config
+
+        // Gate passed recently — restart the session silently instead of re-gating
+        if (withinRegateGrace(pkg)) {
+            startSession(pkg, null, effectiveConfig.sessionLimitMinutes,
+                effectiveConfig.cooldownMinutes, contentTrack)
+            return
+        }
+
+        pendingGate.add(pkg)
+        showIntentGate(pkg, contentTrack, effectiveConfig)
     }
 
     // ── Browser URL handling ──────────────────────────────────────────────────
@@ -157,9 +204,21 @@ class DefangAccessibilityService : AccessibilityService() {
         // Adult domain detected
         if (pkg in pendingGate) return           // gate already showing
         if (currentWatchedPackage == pkg) return // already in an active browser adult session
+        if (System.currentTimeMillis() < (gateSuppressedUntilMs[pkg] ?: 0L)) {
+            // User just tapped "Go back" — the adult URL is still in the URL bar.
+            // Give them time to navigate away without instantly re-firing the gate.
+            return
+        }
+
+        val config = defaultBrowserConfig(pkg)
+            .copy(sessionLimitMinutes = ADULT_SESSION_LIMIT_MINUTES)
+        if (withinRegateGrace(pkg)) {
+            startSession(pkg, null, config.sessionLimitMinutes, config.cooldownMinutes, ContentTrack.ADULT)
+            return
+        }
 
         pendingGate.add(pkg)
-        showIntentGate(pkg, ContentTrack.ADULT, defaultBrowserConfig(pkg))
+        showIntentGate(pkg, ContentTrack.ADULT, config)
     }
 
     // ── Intent gate ───────────────────────────────────────────────────────────
@@ -173,6 +232,7 @@ class DefangAccessibilityService : AccessibilityService() {
                 tidbitSelector = tidbitSelector,
                 onIntentDeclared = { intent ->
                     pendingGate.remove(pkg)
+                    lastGatePassedMs[pkg] = System.currentTimeMillis()
                     currentGateOverlay?.cancel()
                     overlayManager.dismissFullscreen()
                     serviceScope.launch {
@@ -182,6 +242,7 @@ class DefangAccessibilityService : AccessibilityService() {
                 },
                 onGoBack = {
                     pendingGate.remove(pkg)
+                    gateSuppressedUntilMs[pkg] = System.currentTimeMillis() + GO_BACK_SUPPRESS_MS
                     currentGateOverlay?.cancel()
                     overlayManager.dismissAll()
                     goHome()
@@ -205,6 +266,7 @@ class DefangAccessibilityService : AccessibilityService() {
         currentWatchedPackage = pkg
         sessionStartMs = System.currentTimeMillis()
         extensionUsedThisSession = false
+        grayscale.enable()
 
         currentTimerOverlay = SessionTimerOverlay(
             context = this,
@@ -226,10 +288,14 @@ class DefangAccessibilityService : AccessibilityService() {
     ) {
         currentTimerOverlay?.cancel()
         overlayManager.dismissHud()
+        grayscale.disable() // end card and home screen render in color
 
         val durationMs = System.currentTimeMillis() - sessionStartMs
         val config = resolveConfig(pkg) ?: defaultBrowserConfig(pkg)
-        val extensionAvailable = getDailyExtensionStatus.isExtensionAvailable()
+        // No "more time" for the adult track — a 10-minute extension on a
+        // 1-minute session would defeat the short leash entirely
+        val extensionAvailable = contentTrack != ContentTrack.ADULT &&
+            getDailyExtensionStatus.isExtensionAvailable()
         offlinePromptSelector.resetSession()
 
         currentEndCard = EndCardOverlay(
@@ -277,6 +343,7 @@ class DefangAccessibilityService : AccessibilityService() {
 
         currentEndCard?.cancel()
         overlayManager.dismissFullscreen()
+        grayscale.enable() // back into the watched app for the extension
 
         currentTimerOverlay = SessionTimerOverlay(
             context = this,
@@ -298,6 +365,7 @@ class DefangAccessibilityService : AccessibilityService() {
     ) {
         currentTimerOverlay?.cancel()
         overlayManager.dismissHud()
+        grayscale.disable()
         val durationMs = System.currentTimeMillis() - sessionStartMs
         val config = resolveConfig(pkg) ?: defaultBrowserConfig(pkg)
         offlinePromptSelector.resetSession()
@@ -362,6 +430,7 @@ class DefangAccessibilityService : AccessibilityService() {
     )
 
     private suspend fun endCurrentSession() {
+        grayscale.disable()
         currentSessionId?.let { id -> recordSession.end(id, extensionUsedThisSession) }
         currentSessionId = null
         currentWatchedPackage = null
@@ -374,8 +443,12 @@ class DefangAccessibilityService : AccessibilityService() {
         overlayManager.dismissAll()
     }
 
+    private fun withinRegateGrace(pkg: String): Boolean =
+        System.currentTimeMillis() - (lastGatePassedMs[pkg] ?: 0L) < REGATE_GRACE_MS
+
     private suspend fun startCooldown(pkg: String, cooldownMinutes: Int) {
         val endsAt = System.currentTimeMillis() + cooldownMinutes * 60_000L
+        lastGatePassedMs.remove(pkg) // cool-down overrides the re-gate grace window
         appConfigRepo.setCooldown(pkg, endsAt)
     }
 
@@ -399,6 +472,15 @@ class DefangAccessibilityService : AccessibilityService() {
     }
 
     companion object {
+        /** After passing the gate, re-opens within this window skip the gate. */
+        const val REGATE_GRACE_MS = 5 * 60_000L
+
+        /** Hard session limit for adult content, overriding configured defaults. */
+        const val ADULT_SESSION_LIMIT_MINUTES = 1
+
+        /** After "Go back" on the gate, don't re-fire for this long. */
+        const val GO_BACK_SUPPRESS_MS = 45_000L
+
         val DEFAULT_WATCHED_PACKAGES = setOf(
             "com.instagram.android",
             "com.snapchat.android",

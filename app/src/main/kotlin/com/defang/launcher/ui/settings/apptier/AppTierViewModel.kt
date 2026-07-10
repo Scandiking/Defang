@@ -10,8 +10,10 @@ import com.defang.launcher.domain.model.AppTier
 import com.defang.launcher.domain.model.toDomain
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -29,7 +31,14 @@ class AppTierViewModel @Inject constructor(
     private val repo: AppConfigRepository,
 ) : ViewModel() {
 
-    val apps: StateFlow<List<AppTierItem>> = repo.observeAll()
+    private val _query = MutableStateFlow("")
+    val query: StateFlow<String> = _query
+
+    fun onQueryChange(q: String) {
+        _query.value = q
+    }
+
+    private val allApps = repo.observeAll()
         .map { list ->
             list.map { entity ->
                 AppTierItem(
@@ -39,7 +48,17 @@ class AppTierViewModel @Inject constructor(
                 )
             }
         }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    // Matches label or package name — third-party clients (e.g. "Infinity" for
+    // Reddit) are often findable only via their package name.
+    val apps: StateFlow<List<AppTierItem>> = combine(allApps, _query) { apps, q ->
+        val trimmed = q.trim()
+        if (trimmed.isEmpty()) apps
+        else apps.filter {
+            it.label.contains(trimmed, ignoreCase = true) ||
+                it.packageName.contains(trimmed, ignoreCase = true)
+        }
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     fun setTier(packageName: String, tier: AppTier) {
         viewModelScope.launch {

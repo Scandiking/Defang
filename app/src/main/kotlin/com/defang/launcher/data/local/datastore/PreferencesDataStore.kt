@@ -57,4 +57,35 @@ class PreferencesDataStore @Inject constructor(
     suspend fun setGateDelay(seconds: Int)    = store.edit { it[KEY_GATE_DELAY]    = seconds }
     suspend fun setSessionLimit(minutes: Int) = store.edit { it[KEY_SESSION_LIMIT] = minutes }
     suspend fun setCooldown(minutes: Int)     = store.edit { it[KEY_COOLDOWN]      = minutes }
+
+    // ── Per-app grayscale ─────────────────────────────────────────────────────
+    private val KEY_GRAYSCALE_ENABLED = booleanPreferencesKey("grayscale_enabled")
+    // True while WE have switched the system daltonizer on — used to restore
+    // the user's own color-correction state and to recover after a crash.
+    private val KEY_GRAYSCALE_APPLIED = booleanPreferencesKey("grayscale_applied")
+    private val KEY_SAVED_DALTONIZER_ENABLED = intPreferencesKey("saved_daltonizer_enabled")
+    private val KEY_SAVED_DALTONIZER_MODE    = intPreferencesKey("saved_daltonizer_mode")
+
+    val grayscaleEnabled: Flow<Boolean> = store.data.map { it[KEY_GRAYSCALE_ENABLED] ?: true }
+    val grayscaleApplied: Flow<Boolean> = store.data.map { it[KEY_GRAYSCALE_APPLIED] ?: false }
+
+    suspend fun setGrayscaleEnabled(on: Boolean) = store.edit { it[KEY_GRAYSCALE_ENABLED] = on }
+    suspend fun setGrayscaleApplied(on: Boolean) = store.edit { it[KEY_GRAYSCALE_APPLIED] = on }
+
+    suspend fun saveDaltonizerState(enabled: Int, mode: Int) = store.edit {
+        it[KEY_SAVED_DALTONIZER_ENABLED] = enabled
+        it[KEY_SAVED_DALTONIZER_MODE] = mode
+    }
+
+    val savedDaltonizerEnabled: Flow<Int> = store.data.map { it[KEY_SAVED_DALTONIZER_ENABLED] ?: 0 }
+    val savedDaltonizerMode: Flow<Int>    = store.data.map { it[KEY_SAVED_DALTONIZER_MODE] ?: -1 }
+
+    // ── Notification sanitization ─────────────────────────────────────────────
+    private val KEY_NOTIF_SANITIZE = booleanPreferencesKey("notification_sanitize_enabled")
+
+    val notificationSanitizeEnabled: Flow<Boolean> =
+        store.data.map { it[KEY_NOTIF_SANITIZE] ?: true }
+
+    suspend fun setNotificationSanitizeEnabled(on: Boolean) =
+        store.edit { it[KEY_NOTIF_SANITIZE] = on }
 }

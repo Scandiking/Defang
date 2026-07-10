@@ -45,8 +45,12 @@ class LauncherViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val onboardingDone = prefs.isOnboardingDone.first()
-            val allApps = loadInstalledApps()
-            seedAppConfigs(allApps)
+            val installedApps = loadInstalledApps()
+            seedAppConfigs(installedApps)
+            // Defang itself is listed so settings stay reachable from the drawer.
+            // LauncherActivity routes a tap on our own package to SettingsActivity.
+            val allApps = (installedApps + AppInfo(context.packageName, "Defang"))
+                .sortedBy { it.label.lowercase() }
             _uiState.value = LauncherUiState(
                 apps = allApps,
                 needsOnboarding = !onboardingDone,

@@ -1,21 +1,12 @@
 package com.defang.launcher.ui.launcher
 
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -40,7 +31,6 @@ import java.util.Locale
 fun HomeScreen(
     tidbit: String,
     onAppsTap: () -> Unit,
-    onSettingsTap: () -> Unit,
 ) {
     var now by remember { mutableStateOf(LocalDateTime.now()) }
     LaunchedEffect(Unit) {
@@ -59,7 +49,7 @@ fun HomeScreen(
     var dragTotal by remember { mutableFloatStateOf(0f) }
     val swipeThresholdPx = with(LocalDensity.current) { 72.dp.toPx() }
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .pointerInput(Unit) {
@@ -77,66 +67,38 @@ fun HomeScreen(
                     },
                 )
             },
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        // Gear icon — below the status bar
-        IconButton(
-            onClick = onSettingsTap,
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .windowInsetsPadding(WindowInsets.statusBars)
-                .padding(end = 8.dp),
-        ) {
-            Icon(
-                imageVector = Icons.Outlined.Settings,
-                contentDescription = "Innstillinger",
-                tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f),
+        // Clock in the upper quarter, tidbit in the lower half
+        Spacer(modifier = Modifier.weight(0.5f))
+
+        Text(
+            text = timeStr,
+            style = MaterialTheme.typography.displayLarge,
+            color = MaterialTheme.colorScheme.onBackground,
+        )
+        Text(
+            text = dateStr,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+            modifier = Modifier.padding(top = 4.dp),
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        if (tidbit.isNotBlank()) {
+            Text(
+                text = "“$tidbit”",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontStyle = FontStyle.Italic,
+                    lineHeight = 22.sp,
+                ),
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.35f),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 40.dp),
             )
         }
 
-        // Clock + date + tidbit — centred
-        Column(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .padding(horizontal = 40.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = timeStr,
-                style = MaterialTheme.typography.displayLarge,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-            Text(
-                text = dateStr,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                modifier = Modifier.padding(top = 4.dp, bottom = 48.dp),
-            )
-            if (tidbit.isNotBlank()) {
-                Text(
-                    text = "“$tidbit”",
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        fontStyle = FontStyle.Italic,
-                        lineHeight = 22.sp,
-                    ),
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.35f),
-                    textAlign = TextAlign.Center,
-                )
-            }
-        }
-
-        // "Apper ↑" — above the navigation bar
-        TextButton(
-            onClick = onAppsTap,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .windowInsetsPadding(WindowInsets.navigationBars)
-                .padding(bottom = 12.dp),
-        ) {
-            Text(
-                text = "Apper  ↑",
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f),
-            )
-        }
+        Spacer(modifier = Modifier.weight(1.5f))
     }
 }

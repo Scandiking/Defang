@@ -14,6 +14,12 @@
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
         tools:ignore="QueryAllPackagesPermission" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Signature-level: only active if granted once via
+         `adb shell pm grant <pkg> android.permission.WRITE_SECURE_SETTINGS`.
+         Lets the app re-enable its own accessibility service after reinstalls. -->
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
 
     <application
         android:name=".DefangApplication"
