@@ -46,12 +46,15 @@ fun AppTierScreen(
         OutlinedTextField(
             value = query,
             onValueChange = viewModel::onQueryChange,
-            placeholder = { Text("Søk etter app eller pakkenavn") },
+            placeholder = { Text(stringResource(R.string.tier_search_hint)) },
             leadingIcon = { Icon(Icons.Filled.Search, contentDescription = null) },
             trailingIcon = {
                 if (query.isNotEmpty()) {
                     IconButton(onClick = { viewModel.onQueryChange("") }) {
-                        Icon(Icons.Filled.Clear, contentDescription = "Tøm søk")
+                        Icon(
+                            Icons.Filled.Clear,
+                            contentDescription = stringResource(R.string.tier_search_clear),
+                        )
                     }
                 }
             },

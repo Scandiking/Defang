@@ -128,7 +128,7 @@ class DefangNotificationListenerService : NotificationListenerService() {
             )
         }
 
-        val text = if (count == 1) "1 varsel venter" else "$count varsler venter"
+        val text = resources.getQuantityString(R.plurals.notif_pending, count, count)
         val summary = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_stat_defang)
             .setContentTitle(label)
@@ -151,10 +151,10 @@ class DefangNotificationListenerService : NotificationListenerService() {
     private fun createChannel() {
         val channel = NotificationChannel(
             CHANNEL_ID,
-            "Nøytrale varsler",
+            getString(R.string.notif_channel_name),
             NotificationManager.IMPORTANCE_LOW, // shade only: no sound, no heads-up
         ).apply {
-            description = "Dempede oppsummeringer av varsler fra overvåkede apper"
+            description = getString(R.string.notif_channel_desc)
             setShowBadge(false)
             enableVibration(false)
             enableLights(false)

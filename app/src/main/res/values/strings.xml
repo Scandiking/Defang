@@ -112,6 +112,39 @@
     <string name="launcher_search_hint">Search apps…</string>
     <string name="launcher_settings">Settings</string>
 
+    <!-- Settings menu (Phase 2) -->
+    <string name="settings_timing_title">Default timings</string>
+    <string name="settings_timing_desc">Gate delay, max session length, and cool-down</string>
+    <string name="settings_timing_scope">Applies to all watched apps unless you change them individually.</string>
+    <string name="settings_gate_delay">Gate delay</string>
+    <string name="unit_seconds">%1$d sec</string>
+    <string name="unit_minutes">%1$d min</string>
+    <string name="settings_grayscale">Grayscale</string>
+    <string name="settings_grayscale_desc">Watched apps render in black and white during a session</string>
+    <string name="settings_grayscale_why_title">Why grayscale?</string>
+    <string name="settings_grayscale_why_body">The colors in social apps are not accidental. Red badges and saturated feed colors are chosen because the brain reads them as reward. In black and white the content is the same, but the reward signal is gone — the pull to keep scrolling weakens measurably. Your camera, maps, and the rest of the phone keep their colors.</string>
+    <string name="settings_sanitize">Neutral notifications</string>
+    <string name="settings_sanitize_desc">Notifications from watched apps are muted: gray, silent, no preview</string>
+    <string name="settings_sanitize_why_title">Why neutral notifications?</string>
+    <string name="settings_sanitize_why_body">Notifications are the platforms\' strongest tool for pulling you back: brand-red color, sound, vibration, and urgency language (\"X is waiting for you\") — often bulk sends dressed up as personal messages. Defang replaces them with one gray, silent summary per app, with no content preview. You know something is waiting — without the bait. Tapping the summary opens the app through its front door, not the deep link the notification wanted to send you to.</string>
+    <string name="settings_notification_access">Notification access</string>
+    <string name="settings_notification_access_desc">Required for neutral notifications — grant Defang access to notifications</string>
+    <string name="settings_why">Why?</string>
+    <string name="action_back">Back</string>
+    <string name="action_ok">OK</string>
+
+    <!-- App tier search -->
+    <string name="tier_search_hint">Search by app or package name</string>
+    <string name="tier_search_clear">Clear search</string>
+
+    <!-- Sanitized notification summaries -->
+    <string name="notif_channel_name">Neutral notifications</string>
+    <string name="notif_channel_desc">Muted summaries of notifications from watched apps</string>
+    <plurals name="notif_pending">
+        <item quantity="one">%d notification waiting</item>
+        <item quantity="other">%d notifications waiting</item>
+    </plurals>
+
     <!-- Misc -->
     <string name="minutes_short">%1$dm</string>
     <string name="time_format_mm_ss">%1$d:%2$02d</string>

@@ -131,7 +131,7 @@ private fun SettingsMenuScreen(
     onAccessibility: () -> Unit,
     onNotificationAccess: () -> Unit,
 ) {
-    // (title, body) of the currently open "Hvorfor?" explanation, or null
+    // (title, body) of the currently open "Why?" explanation, or null
     var whyDialog by remember { mutableStateOf<Pair<String, String>?>(null) }
 
     whyDialog?.let { (title, body) ->
@@ -140,10 +140,17 @@ private fun SettingsMenuScreen(
             title = { Text(title) },
             text = { Text(body) },
             confirmButton = {
-                TextButton(onClick = { whyDialog = null }) { Text("OK") }
+                TextButton(onClick = { whyDialog = null }) {
+                    Text(stringResource(R.string.action_ok))
+                }
             },
         )
     }
+
+    val grayscaleWhy = stringResource(R.string.settings_grayscale_why_title) to
+        stringResource(R.string.settings_grayscale_why_body)
+    val sanitizeWhy = stringResource(R.string.settings_sanitize_why_title) to
+        stringResource(R.string.settings_sanitize_why_body)
 
     Scaffold(
         topBar = {
@@ -157,9 +164,9 @@ private fun SettingsMenuScreen(
                 .padding(padding),
         ) {
             ListItem(
-                headlineContent = { Text("Standardtider") },
+                headlineContent = { Text(stringResource(R.string.settings_timing_title)) },
                 supportingContent = {
-                    Text("Ventetid ved åpning, maks økt-lengde og nedkjølingstid")
+                    Text(stringResource(R.string.settings_timing_desc))
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -175,20 +182,13 @@ private fun SettingsMenuScreen(
             )
             HorizontalDivider()
             ListItem(
-                headlineContent = { Text("Gråtoner") },
+                headlineContent = { Text(stringResource(R.string.settings_grayscale)) },
                 supportingContent = {
-                    Text("Overvåkede apper vises i svart-hvitt under økten")
+                    Text(stringResource(R.string.settings_grayscale_desc))
                 },
                 trailingContent = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        WhyButton {
-                            whyDialog = "Hvorfor gråtoner?" to
-                                "Fargene i sosiale apper er ikke tilfeldige. Rød på varsler " +
-                                "og mettede farger i feeden er valgt fordi hjernen tolker dem " +
-                                "som belønning. I svart-hvitt er innholdet det samme, men " +
-                                "belønningssignalet er borte — suget etter å bla videre svekkes " +
-                                "målbart. Kamera, kart og resten av telefonen beholder farger."
-                        }
+                        WhyButton { whyDialog = grayscaleWhy }
                         Switch(checked = grayscaleOn, onCheckedChange = onGrayscaleChange)
                     }
                 },
@@ -196,23 +196,13 @@ private fun SettingsMenuScreen(
             )
             HorizontalDivider()
             ListItem(
-                headlineContent = { Text("Nøytrale varsler") },
+                headlineContent = { Text(stringResource(R.string.settings_sanitize)) },
                 supportingContent = {
-                    Text("Varsler fra overvåkede apper dempes: grå, stille, uten forhåndsvisning")
+                    Text(stringResource(R.string.settings_sanitize_desc))
                 },
                 trailingContent = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        WhyButton {
-                            whyDialog = "Hvorfor nøytrale varsler?" to
-                                "Varsler er plattformenes sterkeste verktøy for å dra deg " +
-                                "tilbake: rød merkevarefarge, lyd, vibrasjon og hastverksspråk " +
-                                "(«X venter på deg») — ofte generert masseutsendelse forkledd " +
-                                "som personlig melding. Defang bytter dem ut med én grå, stille " +
-                                "oppsummering per app, uten forhåndsvisning av innholdet. Du får " +
-                                "vite at noe venter — uten agnet. Å trykke på varselet åpner " +
-                                "appen gjennom vanlig inngang, ikke dyplenken varselet ville " +
-                                "sendt deg til."
-                        }
+                        WhyButton { whyDialog = sanitizeWhy }
                         Switch(checked = sanitizeOn, onCheckedChange = onSanitizeChange)
                     }
                 },
@@ -220,9 +210,9 @@ private fun SettingsMenuScreen(
             )
             HorizontalDivider()
             ListItem(
-                headlineContent = { Text("Varseltilgang") },
+                headlineContent = { Text(stringResource(R.string.settings_notification_access)) },
                 supportingContent = {
-                    Text("Kreves for nøytrale varsler — gi Defang tilgang til varsler")
+                    Text(stringResource(R.string.settings_notification_access_desc))
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -263,7 +253,7 @@ private fun TimingSettingsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Standardtider") },
+                title = { Text(stringResource(R.string.settings_timing_title)) },
                 navigationIcon = { BackIcon(onBack) },
             )
         },
@@ -275,34 +265,34 @@ private fun TimingSettingsScreen(
                 .padding(padding),
         ) {
             Text(
-                text = "Gjelder alle overvåkede apper med mindre du endrer dem enkeltvis.",
+                text = stringResource(R.string.settings_timing_scope),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 12.dp),
             )
 
             SettingSlider(
-                label = "Ventetid ved åpning",
+                label = stringResource(R.string.settings_gate_delay),
                 value = gateDelay,
-                valueLabel = "$gateDelay sek",
+                valueLabel = stringResource(R.string.unit_seconds, gateDelay),
                 valueRange = 3f..30f,
                 steps = 26,  // (30-3)/1 - 1 = 26 steps for step=1
                 onValueChange = { onGateDelayChange(it.roundToInt().coerceIn(3, 30)) },
             )
 
             SettingSlider(
-                label = "Maks økt-lengde",
+                label = stringResource(R.string.settings_session_limit),
                 value = sessionLimit,
-                valueLabel = "$sessionLimit min",
+                valueLabel = stringResource(R.string.unit_minutes, sessionLimit),
                 valueRange = 5f..60f,
                 steps = 10,  // (60-5)/5 - 1 = 10 steps for step=5
                 onValueChange = { onSessionLimitChange(it.roundToInt()) },
             )
 
             SettingSlider(
-                label = "Nedkjølingstid",
+                label = stringResource(R.string.settings_cooldown),
                 value = cooldown,
-                valueLabel = "$cooldown min",
+                valueLabel = stringResource(R.string.unit_minutes, cooldown),
                 valueRange = 10f..120f,
                 steps = 10,  // (120-10)/10 - 1 = 10 steps for step=10
                 onValueChange = { onCooldownChange(it.roundToInt() / 10 * 10) },
@@ -342,7 +332,7 @@ private fun WhyButton(onClick: () -> Unit) {
     IconButton(onClick = onClick) {
         Icon(
             imageVector = Icons.Outlined.Info,
-            contentDescription = "Hvorfor?",
+            contentDescription = stringResource(R.string.settings_why),
             tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
         )
     }
@@ -353,7 +343,7 @@ private fun BackIcon(onBack: () -> Unit) {
     IconButton(onClick = onBack) {
         Icon(
             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-            contentDescription = "Tilbake",
+            contentDescription = stringResource(R.string.action_back),
         )
     }
 }

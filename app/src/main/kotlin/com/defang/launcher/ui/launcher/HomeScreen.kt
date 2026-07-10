@@ -1,5 +1,6 @@
 package com.defang.launcher.ui.launcher
 
+import android.text.format.DateFormat
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -41,9 +42,12 @@ fun HomeScreen(
     }
 
     val timeStr = now.format(DateTimeFormatter.ofPattern("HH:mm"))
-    val dateStr = now.format(
-        DateTimeFormatter.ofPattern("EEEE d. MMMM", Locale("nb", "NO"))
-    )
+    // Locale-correct "weekday, day, month" ordering and punctuation
+    val locale = Locale.getDefault()
+    val datePattern = remember(locale) {
+        DateFormat.getBestDateTimePattern(locale, "EEEEdMMMM")
+    }
+    val dateStr = now.format(DateTimeFormatter.ofPattern(datePattern, locale))
 
     // Swipe-up threshold
     var dragTotal by remember { mutableFloatStateOf(0f) }

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Norwegian (Bokmål) awareness content. Keep arrays in sync with values/strings_awareness.xml. -->
+<resources>
+
+    <!-- ════════ GENERAL TRACK ════════ -->
+    <string-array name="tidbits_general">
+        <item>Dra-for-å-oppdatere ble bevisst modellert etter spaken på en spilleautomat. Den korte forsinkelsen før innholdet lastes er konstruert spenning, ikke treg lasting.</item>
+        <item>Uendelig skrolling ble oppfunnet av Aza Raskin i 2006. Han har offentlig kalt det en feil og anslår at det koster menneskeheten 200 000 timer oppmerksomhet per dag.</item>
+        <item>Uforutsigbarheten i hva som dukker opp i feeden din er selve funksjonen, ikke en bivirkning. Faste belønninger gir tilvenning. Variable belønninger gir tvang.</item>
+        <item>«Foreslåtte innlegg» dukker opp når du har tømt din egentlige sosiale feed, fordi en tom feed ville avsluttet økten. Det finnes ingen bunn.</item>
+        <item>Den høye fargemetningen og kontrasten i sosiale mediers grensesnitt er kalibrert til å føles mer levende og givende enn den fysiske verdenen rundt deg. Det er derfor telefonen ser mer interessant ut enn rommet du sitter i.</item>
+        <item>Gråtonemodus reduserer tvangsmessig telefonbruk i kontrollerte studier — ikke fordi grått er kjedelig, men fordi fargekodingen i sosiale apper bærer emosjonelle signaler som gråtoner fjerner.</item>
+        <item>Autoavspilling starter før du bevisst har bestemt deg for å se. Bevegelse er en førbevisst oppmerksomhetstrigger; beslutningen om å se skjer etter at oppmerksomheten din allerede er fanget.</item>
+        <item>Apper sender ikke varsler når ting skjer. De sender varsler når modellene deres forutsier at du mest sannsynlig åpner appen. Tidspunktet er optimalisert for gjenengasjement, ikke for din informasjon.</item>
+        <item>Det røde merket på et appikon skaper en åpen løkke i arbeidsminnet — en uløst oppgave. Mennesker er skrudd sammen for å lukke åpne løkker. Merket utnytter dette uten kostnad for appen.</item>
+        <item>Å skru av varsler reduserer passiv telefonplukking med rundt 30 % i atferdsstudier — ikke fordi varslene var informative, men fordi de var triggere.</item>
+        <item>Sosiale apper er gratis fordi betaling ville begrenset inntektene til det du er villig til å betale. Å selge oppmerksomheten din til annonsører har ingen slik grense.</item>
+        <item>FOMO er ikke et personlighetstrekk. Det er en respons på et system designet for å få deg til å føle at det viktigste alltid skjer et sted du ikke ser akkurat nå.</item>
+        <item>Formuleringen «X personer har reagert på innlegget ditt» handler om andres atferd, ikke innholdet ditt. Andres meninger er en sterkere gjenengasjementstrigger enn dine egne handlinger.</item>
+        <item>Gjentatt aktivering av dopaminbanen med samme stimulus gir sensitivisering (suget blir sterkere) og samtidig desensitivisering (gleden blir svakere). Du trenger mer for å føle det samme, men føler mindre når du får det.</item>
+        <item>Stressystemet og belønningssystemet henger sammen. Når en vanemessig belønning er utilgjengelig, aktiveres stressystemet. Ubehaget ved å ikke sjekke er fysiologisk, ikke en karakterbrist.</item>
+        <item>Hver gang du åpner en sosial app av kjedsomhet, forsterkes nervebanen som kobler kjedsomhet → telefon → app. Atferden blir mer automatisk over tid, ikke mindre, uten bevisst avbrytelse. (Hebb, 1949)</item>
+        <item>DeltaFosB hoper seg opp i hjernens belønningskretser ved gjentatt tvangsmessig atferd. I motsetning til andre nevrologiske markører forsvinner det ikke raskt — det varer i ukevis. Det driver suget selv når den bevisste motivasjonen for å slutte er til stede.</item>
+        <item>Dopamin er ikke et nytelsesstoff. Det er et forventningsstoff — det topper seg før belønningen, ikke under. Det er derfor skrolling føles tvingende selv når innholdet ikke er bra.</item>
+        <item>Dopamin fra å fullføre noe vanskelig — et prosjekt, en ferdighet — varer i timevis. Dopamin fra et varsel topper seg på sekunder og faller under grunnivået når det forsvinner.</item>
+        <item>Hjernens belønningssystem skiller ikke mellom en «like» på et bilde og en bit mat. Begge utløser samme bane. Appene mater deg i svært små, uforutsigbare porsjoner med vilje.</item>
+        <item>Å bevisst utsette en belønning styrker prefrontal cortex\' evne til å overstyre impulser. Friksjonen i denne appen er trening, ikke straff.</item>
+        <item>Flere store studier som hevder å vise at sosiale medier ikke gjør nevneverdig skade, ble gjennomført i samarbeid med eller finansiert av sosiale medieselskaper. Det gjør dem ikke feil. Det er verdt å vite når du vurderer bevisene.</item>
+        <item>Studier av sosiale medier og psykisk helse baserer seg ofte på selvrapportert skjermtid, som brukere konsekvent underestimerer med 30–50 %. Forskning med objektive bruksdata finner gjerne sterkere effekter.</item>
+        <item>Medianinntekten i de fleste vestlige land er mellom 300 000 og 450 000 kroner i året. Livsstilen som fremstilles som normal på sosiale medier krever mange ganger det, typisk finansiert av arvet formue, gjeld eller en karriere bygget på å fremføre livsstilen for et publikum.</item>
+        <item>Algoritmene viser deg ikke representative mennesker. De viser deg folk valgt for visuell effekt, på sitt mest forberedte, i sitt beste lys, filtrert, retusjert og ofte kirurgisk endret. Referansepunktet ditt for hvordan et vanlig attraktivt menneske ser ut, er rekalibrert av årevis med eksponering for den øverste brøkdelen av en prosent.</item>
+        <item>Innhold som gjør menn sinte på kvinner og innhold som gjør kvinner sinte på menn gir identiske engasjementssignaler. Raseri mot det andre kjønnet sprer seg raskere enn nesten alle andre innholdskategorier på alle store plattformer. Konflikten er produktet.</item>
+        <item>Algoritmen viser deg ikke representative mennesker. Den viser deg de mest ekstreme, mest provoserende eksemplene fordi de skaper mest reaksjon. Begge grupper får se en karikatur av den andre.</item>
+        <item>De fleste politiske spørsmål har mer enn to sammenhengende posisjoner. Sosiale medier presser dem sammen til binære konfliktpar fordi konflikt mellom to sider gir mer engasjement enn et nyansert spekter.</item>
+        <item>Forskning på politiske innholdsalgoritmer viser konsekvent en kaninhull-effekt: brukere får servert innhold som er litt mer ekstremt enn det de nettopp så. Over måneder ender noen som startet med mainstream-innhold langt utenfor det — ikke fordi de oppsøkte det, men fordi hvert steg føltes som en liten fortsettelse av det forrige.</item>
+        <item>Blått lys fra skjermer hemmer melatoninproduksjonen og utsetter innsovning med opptil 90 minutter. Dette er en målt hormonell effekt, ikke en metafor.</item>
+        <item>Søvnmangel svekker prefrontal cortex — samme region som står for impulskontroll og evnen til å la være å åpne appen i utgangspunktet. Sen kveldsbruk gjør neste dags bruk vanskeligere å motstå.</item>
+        <item>«Like»-knappen het opprinnelig «awesome»-knappen hos Facebook. Den ble omdøpt fordi «like» er mer tvetydig — folk liker ting de ikke støtter, noe som øker signalvolumet og holder deg sjekkende.</item>
+        <item>Snapchat-streaks har ingen verdi. De er en kunstig sosial forpliktelse — en daglig tvungen handling utkledd som en vennskapsfunksjon.</item>
+    </string-array>
+
+    <!-- ════════ SOCIAL TRACK ════════ -->
+    <string-array name="tidbits_social">
+        <item>Dra-for-å-oppdatere ble bevisst modellert etter spaken på en spilleautomat. Den korte forsinkelsen før innholdet lastes er konstruert spenning, ikke treg lasting.</item>
+        <item>Uendelig skrolling ble oppfunnet av Aza Raskin i 2006. Han har offentlig kalt det en feil og anslår at det koster menneskeheten 200 000 timer oppmerksomhet per dag.</item>
+        <item>Uforutsigbarheten i hva som dukker opp i feeden din er selve funksjonen, ikke en bivirkning. Faste belønninger gir tilvenning. Variable belønninger gir tvang.</item>
+        <item>«Foreslåtte innlegg» dukker opp når du har tømt din egentlige sosiale feed, fordi en tom feed ville avsluttet økten. Det finnes ingen bunn.</item>
+        <item>Instagrams varselmerke er rødt fordi rødt fanger ufrivillig oppmerksomhet raskere enn noen annen farge i det synlige spekteret. Dette ble testet og valgt med vilje.</item>
+        <item>Autoavspilling starter før du bevisst har bestemt deg for å se. Bevegelse er en førbevisst oppmerksomhetstrigger; beslutningen om å se skjer etter at oppmerksomheten din allerede er fanget.</item>
+        <item>Instagram, TikTok og Snapchat er ikke sosiale apper. De er annonseplattformer. Hvert minutt du bruker i appen er varelager solgt til merkevarer. Oppmerksomheten din er produktet.</item>
+        <item>«Like»-telleren ble skjult fra offentligheten i 2019 etter at intern forskning viste at den skadet psykisk helse. Den ble gjeninnført da engasjementstallene falt. Forskningen endret seg ikke; forretningsbeslutningen gjorde det.</item>
+        <item>Instagram Stories utløper etter 24 timer. Det er ikke en teknisk begrensning. Det er en designet hastverksmekanisme — en nedtellingsklokke på sosial deltakelse.</item>
+        <item>Snapchat-streaks våpengjør FOMO ved å feste en daglig sosial forpliktelse til vennskap. Å gå glipp av en dag føles som å svikte forholdet. Forholdet er til et app-tall.</item>
+        <item>Gjentatt aktivering av dopaminbanen med samme stimulus gir sensitivisering (suget blir sterkere) og samtidig desensitivisering (gleden blir svakere).</item>
+        <item>Prefrontal cortex står for impulskontroll, langsiktig planlegging og evnen til å si nei. Kronisk tvangsmessig telefonbruk er assosiert med målbare reduksjoner i grå substans i prefrontal cortex.</item>
+        <item>Hver gang du åpner denne appen av kjedsomhet, forsterkes nervebanen som kobler kjedsomhet → telefon → app. Atferden blir mer automatisk over tid, ikke mindre, uten bevisst avbrytelse.</item>
+        <item>Dopamin er ikke et nytelsesstoff. Det er et forventningsstoff — det topper seg før belønningen, ikke under. Det er derfor skrolling føles tvingende selv når innholdet ikke er bra.</item>
+        <item>Dopamin fra å fullføre noe vanskelig varer i timevis. Dopamin fra et varsel topper seg på sekunder og faller under grunnivået når det forsvinner.</item>
+        <item>Gjennomsnittshøyden for menn i Vest-Europa er 178 cm. Færre enn 15 % av menn er 183 cm eller høyere. Mannskroppen som fremstilles som normal på sosiale medier krever en høyde det overveldende flertallet av menn aldri vil ha, uansett hva de gjør.</item>
+        <item>Skjønnhetsstandardene kvinner møter på sosiale medier krever en kombinasjon av genetikk, penger, tid, profesjonell hjelp og bilderedigering som ikke er tilgjengelig for folk flest og ikke oppgis ærlig.</item>
+        <item>Mannsfysikken som fremstilles som oppnåelig gjennom treningsinnhold, innebærer ofte farmakologisk hjelp som ikke nevnes.</item>
+        <item>Apper sender ikke varsler når ting skjer. De sender varsler når modellene deres forutsier at du mest sannsynlig åpner appen.</item>
+        <item>Det røde merket på et appikon skaper en åpen løkke i arbeidsminnet. Mennesker er skrudd sammen for å lukke åpne løkker. Merket utnytter dette uten kostnad for appen.</item>
+        <item>Sosiale medieselskaper kjenner sine beste engasjementstimer. Innholdet du får servert klokka 23 er optimalisert for å holde deg våken, ikke for å runde av.</item>
+        <item>Søvnmangel svekker prefrontal cortex — samme region som står for evnen til å la være å åpne appen i utgangspunktet.</item>
+        <item>Instagram viser deg hvem som har sett Storyen din i en bestemt rekkefølge, optimalisert for å få deg til å sjekke igjen om en bestemt person har sett den ennå.</item>
+        <item>«Like»-knappen het opprinnelig «awesome»-knappen hos Facebook. Den ble omdøpt fordi «like» er mer tvetydig — folk liker ting de ikke støtter, noe som øker signalvolumet og holder deg sjekkende.</item>
+    </string-array>
+
+    <!-- ════════ ADULT TRACK ════════ -->
+    <string-array name="tidbits_adult">
+        <item>Coolidge-effekten er et reelt nevrologisk fenomen: seksuell opphisselse dempes av samme stimulus, men gjenopprettes av nyhet. Internettpornografi gir uendelig nyhet uten anstrengelse — en stimulus hjernen ikke utviklet seg for å møte og ikke har noe naturlig forsvar mot.</item>
+        <item>Pornografi er en superstimulus — en stimulus som overgår parameterne menneskets belønningssystem utviklet seg for å håndtere. Som mat konstruert for å treffe fett, salt og sukker samtidig, utløser den en respons langt sterkere enn noe den utviklet seg sammen med.</item>
+        <item>Mat har et stoppsignal: du blir mett. Alkohol har et stoppsignal: du besvimer eller blir kvalm. Pornografi har ikke noe tilsvarende fysiologisk stoppsignal. Metthet etter et måltid er en funksjon; det finnes ingen tilsvarende arkitektur for visuell seksuell stimulering.</item>
+        <item>DeltaFosB hoper seg opp i hjernens belønningskretser ved gjentatt pornografibruk, akkurat som ved annen tvangsmessig atferd. Det varer i ukevis etter at atferden stopper. Det driver følelsen av sug selv når den bevisste motivasjonen for å slutte er til stede.</item>
+        <item>PIED (pornoindusert erektil dysfunksjon) er et dokumentert klinisk fenomen hos menn uten andre risikofaktorer, også unge menn. Mekanismen er desensitivisering: gjentatt eksponering for superstimuli reduserer belønningssystemets følsomhet for normale stimuli.</item>
+        <item>Eskaleringsmønsteret i pornografikonsum er samme mekanisme som toleranse ved rusbruk: hjernen venner seg til en stimulus og krever nyhet for å skape samme respons. Hvordan sluttpunktet ser ut er forskjellig for alle; at retningen finnes, er ikke omdiskutert.</item>
+        <item>Prefrontal cortex fungerer normalt som en brems på impulser. Kronisk overstimulering av belønningssystemet svekker denne bremsen. Forskere kaller det hypofrontalitet. Det er derfor folk beskriver atferden som tvangsmessig selv når de bevisst vil slutte.</item>
+        <item>Om tvangsmessig pornografibruk oppfyller den kliniske definisjonen av avhengighet, er genuint omdiskutert. Den subjektive opplevelsen av tapt kontroll, eskalering og svekkede virkelige relasjoner er ikke omdiskutert. Merkelappen er det.</item>
+        <item>Noen studier finner ingen årsakssammenheng mellom pornografibruk og erektil dysfunksjon i laboratoriesettinger. Disse studiene måler typisk akutt opphisselsesrespons, ikke langsiktig tilvenning. Det metodiske gapet er reelt og verdt å kjenne til.</item>
+        <item>Forskning på tvangsmessig pornografibruk hos kvinner er vesentlig mindre utviklet enn forskningen på mannlige brukere, men studiene som finnes viser lignende eskaleringsmønstre, lignende desensitivisering og lignende rapporter om svekket seksuell tilfredshet i virkeligheten.</item>
+        <item>Kroppsstandardene for kvinnelige utøvere i mainstream-pornografi innebærer kirurgi, groomingnormer og fysiske konfigurasjoner som ikke er representative for spekteret av virkelige kropper. Dette påvirker kvinnelige seeres forhold til egen kropp og mannlige seeres forventninger til virkelige partnere — samtidig, i motsatte retninger, fra samme innhold.</item>
+        <item>Pornografi former de seksuelle forventningene mannlige partnere tar med seg inn i forhold, uavhengig av om kvinner selv ser på. Kvinner påvirkes av partnerens pornografibruk enten de er brukere selv eller ikke.</item>
+    </string-array>
+
+    <!-- ════════ OFFLINE ACTIVITY PROMPTS ════════ -->
+    <string-array name="offline_prompts_movement">
+        <item>Ta en tur rundt kvartalet.</item>
+        <item>Reis deg og tøy i 30 sekunder.</item>
+        <item>Gjør 10 rolige knebøy.</item>
+        <item>Gå til kjøkkenet og drikk et glass vann.</item>
+        <item>Gå ut i 2 minutter. Bare stå der.</item>
+        <item>Gå til et annet rom uten grunn.</item>
+    </string-array>
+
+    <string-array name="offline_prompts_space">
+        <item>Rydd stuebordet.</item>
+        <item>Legg én ting tilbake der den hører hjemme.</item>
+        <item>Kast én ting søppel du har ignorert.</item>
+        <item>Re opp senga (eller strekk på dyna).</item>
+        <item>Tørk av nærmeste overflate.</item>
+        <item>Legg telefonen med skjermen ned et annet sted enn der du pleier å ha den.</item>
+    </string-array>
+
+    <string-array name="offline_prompts_sensory">
+        <item>Se ut av vinduet. Nevn tre ting du kan se.</item>
+        <item>Lukk øynene og nevn fem ting du hører akkurat nå.</item>
+        <item>Åpne et vindu og legg merke til hva lufta lukter.</item>
+        <item>Lag en kopp med noe varmt og hold den med begge hender.</item>
+        <item>Legg merke til temperaturen i rommet. Er den behagelig?</item>
+    </string-array>
+
+    <string-array name="offline_prompts_social">
+        <item>Tenk på én person du ikke har snakket med på en stund. Du trenger ikke kontakte dem — bare tenk på dem.</item>
+        <item>Skriv én setning for hånd. Hva som helst.</item>
+        <item>Hvis noen er i nærheten, si noe til dem som ikke handler om logistikk.</item>
+    </string-array>
+
+    <string-array name="offline_prompts_creative">
+        <item>Plukk opp en bok — hvilken som helst — og les én side.</item>
+        <item>Tegn noe dårlig. Det spiller ingen rolle hva.</item>
+        <item>Nynn eller plystre på noe.</item>
+        <item>Flytt på én gjenstand i en hylle til den ser bedre ut for deg.</item>
+    </string-array>
+
+</resources>

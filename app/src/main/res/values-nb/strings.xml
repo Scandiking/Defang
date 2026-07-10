@@ -1,15 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Norwegian (Bokmål) — smoke-test locale. Untranslated strings fall back to English. -->
+<!-- Norwegian (Bokmål). Keep keys in sync with values/strings.xml. -->
 <resources>
+    <!-- App -->
     <string name="app_name">Defang</string>
+
+    <!-- Accessibility service -->
+    <string name="accessibility_service_label">Defang launcher</string>
+    <string name="accessibility_service_description">Oppdager hvilken app som er i forgrunnen og leser adressefeltet i nettleseren, slik at Defang kan vise en pauseskjerm før overvåkede apper eller voksennettsteder åpnes. Defang logger, lagrer eller sender aldri nettleserhistorikken din.</string>
+    <string name="notification_listener_label">Defang varselhåndtering</string>
+
+    <!-- ── Onboarding ── -->
     <string name="onboarding_skip">Hopp over</string>
     <string name="onboarding_next">Neste →</string>
     <string name="onboarding_continue">Fortsett til oppsett →</string>
+
+    <!-- Screen 1 — What this is -->
     <string name="onboarding_1_heading">Dette er en fartsdump. Ikke en vegg.</string>
-    <string name="gate_question">Hva skal du åpne denne appen for?</string>
+    <string name="onboarding_1_body">Noen apper blokkerer telefonen din fullstendig. Noen setter hele telefonen i gråtoner via utviklerinnstillingene. Dette er ikke det. Du kan fortsatt åpne Instagram. Du kan fortsatt overstyre tidtakeren. Ingenting her er umulig å omgå.\n\nDet er med vilje. En vegg skaper press. Press krever utløp. Du har sett dette før: Instagrams egen tidsgrense kommer med en «15 minutter til»-knapp som du trykker på uten å tenke. Grensen finnes, men utgangen er så friksjonsfri at den lærer deg å ignorere grensen, ikke respektere den.\n\nDenne appen legger en fartsdump foran refleksen. Den gjør den ubevisste åpningen bevisst. Hva du gjør etterpå, er opp til deg.</string>
+
+    <!-- Screen 2 — What this is not -->
+    <string name="onboarding_2_heading">Ikke en viljestyrke-app. Ikke foreldrekontroll.</string>
+    <string name="onboarding_2_body">Du vet sannsynligvis allerede at Instagram er konstruert for å holde deg skrollende. Du vet sannsynligvis allerede at dra-for-å-oppdatere etterligner en spilleautomat. Å vite det har ikke vært nok, fordi systemene som jobber mot deg ikke sikter på kunnskapen din — de sikter på den delen av hjernen som handler før du tenker.\n\nDenne appen ber deg ikke om å prøve hardere. Den setter inn en liten pause mellom impulsen og handlingen. I den pausen bor prefrontal cortex.\n\nDen rører heller ikke utviklerinnstillingene dine, krever ikke rootet telefon, og legger ikke gråtoner over hele systemet. Kameraet, kartene og kalkulatoren fungerer akkurat som før.</string>
+
+    <!-- Screen 3 — The loop -->
+    <string name="onboarding_3_heading">Signal → rutine → belønning. De eier signalet.</string>
+    <string name="onboarding_3_body">Hver vane går i en tredelt løkke: et signal utløser en rutine som gir en belønning. Appene har industrialisert signalet. Det røde merket, varselet som kommer på akkurat riktig tidspunkt, muskelminnet som låser opp telefonen når du kjeder deg — alt sammen er designede signaler som starter rutinen før du har bestemt noe som helst.\n\nDenne appen angriper to punkter i løkken. Før du åpner: den avbryter signalet med en pause og spør hva du faktisk vil. Etter at du lukker: den prøver å gi deg en annen belønning — noe ekte, fysisk og ditt — før løkken nullstilles.\n\nDen kan ikke røre det som er inne i appen. Men signalet og landingen er opp for kamp.</string>
+
+    <!-- Screen 4 — Why small tasks -->
+    <string name="onboarding_4_heading">«Rydd stuebordet» er ikke en spøk.</string>
+    <string name="onboarding_4_body">Når du strekker deg etter telefonen av kjedsomhet eller rastløshet, er du i en tilstand med lite energi og lav motivasjon. Et forslag som «vask badet» i den tilstanden skaper ikke handling. Det skaper en grunn til å åpne Instagram.\n\nSmå oppgaver fungerer fordi de er fullførbare. Å fullføre noe — hva som helst — gir ekte dopamin: den typen som varer, ikke den som forsvinner på tre sekunder. «Legg én ting tilbake der den hører hjemme» er gjennomførbart på 20 sekunder. Når du har gjort det, står du oppreist, du har beveget deg, og løkken er avbrutt av noe som krevde kroppen din, ikke bare tommelen.\n\nOppgavene er ikke der for å gjøre deg produktiv. De er der for å gi belønningssystemet noe ærlig å jobbe med.</string>
+
+    <!-- Screen 5 — Setup -->
+    <string name="onboarding_5_heading">La oss sette det opp. To minutter.</string>
+    <string name="onboarding_5_body">Velg hvilke apper som får fartsdumpen. Bestem hvor lenge du vil være i dem før tidtakeren slår inn. Velg når du vil at varsler fra disse appene skal komme.\n\nDu kan endre alt senere. Standardverdiene er rimelige utgangspunkter, ikke anbefalinger.\n\nHvis du har satt opp leggetid eller Ikke forstyrr på telefonen, øker denne appen automatisk friksjonen i de timene.</string>
+
+    <!-- ── Intent gate overlay ── -->
+    <string name="gate_question">Hva skal du åpne denne for?</string>
+    <string name="gate_opening_in">Åpner om %1$d…</string>
     <string name="gate_open_anyway">Åpne likevel</string>
     <string name="gate_go_back">← Gå tilbake</string>
+    <string name="gate_intent_post">Poste noe</string>
+    <string name="gate_intent_dm">Sjekke en melding</string>
+    <string name="gate_intent_lookup">Slå opp noe spesifikt</string>
+
+    <!-- ── Session timer HUD ── -->
+    <string name="hud_time_remaining">%1$s igjen</string>
+    <string name="hud_tap_to_expand">Trykk for å se økten</string>
+
+    <!-- ── End card ── -->
+    <string name="endcard_time_used">Du brukte %1$s i %2$s.</string>
+    <string name="endcard_intent_declared">Du åpnet den for å: %1$s</string>
+    <string name="endcard_intent_none">Ingen hensikt oppgitt.</string>
+    <string name="endcard_more_time">Jeg trenger mer tid</string>
+    <string name="endcard_why_prompt">Hvorfor trenger du mer tid?</string>
+    <string name="endcard_why_hint">Vær konkret (minst 10 tegn)</string>
+    <string name="endcard_why_confirm">Legg til 10 minutter</string>
+    <string name="endcard_extension_used">Du har brukt dagens ene forlengelse.</string>
+    <string name="endcard_go_home">Tilbake til hjem</string>
+    <string name="endcard_another_prompt">Gi meg en til</string>
+
+    <!-- Cool-down lockout -->
+    <string name="cooldown_heading">Nedkjøling</string>
+    <string name="cooldown_available_in">%1$s er tilgjengelig igjen om %2$s</string>
+    <string name="cooldown_go_home">Tilbake til hjem</string>
+
+    <!-- ── Settings ── -->
     <string name="settings_title">Innstillinger</string>
+    <string name="settings_watched_apps">Overvåkede apper</string>
+    <string name="settings_watched_apps_desc">Apper som utløser fartsdumpen</string>
+    <string name="settings_session_limit">Maks økt-lengde</string>
+    <string name="settings_session_limit_desc">Tid før sluttkortet vises</string>
+    <string name="settings_cooldown">Nedkjølingstid</string>
+    <string name="settings_cooldown_desc">Tid før appen kan åpnes igjen</string>
+    <string name="settings_awareness_library">Hva vi vet om dem</string>
+    <string name="settings_awareness_library_desc">Hele innholdsbiblioteket med kilder</string>
+    <string name="settings_about">Om Defang</string>
+    <string name="settings_distribution">Distribusjon og installasjon</string>
+    <string name="settings_onboarding_replay">Les introduksjonen på nytt</string>
+
+    <!-- App tier config -->
+    <string name="tier_config_title">App-oppsett</string>
+    <string name="tier_config_subtitle">Disse appene overvåkes som standard. Juster ved behov.</string>
     <string name="tier_utility">Verktøy</string>
     <string name="tier_watched">Overvåket</string>
+    <string name="tier_utility_desc">Åpnes umiddelbart, ingen friksjon</string>
+    <string name="tier_watched_desc">Hensiktsport + økt-tidtaker</string>
+    <string name="tier_save">Lagre</string>
+
+    <!-- Session limit options -->
+    <string name="limit_5_min">5 minutter</string>
+    <string name="limit_10_min">10 minutter</string>
+    <string name="limit_15_min">15 minutter</string>
+    <string name="limit_20_min">20 minutter</string>
+    <string name="limit_30_min">30 minutter</string>
+
+    <!-- Permission prompts -->
+    <string name="perm_overlay_title">Vis over andre apper</string>
+    <string name="perm_overlay_body">Defang trenger dette for å vise pauseskjermen før overvåkede apper åpnes. Uten den fungerer ikke kjernefunksjonen.</string>
+    <string name="perm_overlay_grant">Gi tillatelse</string>
+    <string name="perm_accessibility_title">Tilgjengelighetstillatelse</string>
+    <string name="perm_accessibility_body">Defang trenger å vite når en overvåket app åpnes, og leser nettleserens adressefelt for å gjenkjenne voksendomener. Den leser aldri sideinnhold, meldinger eller noe du skriver — kun appen i forgrunnen og adressen i adressefeltet.</string>
+    <string name="perm_accessibility_grant">Åpne tilgjengelighetsinnstillinger</string>
+    <string name="perm_battery_title">Batterioptimalisering</string>
+    <string name="perm_battery_body">Samsungs batteristyring kan drepe bakgrunnstjenester, noe som ville stoppet økt-tidtakeren. Trykk for å unnta Defang fra batterioptimalisering.</string>
+    <string name="perm_battery_grant">Unnta fra optimalisering</string>
+    <string name="perm_usage_stats_title">Brukstilgang</string>
+    <string name="perm_usage_stats_body">Trengs for å vise historikken over tid brukt i apper.</string>
+    <string name="perm_usage_stats_grant">Gi brukstilgang</string>
+
+    <!-- Launcher -->
+    <string name="launcher_all_apps">Alle apper</string>
+    <string name="launcher_search_hint">Søk etter apper…</string>
+    <string name="launcher_settings">Innstillinger</string>
+
+    <!-- Settings menu (Phase 2) -->
+    <string name="settings_timing_title">Standardtider</string>
+    <string name="settings_timing_desc">Ventetid ved åpning, maks økt-lengde og nedkjøling</string>
+    <string name="settings_timing_scope">Gjelder alle overvåkede apper med mindre du endrer dem enkeltvis.</string>
+    <string name="settings_gate_delay">Ventetid ved åpning</string>
+    <string name="unit_seconds">%1$d sek</string>
+    <string name="unit_minutes">%1$d min</string>
+    <string name="settings_grayscale">Gråtoner</string>
+    <string name="settings_grayscale_desc">Overvåkede apper vises i svart-hvitt under økten</string>
+    <string name="settings_grayscale_why_title">Hvorfor gråtoner?</string>
+    <string name="settings_grayscale_why_body">Fargene i sosiale apper er ikke tilfeldige. Røde merker og mettede farger i feeden er valgt fordi hjernen tolker dem som belønning. I svart-hvitt er innholdet det samme, men belønningssignalet er borte — suget etter å bla videre svekkes målbart. Kamera, kart og resten av telefonen beholder fargene.</string>
+    <string name="settings_sanitize">Nøytrale varsler</string>
+    <string name="settings_sanitize_desc">Varsler fra overvåkede apper dempes: grå, stille, uten forhåndsvisning</string>
+    <string name="settings_sanitize_why_title">Hvorfor nøytrale varsler?</string>
+    <string name="settings_sanitize_why_body">Varsler er plattformenes sterkeste verktøy for å dra deg tilbake: rød merkevarefarge, lyd, vibrasjon og hastverksspråk («X venter på deg») — ofte masseutsendelser forkledd som personlige meldinger. Defang bytter dem ut med én grå, stille oppsummering per app, uten forhåndsvisning av innholdet. Du får vite at noe venter — uten agnet. Å trykke på varselet åpner appen gjennom hovedinngangen, ikke dyplenken varselet ville sendt deg til.</string>
+    <string name="settings_notification_access">Varseltilgang</string>
+    <string name="settings_notification_access_desc">Kreves for nøytrale varsler — gi Defang tilgang til varsler</string>
+    <string name="settings_why">Hvorfor?</string>
+    <string name="action_back">Tilbake</string>
+    <string name="action_ok">OK</string>
+
+    <!-- App tier search -->
+    <string name="tier_search_hint">Søk etter app eller pakkenavn</string>
+    <string name="tier_search_clear">Tøm søk</string>
+
+    <!-- Sanitized notification summaries -->
+    <string name="notif_channel_name">Nøytrale varsler</string>
+    <string name="notif_channel_desc">Dempede oppsummeringer av varsler fra overvåkede apper</string>
+    <plurals name="notif_pending">
+        <item quantity="one">%d varsel venter</item>
+        <item quantity="other">%d varsler venter</item>
+    </plurals>
 </resources>
