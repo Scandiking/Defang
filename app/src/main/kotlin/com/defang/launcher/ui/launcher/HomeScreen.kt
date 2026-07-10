@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.defang.launcher.domain.model.HomeScreenMode
 import kotlinx.coroutines.delay
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -31,6 +32,7 @@ import java.util.Locale
 @Composable
 fun HomeScreen(
     tidbit: String,
+    mode: HomeScreenMode,
     onAppsTap: () -> Unit,
 ) {
     var now by remember { mutableStateOf(LocalDateTime.now()) }
@@ -76,21 +78,23 @@ fun HomeScreen(
         // Clock in the upper quarter, tidbit in the lower half
         Spacer(modifier = Modifier.weight(0.5f))
 
-        Text(
-            text = timeStr,
-            style = MaterialTheme.typography.displayLarge,
-            color = MaterialTheme.colorScheme.onBackground,
-        )
-        Text(
-            text = dateStr,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-            modifier = Modifier.padding(top = 4.dp),
-        )
+        if (mode == HomeScreenMode.CLOCK_AND_TIDBIT) {
+            Text(
+                text = timeStr,
+                style = MaterialTheme.typography.displayLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+            Text(
+                text = dateStr,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                modifier = Modifier.padding(top = 4.dp),
+            )
+        }
 
         Spacer(modifier = Modifier.weight(1f))
 
-        if (tidbit.isNotBlank()) {
+        if (mode != HomeScreenMode.EMPTY && tidbit.isNotBlank()) {
             Text(
                 text = "“$tidbit”",
                 style = MaterialTheme.typography.bodyMedium.copy(

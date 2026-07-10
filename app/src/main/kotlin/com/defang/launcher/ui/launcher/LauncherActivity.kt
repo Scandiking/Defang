@@ -50,8 +50,10 @@ class LauncherActivity : ComponentActivity() {
                         onClose = { showDrawer = false },
                     )
                 } else {
+                    val homeMode by viewModel.homeMode.collectAsState()
                     HomeScreen(
                         tidbit = state.homeTidbit,
+                        mode = homeMode,
                         onAppsTap = { showDrawer = true },
                     )
                 }
@@ -90,6 +92,7 @@ class LauncherActivity : ComponentActivity() {
         // Self-enables silently if WRITE_SECURE_SETTINGS was granted via adb;
         // otherwise opens accessibility settings with our row highlighted.
         AccessibilityServiceHelper.ensureEnabled(this)
+        viewModel.refreshHomeTidbit()
     }
 
     private fun launchApp(packageName: String) {

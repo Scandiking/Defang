@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.defang.launcher.data.local.datastore.PreferencesDataStore
 import com.defang.launcher.data.repository.AppConfigRepository
+import com.defang.launcher.domain.model.HomeScreenMode
 import com.defang.launcher.util.GrayscaleController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -47,6 +48,26 @@ class GlobalSettingsViewModel @Inject constructor(
 
     fun setNotificationSanitizeEnabled(on: Boolean) {
         viewModelScope.launch { prefs.setNotificationSanitizeEnabled(on) }
+    }
+
+    val homeScreenMode: StateFlow<HomeScreenMode> = prefs.homeScreenMode.stateIn(
+        viewModelScope, SharingStarted.Eagerly, HomeScreenMode.CLOCK_AND_TIDBIT
+    )
+
+    fun setHomeScreenMode(mode: HomeScreenMode) {
+        viewModelScope.launch { prefs.setHomeScreenMode(mode) }
+    }
+
+    val customTasks: StateFlow<List<String>> = prefs.customTasks.stateIn(
+        viewModelScope, SharingStarted.Eagerly, emptyList()
+    )
+
+    fun addCustomTask(task: String) {
+        viewModelScope.launch { prefs.addCustomTask(task) }
+    }
+
+    fun removeCustomTask(task: String) {
+        viewModelScope.launch { prefs.removeCustomTask(task) }
     }
 
     fun setGateDelay(seconds: Int) {

@@ -154,6 +154,95 @@
 
 
     <!-- ════════════════════════════════════════════
+         SOURCES
+         Index-aligned with the tidbit arrays above (and with the translated
+         arrays in values-nb, which are kept in the same order). Shown only in
+         Settings > "What we know about them". Citations are primary research
+         or first-party reports where one exists; entries that are design
+         analysis rather than a studied finding say so.
+         Not translated — citations keep their original form.
+         ════════════════════════════════════════════ -->
+
+    <string-array name="tidbits_general_sources" translatable="false">
+        <item>Loren Brichter (inventor of pull-to-refresh) on its slot-machine quality: interview in The Guardian, 2017. Tristan Harris, "How Technology is Hijacking Your Mind", 2016.</item>
+        <item>Aza Raskin, BBC interview, 2018.</item>
+        <item>Ferster and Skinner, Schedules of Reinforcement, 1957 — variable-ratio reinforcement.</item>
+        <item>Instagram product announcement of Suggested Posts, 2020 — shown "when you\'ve caught up". Design analysis.</item>
+        <item>Design analysis — no single controlled study. On engineered visual reward generally: B. J. Fogg, Persuasive Technology, 2003.</item>
+        <item>Holte and Ferraro, "True Colors: Grayscale setting reduces screen time in college students", The Social Science Journal, 2020.</item>
+        <item>Abrams and Christ, "Motion Onset Captures Attention", Psychological Science, 2003.</item>
+        <item>Machine-learned notification ranking documented in platform engineering publications (Meta, LinkedIn, Twitter, 2016–2020).</item>
+        <item>Zeigarnik effect: Zeigarnik, 1927. Application to app badges is design analysis.</item>
+        <item>Pielot and Rello, "Productive, Anxious, Lonely: 24 Hours Without Push Notifications", MobileHCI, 2017. Exact figures vary by study.</item>
+        <item>Meta annual reports (Form 10-K): about 97–98% of revenue is advertising.</item>
+        <item>Przybylski, Murayama, DeHaan and Gladwell, "Motivational, emotional, and behavioral correlates of fear of missing out", Computers in Human Behavior, 2013.</item>
+        <item>Social proof: Cialdini, Influence, 1984. The specific copywriting is standard growth-team A/B practice; design analysis.</item>
+        <item>Robinson and Berridge, incentive-sensitization theory of addiction, Brain Research Reviews, 1993.</item>
+        <item>Koob and Le Moal, "Drug addiction, dysregulation of reward, and allostasis", Neuropsychopharmacology, 2001.</item>
+        <item>Hebb, The Organization of Behavior, 1949.</item>
+        <item>Nestler, Barrot and Self, "ΔFosB: A sustained molecular switch for addiction", PNAS, 2001.</item>
+        <item>Schultz, Dayan and Montague, "A Neural Substrate of Prediction and Reward", Science, 1997.</item>
+        <item>Synthesis of dopamine research; accessible treatment in Lembke, Dopamine Nation, 2021.</item>
+        <item>Sescousse, Caldú, Segura and Dreher, "Processing of primary and secondary rewards: a meta-analysis", Neuroscience and Biobehavioral Reviews, 2013.</item>
+        <item>Delay-of-gratification research: Mischel et al.; Casey et al., "Behavioral and neural correlates of delay of gratification 40 years later", PNAS, 2011.</item>
+        <item>See funding and data-access disclosures in platform–academic collaborations, e.g. the Meta 2020 Election research partnership published in Science and Nature, 2023.</item>
+        <item>Parry et al., "A systematic review and meta-analysis of discrepancies between logged and self-reported digital media use", Nature Human Behaviour, 2021.</item>
+        <item>OECD median equivalised disposable income statistics.</item>
+        <item>Fardouly and Vartanian, "Social media and appearance concerns", Current Opinion in Psychology, 2016. Algorithmic selection for visual impact is design analysis.</item>
+        <item>Rathje, Van Bavel and van der Linden, "Out-group animosity drives engagement on social media", PNAS, 2021. Brady et al., "Emotion shapes the diffusion of moralized content", PNAS, 2017.</item>
+        <item>Bail, Breaking the Social Media Prism, 2021. Rathje et al., PNAS, 2021.</item>
+        <item>Bail, Breaking the Social Media Prism, 2021. Design analysis of engagement mechanics.</item>
+        <item>Ribeiro et al., "Auditing Radicalization Pathways on YouTube", ACM FAT*, 2020. Later audits dispute the strength of the effect; the literature is contested.</item>
+        <item>Chang, Aeschbach, Duffy and Czeisler, "Evening use of light-emitting eReaders negatively affects sleep, circadian timing, and next-morning alertness", PNAS, 2015.</item>
+        <item>Harrison and Horne, "The impact of sleep deprivation on decision making", Journal of Experimental Psychology: Applied, 2000. Muzur, Pace-Schott and Hobson, "The prefrontal cortex in sleep", Trends in Cognitive Sciences, 2002.</item>
+        <item>Accounts by early Facebook engineers (Rosenstein, Pearlman), reported in The Guardian, 2017.</item>
+        <item>Design analysis. On streaks as social obligation among teenagers, see press investigations (e.g. BBC, 2017).</item>
+    </string-array>
+
+    <string-array name="tidbits_social_sources" translatable="false">
+        <item>Loren Brichter (inventor of pull-to-refresh) on its slot-machine quality: interview in The Guardian, 2017. Tristan Harris, "How Technology is Hijacking Your Mind", 2016.</item>
+        <item>Aza Raskin, BBC interview, 2018.</item>
+        <item>Ferster and Skinner, Schedules of Reinforcement, 1957 — variable-ratio reinforcement.</item>
+        <item>Instagram product announcement of Suggested Posts, 2020 — shown "when you\'ve caught up". Design analysis.</item>
+        <item>Red and involuntary attention capture: Elliot and Maier, "Color Psychology", Annual Review of Psychology, 2014. "Tested and chosen deliberately" is an industry account (Harris, 2016).</item>
+        <item>Abrams and Christ, "Motion Onset Captures Attention", Psychological Science, 2003.</item>
+        <item>Meta and Snap annual reports (Form 10-K): advertising is about 98% of Meta\'s revenue.</item>
+        <item>Instagram hid like counts in tests from 2019; internal research on harm reported in "The Facebook Files", Wall Street Journal, 2021; counts later returned as an option.</item>
+        <item>Design analysis — scarcity and urgency mechanics (Cialdini, Influence, 1984).</item>
+        <item>Design analysis. On FOMO: Przybylski et al., Computers in Human Behavior, 2013.</item>
+        <item>Robinson and Berridge, incentive-sensitization theory of addiction, Brain Research Reviews, 1993.</item>
+        <item>Horvath et al., "Structural and functional correlates of smartphone addiction", Addictive Behaviors, 2020. Yuan et al., PLoS ONE, 2011. Correlational — causation is not established.</item>
+        <item>Hebb, The Organization of Behavior, 1949.</item>
+        <item>Schultz, Dayan and Montague, "A Neural Substrate of Prediction and Reward", Science, 1997.</item>
+        <item>Synthesis of dopamine research; accessible treatment in Lembke, Dopamine Nation, 2021.</item>
+        <item>NCD Risk Factor Collaboration, "A century of trends in adult human height", eLife, 2016; national anthropometric surveys.</item>
+        <item>Fardouly, Diedrichs, Vartanian and Halliwell, "Social comparisons on social media", Body Image, 2015.</item>
+        <item>Pope, Phillips and Olivardia, The Adonis Complex, 2000. Disclosure of pharmacological assistance in fitness content is rare; design analysis.</item>
+        <item>Machine-learned notification ranking documented in platform engineering publications (Meta, LinkedIn, Twitter, 2016–2020).</item>
+        <item>Zeigarnik effect: Zeigarnik, 1927. Application to app badges is design analysis.</item>
+        <item>Industry engagement-optimisation practice; on teen night-time use see "The Facebook Files", Wall Street Journal, 2021. Partly design analysis.</item>
+        <item>Harrison and Horne, "The impact of sleep deprivation on decision making", Journal of Experimental Psychology: Applied, 2000.</item>
+        <item>Not officially documented. Based on widely reported user experiments and reverse-engineering; treat as informed inference.</item>
+        <item>Accounts by early Facebook engineers (Rosenstein, Pearlman), reported in The Guardian, 2017.</item>
+    </string-array>
+
+    <string-array name="tidbits_adult_sources" translatable="false">
+        <item>Beach and Jordan, 1956 (original studies). Fiorino, Coury and Phillips, "Dynamic changes in nucleus accumbens dopamine efflux during the Coolidge effect in male rats", Journal of Neuroscience, 1997.</item>
+        <item>Supernormal stimuli: Tinbergen, The Study of Instinct, 1951. Barrett, Supernormal Stimuli, 2010.</item>
+        <item>Conceptual argument building on supernormal-stimulus theory (Barrett, 2010); not itself an empirical finding.</item>
+        <item>Pitchers et al., "Natural and drug rewards act on common neural plasticity mechanisms with ΔFosB as a key mediator", Journal of Neuroscience, 2013. Nestler et al., PNAS, 2001.</item>
+        <item>Park et al., "Is Internet Pornography Causing Sexual Dysfunctions? A Review with Clinical Reports", Behavioral Sciences, 2016. Causation is debated — see the counter-research entry below.</item>
+        <item>Kraus, Voon and Potenza, "Should compulsive sexual behavior be considered an addiction?", Addiction, 2016.</item>
+        <item>Hypofrontality in addiction: Volkow and Fowler, Cerebral Cortex, 2000; Volkow et al., PNAS, 2011.</item>
+        <item>WHO ICD-11 classifies compulsive sexual behaviour disorder as an impulse-control disorder, not an addiction (2019). Kraus, Voon and Potenza, Addiction, 2016.</item>
+        <item>Prause and Pfaus, "Viewing Sexual Stimuli Associated with Greater Sexual Responsiveness, Not Erectile Dysfunction", Sexual Medicine, 2015.</item>
+        <item>Lewczuk, Szmyd, Skorko and Gola, "Treatment seeking for problematic pornography use among women", Journal of Behavioral Addictions, 2017.</item>
+        <item>Content analyses of mainstream pornography, e.g. Vannier, Currie and O\'Sullivan, Journal of Sex Research, 2014.</item>
+        <item>Wright, Tokunaga, Kraus and Klann, "Pornography Consumption and Satisfaction: A Meta-Analysis", Human Communication Research, 2017.</item>
+    </string-array>
+
+
+    <!-- ════════════════════════════════════════════
          OFFLINE ACTIVITY PROMPTS
          ════════════════════════════════════════════ -->
 

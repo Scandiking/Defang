@@ -47,6 +47,18 @@ class TidbitSelector @Inject constructor(
         return library[chosen]
     }
 
+    /**
+     * The tidbit of the day: deterministic from the calendar date, so it is
+     * stable across process restarts and rolls over at midnight. Read-only —
+     * does not consume from the gate's same-day no-repeat rotation above.
+     */
+    fun daily(track: ContentTrack): String {
+        val library = libraryFor(track)
+        val index = kotlin.random.Random(LocalDate.now().toEpochDay())
+            .nextInt(library.size)
+        return library[index]
+    }
+
     private fun libraryFor(track: ContentTrack): Array<String> {
         val resId = when (track) {
             ContentTrack.GENERAL -> R.array.tidbits_general

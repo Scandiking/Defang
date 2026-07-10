@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.defang.launcher.domain.model.HomeScreenMode
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -103,6 +104,45 @@ class PreferencesDataStore @Inject constructor(
 
     suspend fun setBatchWindow2(minutesOfDay: Int) =
         store.edit { it[KEY_BATCH_WINDOW_2] = minutesOfDay }
+
+    // ── Home screen mode ──────────────────────────────────────────────────────
+    private val KEY_HOME_MODE = intPreferencesKey("home_screen_mode")
+
+    val homeScreenMode: Flow<HomeScreenMode> = store.data.map {
+        HomeScreenMode.fromOrdinal(it[KEY_HOME_MODE] ?: HomeScreenMode.CLOCK_AND_TIDBIT.ordinal)
+    }
+
+    suspend fun setHomeScreenMode(mode: HomeScreenMode) =
+        store.edit { it[KEY_HOME_MODE] = mode.ordinal }
+
+    // ── Custom offline tasks ──────────────────────────────────────────────────
+    // User-entered task prompts shown on the end card alongside the built-in
+    // library. Newline-encoded; tasks themselves are single-line by construction.
+    private val KEY_CUSTOM_TASKS = stringPreferencesKey("custom_tasks")
+
+    val customTasks: Flow<List<String>> = store.data.map { prefs ->
+        (prefs[KEY_CUSTOM_TASKS] ?: "").lineSequence()
+            .filter { it.isNotBlank() }
+            .toList()
+    }
+
+    suspend fun addCustomTask(task: String) = store.edit { prefs ->
+        val current = (prefs[KEY_CUSTOM_TASKS] ?: "").lineSequence()
+            .filter { it.isNotBlank() }
+            .toMutableList()
+        val cleaned = task.replace('\n', ' ').trim()
+        if (cleaned.isNotEmpty() && cleaned !in current) {
+            current.add(cleaned)
+            prefs[KEY_CUSTOM_TASKS] = current.joinToString("\n")
+        }
+    }
+
+    suspend fun removeCustomTask(task: String) = store.edit { prefs ->
+        val remaining = (prefs[KEY_CUSTOM_TASKS] ?: "").lineSequence()
+            .filter { it.isNotBlank() && it != task }
+            .toList()
+        prefs[KEY_CUSTOM_TASKS] = remaining.joinToString("\n")
+    }
 
     // Suppressed-notification counts per package, persisted so batching
     // survives process death. Encoded "pkg=count" per line.

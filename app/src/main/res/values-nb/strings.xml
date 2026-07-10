@@ -101,6 +101,8 @@
     <string name="perm_accessibility_title">Tilgjengelighetstillatelse</string>
     <string name="perm_accessibility_body">Defang trenger å vite når en overvåket app åpnes, og leser nettleserens adressefelt for å gjenkjenne voksendomener. Den leser aldri sideinnhold, meldinger eller noe du skriver — kun appen i forgrunnen og adressen i adressefeltet.</string>
     <string name="perm_accessibility_grant">Åpne tilgjengelighetsinnstillinger</string>
+    <string name="accessibility_already_on">Allerede aktivert — her kan du slå det av</string>
+    <string name="accessibility_now_on">Tilgjengelighetstjenesten er aktivert</string>
     <string name="perm_battery_title">Batterioptimalisering</string>
     <string name="perm_battery_body">Samsungs batteristyring kan drepe bakgrunnstjenester, noe som ville stoppet økt-tidtakeren. Trykk for å unnta Defang fra batterioptimalisering.</string>
     <string name="perm_battery_grant">Unnta fra optimalisering</string>
@@ -134,6 +136,29 @@
     <string name="settings_notification_access">Varseltilgang</string>
     <string name="settings_notification_access_desc">Kreves for nøytrale varsler — gi Defang tilgang til varsler</string>
     <string name="settings_why">Hvorfor?</string>
+
+    <!-- Awareness library page -->
+    <string name="library_track_general">Generelt</string>
+    <string name="library_track_social">Sosiale medier</string>
+    <string name="library_track_adult">Voksent innhold</string>
+    <string name="library_tasks_header">Innebygde oppgaveforslag</string>
+
+    <!-- Home screen mode -->
+    <string name="settings_home_mode">Hjemskjerm</string>
+    <string name="home_mode_empty">Tom</string>
+    <string name="home_mode_empty_desc">Ingenting annet enn status- og navigasjonslinjen</string>
+    <string name="home_mode_tidbit">Kun faktabit</string>
+    <string name="home_mode_tidbit_desc">Bare dagens faktabit</string>
+    <string name="home_mode_clock">Klokke og faktabit</string>
+    <string name="home_mode_clock_desc">Klokke, dato og dagens faktabit</string>
+
+    <!-- Custom tasks -->
+    <string name="settings_tasks_title">Dine egne oppgaver</string>
+    <string name="settings_tasks_desc">Oppgaver du legger til foreslås på sluttkortet sammen med de innebygde</string>
+    <string name="tasks_hint">f.eks. Vann plantene</string>
+    <string name="tasks_add">Legg til</string>
+    <string name="tasks_delete">Slett oppgave</string>
+    <string name="tasks_empty">Ingen oppgaver ennå. Legg til noe lite og fullførbart — 20 sekunder er nok.</string>
     <string name="action_back">Tilbake</string>
     <string name="action_ok">OK</string>
 

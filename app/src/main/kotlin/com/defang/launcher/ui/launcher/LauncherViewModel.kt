@@ -10,12 +10,15 @@ import com.defang.launcher.data.local.datastore.PreferencesDataStore
 import com.defang.launcher.data.repository.AppConfigRepository
 import com.defang.launcher.data.local.db.entity.AppConfigEntity
 import com.defang.launcher.domain.model.ContentTrack
+import com.defang.launcher.domain.model.HomeScreenMode
 import com.defang.launcher.util.TidbitSelector
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -42,6 +45,10 @@ class LauncherViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(LauncherUiState())
     val uiState: StateFlow<LauncherUiState> = _uiState
 
+    val homeMode: StateFlow<HomeScreenMode> = prefs.homeScreenMode.stateIn(
+        viewModelScope, SharingStarted.Eagerly, HomeScreenMode.CLOCK_AND_TIDBIT
+    )
+
     init {
         viewModelScope.launch {
             val onboardingDone = prefs.isOnboardingDone.first()
@@ -54,9 +61,16 @@ class LauncherViewModel @Inject constructor(
             _uiState.value = LauncherUiState(
                 apps = allApps,
                 needsOnboarding = !onboardingDone,
-                homeTidbit = tidbitSelector.next(ContentTrack.GENERAL),
+                homeTidbit = tidbitSelector.daily(ContentTrack.GENERAL),
             )
         }
+    }
+
+    /** Re-derives the tidbit of the day — called on resume so it rolls over at midnight. */
+    fun refreshHomeTidbit() {
+        _uiState.value = _uiState.value.copy(
+            homeTidbit = tidbitSelector.daily(ContentTrack.GENERAL),
+        )
     }
 
     fun onQueryChange(q: String) {

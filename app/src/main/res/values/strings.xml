@@ -100,6 +100,8 @@
     <string name="perm_accessibility_title">Accessibility permission</string>
     <string name="perm_accessibility_body">Defang needs to know when a watched app opens, and reads the browser\'s address bar to recognise adult domains. It never reads page content, messages, or anything you type — only the foreground app and the URL in the address field.</string>
     <string name="perm_accessibility_grant">Open accessibility settings</string>
+    <string name="accessibility_already_on">Already enabled — you can turn it off here</string>
+    <string name="accessibility_now_on">Accessibility service enabled</string>
     <string name="perm_battery_title">Battery optimisation</string>
     <string name="perm_battery_body">Samsung\'s battery management can kill background services, which would stop the session timer working. Tap to exclude Defang from battery optimisation.</string>
     <string name="perm_battery_grant">Exclude from optimisation</string>
@@ -133,6 +135,29 @@
     <string name="settings_notification_access">Notification access</string>
     <string name="settings_notification_access_desc">Required for neutral notifications — grant Defang access to notifications</string>
     <string name="settings_why">Why?</string>
+
+    <!-- Awareness library page -->
+    <string name="library_track_general">General</string>
+    <string name="library_track_social">Social media</string>
+    <string name="library_track_adult">Adult content</string>
+    <string name="library_tasks_header">Built-in task suggestions</string>
+
+    <!-- Home screen mode -->
+    <string name="settings_home_mode">Home screen</string>
+    <string name="home_mode_empty">Empty</string>
+    <string name="home_mode_empty_desc">Nothing but the status and navigation bars</string>
+    <string name="home_mode_tidbit">Tidbit only</string>
+    <string name="home_mode_tidbit_desc">Just the tidbit of the day</string>
+    <string name="home_mode_clock">Clock and tidbit</string>
+    <string name="home_mode_clock_desc">Clock, date, and the tidbit of the day</string>
+
+    <!-- Custom tasks -->
+    <string name="settings_tasks_title">Your own tasks</string>
+    <string name="settings_tasks_desc">Tasks you add are suggested on the end card alongside the built-in ones</string>
+    <string name="tasks_hint">e.g. Water the plants</string>
+    <string name="tasks_add">Add</string>
+    <string name="tasks_delete">Delete task</string>
+    <string name="tasks_empty">No tasks yet. Add something small and completable — 20 seconds is enough.</string>
     <string name="action_back">Back</string>
     <string name="action_ok">OK</string>
 
