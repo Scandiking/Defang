@@ -121,6 +121,9 @@
     <string name="unit_minutes">%1$d min</string>
     <string name="settings_grayscale">Grayscale</string>
     <string name="settings_grayscale_desc">Watched apps render in black and white during a session</string>
+    <string name="settings_grayscale_setup">Setup required — tap for instructions</string>
+    <string name="settings_grayscale_setup_title">Grayscale setup</string>
+    <string name="settings_grayscale_setup_body">Grayscale needs a one-time permission that can only be granted from a computer. Connect the phone over USB with USB debugging enabled and run:\n\nadb shell pm grant %1$s android.permission.WRITE_SECURE_SETTINGS\n\nThen come back here to turn grayscale on.</string>
     <string name="settings_grayscale_why_title">Why grayscale?</string>
     <string name="settings_grayscale_why_body">The colors in social apps are not accidental. Red badges and saturated feed colors are chosen because the brain reads them as reward. In black and white the content is the same, but the reward signal is gone — the pull to keep scrolling weakens measurably. Your camera, maps, and the rest of the phone keep their colors.</string>
     <string name="settings_sanitize">Neutral notifications</string>

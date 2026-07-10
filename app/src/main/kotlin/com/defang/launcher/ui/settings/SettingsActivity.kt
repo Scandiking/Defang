@@ -70,9 +70,15 @@ class SettingsActivity : ComponentActivity() {
                         val grayscaleOn by globalVm.grayscaleEnabled.collectAsStateWithLifecycle()
                         val sanitizeOn by globalVm.notificationSanitizeEnabled
                             .collectAsStateWithLifecycle()
+                        val grayscaleSetupNeeded = remember {
+                            checkSelfPermission(
+                                android.Manifest.permission.WRITE_SECURE_SETTINGS
+                            ) != android.content.pm.PackageManager.PERMISSION_GRANTED
+                        }
                         SettingsMenuScreen(
                             grayscaleOn = grayscaleOn,
                             onGrayscaleChange = globalVm::setGrayscaleEnabled,
+                            grayscaleSetupNeeded = grayscaleSetupNeeded,
                             sanitizeOn = sanitizeOn,
                             onSanitizeChange = globalVm::setNotificationSanitizeEnabled,
                             onTiming = { page = SettingsPage.Timing },
@@ -123,6 +129,7 @@ class SettingsActivity : ComponentActivity() {
 private fun SettingsMenuScreen(
     grayscaleOn: Boolean,
     onGrayscaleChange: (Boolean) -> Unit,
+    grayscaleSetupNeeded: Boolean,
     sanitizeOn: Boolean,
     onSanitizeChange: (Boolean) -> Unit,
     onTiming: () -> Unit,
@@ -151,6 +158,9 @@ private fun SettingsMenuScreen(
         stringResource(R.string.settings_grayscale_why_body)
     val sanitizeWhy = stringResource(R.string.settings_sanitize_why_title) to
         stringResource(R.string.settings_sanitize_why_body)
+    val packageName = androidx.compose.ui.platform.LocalContext.current.packageName
+    val grayscaleSetup = stringResource(R.string.settings_grayscale_setup_title) to
+        stringResource(R.string.settings_grayscale_setup_body, packageName)
 
     Scaffold(
         topBar = {
@@ -184,15 +194,28 @@ private fun SettingsMenuScreen(
             ListItem(
                 headlineContent = { Text(stringResource(R.string.settings_grayscale)) },
                 supportingContent = {
-                    Text(stringResource(R.string.settings_grayscale_desc))
+                    Text(
+                        if (grayscaleSetupNeeded)
+                            stringResource(R.string.settings_grayscale_setup)
+                        else
+                            stringResource(R.string.settings_grayscale_desc)
+                    )
                 },
                 trailingContent = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         WhyButton { whyDialog = grayscaleWhy }
-                        Switch(checked = grayscaleOn, onCheckedChange = onGrayscaleChange)
+                        if (!grayscaleSetupNeeded) {
+                            Switch(checked = grayscaleOn, onCheckedChange = onGrayscaleChange)
+                        }
                     }
                 },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .then(
+                        if (grayscaleSetupNeeded)
+                            Modifier.clickable { whyDialog = grayscaleSetup }
+                        else Modifier
+                    ),
             )
             HorizontalDivider()
             ListItem(

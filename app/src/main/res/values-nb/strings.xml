@@ -122,6 +122,9 @@
     <string name="unit_minutes">%1$d min</string>
     <string name="settings_grayscale">Gråtoner</string>
     <string name="settings_grayscale_desc">Overvåkede apper vises i svart-hvitt under økten</string>
+    <string name="settings_grayscale_setup">Oppsett kreves — trykk for instruksjoner</string>
+    <string name="settings_grayscale_setup_title">Oppsett av gråtoner</string>
+    <string name="settings_grayscale_setup_body">Gråtoner krever en engangstillatelse som bare kan gis fra en datamaskin. Koble telefonen til med USB, med USB-feilsøking aktivert, og kjør:\n\nadb shell pm grant %1$s android.permission.WRITE_SECURE_SETTINGS\n\nKom så tilbake hit for å slå på gråtoner.</string>
     <string name="settings_grayscale_why_title">Hvorfor gråtoner?</string>
     <string name="settings_grayscale_why_body">Fargene i sosiale apper er ikke tilfeldige. Røde merker og mettede farger i feeden er valgt fordi hjernen tolker dem som belønning. I svart-hvitt er innholdet det samme, men belønningssignalet er borte — suget etter å bla videre svekkes målbart. Kamera, kart og resten av telefonen beholder fargene.</string>
     <string name="settings_sanitize">Nøytrale varsler</string>

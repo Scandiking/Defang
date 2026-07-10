@@ -1,67 +1,61 @@
 package com.defang.launcher.service.notification
 
 import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.graphics.Color
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import com.defang.launcher.R
 import com.defang.launcher.data.local.datastore.PreferencesDataStore
 import com.defang.launcher.data.repository.AppConfigRepository
 import com.defang.launcher.service.accessibility.DefangAccessibilityService
+import com.defang.launcher.util.ContactNameCache
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.util.concurrent.ConcurrentHashMap
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
 /**
- * Notification sanitization (Phase 2, first slice).
+ * Notification sanitization + batching (Phase 2).
  *
- * Notifications from watched apps are the platform's strongest re-engagement
- * dark pattern: brand-red badges, manufactured urgency ("X is waiting…"),
- * sound and vibration. This service cancels them and re-posts a single calm
- * replacement per app: gray accent, silent channel, no content preview, just
- * "N varsler venter". Tapping it launches the app the normal way — through
- * the intent gate, since the accessibility service sees the foreground change.
+ * Notifications from watched apps are cancelled and counted. Depending on
+ * settings the calm per-app summary ("N notifications waiting") is posted
+ * either immediately (instant mode) or at the configured delivery windows
+ * (batch mode — see [BatchWindowScheduler] / [BatchDeliveryReceiver]).
  *
- * Deliberately NOT intercepted:
+ * Never intercepted:
  *  - ongoing / foreground-service notifications (media playback, uploads)
  *  - call-category notifications (incoming calls via messenger apps)
+ *  - notifications whose title matches an address-book contact
  *  - anything from non-watched apps
  *
- * Batching to delivery windows (full PRD Phase 2) can build on this later:
- * the interception point and counting are already here; only the scheduling
- * would be added.
+ * Counts are persisted in DataStore so batch mode survives process death.
  */
 @AndroidEntryPoint
 class DefangNotificationListenerService : NotificationListenerService() {
 
     @Inject lateinit var appConfigRepo: AppConfigRepository
     @Inject lateinit var prefs: PreferencesDataStore
+    @Inject lateinit var summaryPoster: NotificationSummaryPoster
+    @Inject lateinit var contactNames: ContactNameCache
 
     private val serviceScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+    private val countsMutex = Mutex()
 
     @Volatile private var watchedPackages: Set<String> =
         DefangAccessibilityService.DEFAULT_WATCHED_PACKAGES
     @Volatile private var sanitizeEnabled = true
+    @Volatile private var batchingActive = false
 
-    // Package → count of suppressed notifications since the user last
-    // opened/dismissed our summary. In-memory only: losing it on process death
-    // just means the counter restarts, which is harmless.
-    private val suppressedCounts = ConcurrentHashMap<String, Int>()
-    private val appLabels = ConcurrentHashMap<String, String>()
+    private val appLabels = mutableMapOf<String, String>()
 
     override fun onCreate() {
         super.onCreate()
-        createChannel()
+        summaryPoster.ensureChannel()
+        contactNames.refreshIfStale()
         serviceScope.launch {
             appConfigRepo.observeWatched().collect { list ->
                 watchedPackages = list.map { it.packageName }.toSet() +
@@ -71,6 +65,16 @@ class DefangNotificationListenerService : NotificationListenerService() {
         }
         serviceScope.launch {
             prefs.notificationSanitizeEnabled.collect { sanitizeEnabled = it }
+        }
+        serviceScope.launch {
+            prefs.batchWindow1.collect { w1 ->
+                batchingActive = w1 >= 0 || prefs.batchWindow2.first() >= 0
+            }
+        }
+        serviceScope.launch {
+            prefs.batchWindow2.collect { w2 ->
+                batchingActive = w2 >= 0 || prefs.batchWindow1.first() >= 0
+            }
         }
     }
 
@@ -94,13 +98,22 @@ class DefangNotificationListenerService : NotificationListenerService() {
         if (notification.flags and protectedFlags != 0) return
         if (notification.category == Notification.CATEGORY_CALL) return
 
+        // Contact bypass: DMs from real people arrive untouched
+        val title = notification.extras.getCharSequence(Notification.EXTRA_TITLE)
+        if (contactNames.isContact(title)) return
+
         cancelNotification(posted.key)
 
         // Group summaries carry no content of their own — cancel but don't count
         if (notification.flags and Notification.FLAG_GROUP_SUMMARY != 0) return
 
-        val count = suppressedCounts.merge(posted.packageName, 1, Int::plus) ?: 1
-        postSanitized(posted.packageName, count)
+        serviceScope.launch {
+            val count = incrementCount(posted.packageName)
+            // Batch mode: stay silent now; BatchDeliveryReceiver posts at the window
+            if (!batchingActive) {
+                summaryPoster.postSummary(posted.packageName, count)
+            }
+        }
     }
 
     override fun onNotificationRemoved(sbn: StatusBarNotification?) {
@@ -108,62 +121,23 @@ class DefangNotificationListenerService : NotificationListenerService() {
         // Our summary was tapped or swiped away — reset that app's counter.
         // (The tag of our summaries is the watched app's package name.)
         if (removed.packageName == packageName) {
-            removed.tag?.let { suppressedCounts.remove(it) }
+            val pkg = removed.tag ?: return
+            serviceScope.launch { clearCount(pkg) }
         }
     }
 
-    private fun postSanitized(pkg: String, count: Int) {
-        val label = appLabels[pkg] ?: runCatching {
-            packageManager.getApplicationLabel(
-                packageManager.getApplicationInfo(pkg, 0)
-            ).toString()
-        }.getOrDefault(pkg)
-
-        // Neutral entry point: the app's front door, not the deep link the
-        // notification wanted. The intent gate fires on open as usual.
-        val contentIntent = packageManager.getLaunchIntentForPackage(pkg)?.let {
-            PendingIntent.getActivity(
-                this, pkg.hashCode(), it,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-            )
-        }
-
-        val text = resources.getQuantityString(R.plurals.notif_pending, count, count)
-        val summary = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_stat_defang)
-            .setContentTitle(label)
-            .setContentText(text)
-            .setColor(Color.GRAY)
-            .setSilent(true)
-            .setOnlyAlertOnce(true)
-            .setAutoCancel(true)
-            .apply { contentIntent?.let { setContentIntent(it) } }
-            .build()
-
-        try {
-            NotificationManagerCompat.from(this).notify(pkg, SUMMARY_ID, summary)
-        } catch (_: SecurityException) {
-            // POST_NOTIFICATIONS not granted (API 33+) — suppression still worked,
-            // the summary just isn't shown.
-        }
+    private suspend fun incrementCount(pkg: String): Int = countsMutex.withLock {
+        val counts = prefs.suppressedCounts.first().toMutableMap()
+        val next = (counts[pkg] ?: 0) + 1
+        counts[pkg] = next
+        prefs.setSuppressedCounts(counts)
+        next
     }
 
-    private fun createChannel() {
-        val channel = NotificationChannel(
-            CHANNEL_ID,
-            getString(R.string.notif_channel_name),
-            NotificationManager.IMPORTANCE_LOW, // shade only: no sound, no heads-up
-        ).apply {
-            description = getString(R.string.notif_channel_desc)
-            setShowBadge(false)
-            enableVibration(false)
-            enableLights(false)
+    private suspend fun clearCount(pkg: String) = countsMutex.withLock {
+        val counts = prefs.suppressedCounts.first().toMutableMap()
+        if (counts.remove(pkg) != null) {
+            prefs.setSuppressedCounts(counts)
         }
-        getSystemService(NotificationManager::class.java).createNotificationChannel(channel)
-    }
-
-    companion object {
-        private const val CHANNEL_ID = "defang_sanitized"
-        private const val SUMMARY_ID = 1001
     }
 }

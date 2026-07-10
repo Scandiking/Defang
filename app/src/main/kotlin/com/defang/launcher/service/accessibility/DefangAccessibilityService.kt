@@ -11,6 +11,7 @@ import com.defang.launcher.domain.model.toDomain
 import com.defang.launcher.domain.usecase.GetDailyExtensionStatusUseCase
 import com.defang.launcher.domain.usecase.RecordSessionUseCase
 import com.defang.launcher.domain.usecase.SelectContentTrackUseCase
+import com.defang.launcher.service.overlay.CooldownOverlay
 import com.defang.launcher.service.overlay.EndCardOverlay
 import com.defang.launcher.service.overlay.IntentGateOverlay
 import com.defang.launcher.service.overlay.OverlayManager
@@ -67,6 +68,7 @@ class DefangAccessibilityService : AccessibilityService() {
     private var currentTimerOverlay: SessionTimerOverlay? = null
     private var currentGateOverlay: IntentGateOverlay? = null
     private var currentEndCard: EndCardOverlay? = null
+    private var currentCooldownOverlay: CooldownOverlay? = null
     private var extensionUsedThisSession = false
 
     // Packages currently showing the intent gate (prevents re-trigger on internal windows)
@@ -440,6 +442,8 @@ class DefangAccessibilityService : AccessibilityService() {
         currentGateOverlay = null
         currentEndCard?.cancel()
         currentEndCard = null
+        currentCooldownOverlay?.cancel()
+        currentCooldownOverlay = null
         overlayManager.dismissAll()
     }
 
@@ -453,8 +457,31 @@ class DefangAccessibilityService : AccessibilityService() {
     }
 
     private fun showCooldownScreen(pkg: String, cooldownEndsAt: Long) {
-        // TODO Phase 2: proper cool-down screen. For now: go home.
-        goHome()
+        serviceScope.launch {
+            val config = resolveConfig(pkg) ?: defaultBrowserConfig(pkg)
+            currentCooldownOverlay?.cancel()
+            currentCooldownOverlay = CooldownOverlay(
+                context = this@DefangAccessibilityService,
+                appLabel = config.appLabel,
+                cooldownEndsAt = cooldownEndsAt,
+                tidbit = tidbitSelector.next(selectContentTrack.forPackage(pkg)),
+                onGoHome = {
+                    currentCooldownOverlay?.cancel()
+                    currentCooldownOverlay = null
+                    overlayManager.dismissFullscreen()
+                    goHome()
+                },
+                onExpired = {
+                    // Cool-down ran out while staring at the screen — drop the
+                    // lockout and run the normal gate flow for the app beneath
+                    currentCooldownOverlay?.cancel()
+                    currentCooldownOverlay = null
+                    overlayManager.dismissFullscreen()
+                    serviceScope.launch { handleForegroundChange(pkg, null) }
+                },
+            )
+            overlayManager.showFullscreen(currentCooldownOverlay!!.view)
+        }
     }
 
     private fun goHome() {

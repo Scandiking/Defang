@@ -88,4 +88,38 @@ class PreferencesDataStore @Inject constructor(
 
     suspend fun setNotificationSanitizeEnabled(on: Boolean) =
         store.edit { it[KEY_NOTIF_SANITIZE] = on }
+
+    // ── Notification batching ─────────────────────────────────────────────────
+    // Delivery windows in minutes-since-midnight; -1 = window disabled.
+    // Batching is active iff at least one window is set.
+    private val KEY_BATCH_WINDOW_1 = intPreferencesKey("batch_window_1")
+    private val KEY_BATCH_WINDOW_2 = intPreferencesKey("batch_window_2")
+
+    val batchWindow1: Flow<Int> = store.data.map { it[KEY_BATCH_WINDOW_1] ?: -1 }
+    val batchWindow2: Flow<Int> = store.data.map { it[KEY_BATCH_WINDOW_2] ?: -1 }
+
+    suspend fun setBatchWindow1(minutesOfDay: Int) =
+        store.edit { it[KEY_BATCH_WINDOW_1] = minutesOfDay }
+
+    suspend fun setBatchWindow2(minutesOfDay: Int) =
+        store.edit { it[KEY_BATCH_WINDOW_2] = minutesOfDay }
+
+    // Suppressed-notification counts per package, persisted so batching
+    // survives process death. Encoded "pkg=count" per line.
+    private val KEY_SUPPRESSED_COUNTS = stringPreferencesKey("suppressed_counts")
+
+    val suppressedCounts: Flow<Map<String, Int>> = store.data.map { prefs ->
+        (prefs[KEY_SUPPRESSED_COUNTS] ?: "").lineSequence()
+            .mapNotNull { line ->
+                val idx = line.lastIndexOf('=')
+                if (idx <= 0) null
+                else line.substring(0, idx) to (line.substring(idx + 1).toIntOrNull() ?: return@mapNotNull null)
+            }
+            .toMap()
+    }
+
+    suspend fun setSuppressedCounts(counts: Map<String, Int>) = store.edit { prefs ->
+        prefs[KEY_SUPPRESSED_COUNTS] = counts.entries
+            .joinToString("\n") { "${it.key}=${it.value}" }
+    }
 }
