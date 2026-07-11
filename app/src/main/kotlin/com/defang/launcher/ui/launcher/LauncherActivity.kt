@@ -51,9 +51,17 @@ class LauncherActivity : ComponentActivity() {
                     )
                 } else {
                     val homeMode by viewModel.homeMode.collectAsState()
+                    val homeUsage by viewModel.homeUsage.collectAsState()
                     HomeScreen(
                         tidbit = state.homeTidbit,
                         mode = homeMode,
+                        usage = homeUsage,
+                        onUsageTap = {
+                            startActivity(
+                                Intent(this, SettingsActivity::class.java)
+                                    .putExtra(SettingsActivity.EXTRA_OPEN_USAGE, true)
+                            )
+                        },
                         onAppsTap = { showDrawer = true },
                     )
                 }
@@ -93,6 +101,7 @@ class LauncherActivity : ComponentActivity() {
         // otherwise opens accessibility settings with our row highlighted.
         AccessibilityServiceHelper.ensureEnabled(this)
         viewModel.refreshHomeTidbit()
+        viewModel.refreshHomeUsage()
     }
 
     private fun launchApp(packageName: String) {

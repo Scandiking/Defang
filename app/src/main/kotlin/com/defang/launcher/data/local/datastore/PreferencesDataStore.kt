@@ -105,6 +105,15 @@ class PreferencesDataStore @Inject constructor(
     suspend fun setBatchWindow2(minutesOfDay: Int) =
         store.edit { it[KEY_BATCH_WINDOW_2] = minutesOfDay }
 
+    // ── Home screen usage panel ───────────────────────────────────────────────
+    // The launcher hosts no AppWidgetHost, so the usage widget can't be placed
+    // on Defang's own home screen — this toggle renders the same data natively.
+    private val KEY_HOME_USAGE = booleanPreferencesKey("home_usage_enabled")
+
+    val homeUsageEnabled: Flow<Boolean> = store.data.map { it[KEY_HOME_USAGE] ?: false }
+
+    suspend fun setHomeUsageEnabled(on: Boolean) = store.edit { it[KEY_HOME_USAGE] = on }
+
     // ── Home screen mode ──────────────────────────────────────────────────────
     private val KEY_HOME_MODE = intPreferencesKey("home_screen_mode")
 

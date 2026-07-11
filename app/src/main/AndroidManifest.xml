@@ -91,6 +91,26 @@
             </intent-filter>
         </receiver>
 
+        <!-- ── Batch Delivery Receiver — fired by AlarmManager at each delivery window ── -->
+        <!-- Must be manifest-declared: the scheduler targets it with an explicit
+             PendingIntent, which is silently dropped for unregistered receivers. -->
+        <receiver
+            android:name=".service.notification.BatchDeliveryReceiver"
+            android:exported="false" />
+
+        <!-- ── Usage Widget — today's time per watched app vs limit ── -->
+        <receiver
+            android:name=".ui.widget.UsageWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_usage_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_usage_info" />
+        </receiver>
+
     </application>
 
 </manifest>

@@ -173,4 +173,38 @@
         <item quantity="one">%d varsel venter</item>
         <item quantity="other">%d varsler venter</item>
     </plurals>
+
+    <!-- Notification delivery windows -->
+    <string name="settings_batch_window_1">Leveringsvindu 1</string>
+    <string name="settings_batch_window_2">Leveringsvindu 2</string>
+    <string name="batch_window_off">Av — oppsummeringer kommer umiddelbart</string>
+    <string name="batch_window_clear">Slå av dette vinduet</string>
+
+    <!-- Usage report -->
+    <string name="usage_report_title">Bruksrapport</string>
+    <string name="usage_report_desc">Ukentlig tid i overvåkede apper — bevis, ikke skyld</string>
+    <string name="usage_this_week">Siste 7 dager</string>
+    <string name="usage_per_day">Per dag</string>
+    <string name="usage_per_app">Per app</string>
+    <string name="usage_app_line">%1$s · %2$d økter</string>
+    <string name="usage_no_sessions">Ingen økter i overvåkede apper de siste 7 dagene.</string>
+    <string name="usage_drift_title">Intensjonsærlighet</string>
+    <string name="usage_drift_body">%1$d av %2$d økter med erklært intensjon varte over 8 minutter (%3$d%%).</string>
+    <string name="usage_drift_none">Ingen økter med erklært intensjon ennå.</string>
+    <string name="usage_no_prev_week">Ingen data for de 7 dagene før.</string>
+    <string name="usage_down_vs_prev">Ned %1$d%% fra de forrige 7 dagene.</string>
+    <string name="usage_up_vs_prev">Opp %1$d%% fra de forrige 7 dagene.</string>
+    <string name="usage_hours_minutes">%1$dt %2$dm</string>
+    <string name="usage_minutes">%1$d min</string>
+    <string name="usage_footnote">Målt fra Defangs egen øktlogg — kun økter gjennom porten. Alle data blir på denne enheten.</string>
+
+    <!-- Home screen usage panel -->
+    <string name="settings_home_usage">Dagens bruk på hjemskjermen</string>
+    <string name="settings_home_usage_desc">Små søyler under klokka — vises bare på dager med tid i overvåkede apper</string>
+
+    <!-- Usage widget -->
+    <string name="widget_usage_label">Defang — i dag</string>
+    <string name="widget_usage_desc">Dagens tid i hver overvåkede app mot grensen din</string>
+    <string name="widget_no_sessions">Ingen økter i dag.</string>
+    <string name="widget_usage_value">%1$d/%2$d min</string>
 </resources>

@@ -37,6 +37,8 @@ class SessionRepository @Inject constructor(
     fun observeSessionsForApp(packageName: String): Flow<List<SessionEntity>> =
         dao.observeForApp(packageName)
 
+    suspend fun getSessionsSince(since: Long): List<SessionEntity> = dao.getSince(since)
+
     suspend fun getExtensionUsedToday(dayStartEpoch: Long): SessionEntity? =
         dao.getExtensionUsedToday(dayStartEpoch)
 }

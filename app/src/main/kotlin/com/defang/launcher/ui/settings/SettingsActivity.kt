@@ -60,7 +60,7 @@ import com.defang.launcher.util.NotificationListenerHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.roundToInt
 
-private enum class SettingsPage { Menu, Timing, Apps, Library, Tasks }
+private enum class SettingsPage { Menu, Timing, Apps, Library, Tasks, Usage }
 
 @AndroidEntryPoint
 class SettingsActivity : ComponentActivity() {
@@ -69,9 +69,14 @@ class SettingsActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val initialPage = if (intent.getBooleanExtra(EXTRA_OPEN_USAGE, false)) {
+            SettingsPage.Usage
+        } else {
+            SettingsPage.Menu
+        }
         setContent {
             DefangTheme {
-                var page by remember { mutableStateOf(SettingsPage.Menu) }
+                var page by remember { mutableStateOf(initialPage) }
 
                 // Back from a sub-page returns to the menu, not out of settings
                 BackHandler(enabled = page != SettingsPage.Menu) {
@@ -89,18 +94,28 @@ class SettingsActivity : ComponentActivity() {
                             ) != android.content.pm.PackageManager.PERMISSION_GRANTED
                         }
                         val homeMode by globalVm.homeScreenMode.collectAsStateWithLifecycle()
+                        val batchWindow1 by globalVm.batchWindow1.collectAsStateWithLifecycle()
+                        val batchWindow2 by globalVm.batchWindow2.collectAsStateWithLifecycle()
+                        val homeUsageOn by globalVm.homeUsageEnabled.collectAsStateWithLifecycle()
                         SettingsMenuScreen(
                             homeMode = homeMode,
                             onHomeModeChange = globalVm::setHomeScreenMode,
+                            homeUsageOn = homeUsageOn,
+                            onHomeUsageChange = globalVm::setHomeUsageEnabled,
                             grayscaleOn = grayscaleOn,
                             onGrayscaleChange = globalVm::setGrayscaleEnabled,
                             grayscaleSetupNeeded = grayscaleSetupNeeded,
                             sanitizeOn = sanitizeOn,
                             onSanitizeChange = globalVm::setNotificationSanitizeEnabled,
+                            batchWindow1 = batchWindow1,
+                            batchWindow2 = batchWindow2,
+                            onBatchWindow1Change = globalVm::setBatchWindow1,
+                            onBatchWindow2Change = globalVm::setBatchWindow2,
                             onTiming = { page = SettingsPage.Timing },
                             onApps = { page = SettingsPage.Apps },
                             onLibrary = { page = SettingsPage.Library },
                             onTasks = { page = SettingsPage.Tasks },
+                            onUsage = { page = SettingsPage.Usage },
                             onReplayOnboarding = {
                                 startActivity(Intent(this, OnboardingActivity::class.java))
                             },
@@ -167,9 +182,18 @@ class SettingsActivity : ComponentActivity() {
                             onBack = { page = SettingsPage.Menu },
                         )
                     }
+
+                    SettingsPage.Usage -> com.defang.launcher.ui.settings.usage.UsageReportScreen(
+                        onBack = { page = SettingsPage.Menu },
+                    )
                 }
             }
         }
+    }
+
+    companion object {
+        /** Intent extra: open directly on the usage report page (widget tap). */
+        const val EXTRA_OPEN_USAGE = "open_usage"
     }
 }
 
@@ -180,15 +204,22 @@ class SettingsActivity : ComponentActivity() {
 private fun SettingsMenuScreen(
     homeMode: HomeScreenMode,
     onHomeModeChange: (HomeScreenMode) -> Unit,
+    homeUsageOn: Boolean,
+    onHomeUsageChange: (Boolean) -> Unit,
     grayscaleOn: Boolean,
     onGrayscaleChange: (Boolean) -> Unit,
     grayscaleSetupNeeded: Boolean,
     sanitizeOn: Boolean,
     onSanitizeChange: (Boolean) -> Unit,
+    batchWindow1: Int,
+    batchWindow2: Int,
+    onBatchWindow1Change: (Int) -> Unit,
+    onBatchWindow2Change: (Int) -> Unit,
     onTiming: () -> Unit,
     onApps: () -> Unit,
     onLibrary: () -> Unit,
     onTasks: () -> Unit,
+    onUsage: () -> Unit,
     onReplayOnboarding: () -> Unit,
     onAccessibility: () -> Unit,
     onNotificationAccess: () -> Unit,
@@ -302,6 +333,15 @@ private fun SettingsMenuScreen(
             )
             HorizontalDivider()
             ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_home_usage)) },
+                supportingContent = { Text(stringResource(R.string.settings_home_usage_desc)) },
+                trailingContent = {
+                    Switch(checked = homeUsageOn, onCheckedChange = onHomeUsageChange)
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            HorizontalDivider()
+            ListItem(
                 headlineContent = { Text(stringResource(R.string.settings_tasks_title)) },
                 supportingContent = { Text(stringResource(R.string.settings_tasks_desc)) },
                 modifier = Modifier
@@ -349,6 +389,18 @@ private fun SettingsMenuScreen(
                 },
                 modifier = Modifier.fillMaxWidth(),
             )
+            if (sanitizeOn) {
+                BatchWindowRow(
+                    label = stringResource(R.string.settings_batch_window_1),
+                    minutesOfDay = batchWindow1,
+                    onChange = onBatchWindow1Change,
+                )
+                BatchWindowRow(
+                    label = stringResource(R.string.settings_batch_window_2),
+                    minutesOfDay = batchWindow2,
+                    onChange = onBatchWindow2Change,
+                )
+            }
             HorizontalDivider()
             ListItem(
                 headlineContent = { Text(stringResource(R.string.settings_notification_access)) },
@@ -358,6 +410,14 @@ private fun SettingsMenuScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onNotificationAccess() },
+            )
+            HorizontalDivider()
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.usage_report_title)) },
+                supportingContent = { Text(stringResource(R.string.usage_report_desc)) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onUsage() },
             )
             HorizontalDivider()
             ListItem(
@@ -669,6 +729,54 @@ private fun homeModeStrings(mode: HomeScreenMode): Pair<String, String> = when (
     HomeScreenMode.CLOCK_AND_TIDBIT ->
         stringResource(R.string.home_mode_clock) to
             stringResource(R.string.home_mode_clock_desc)
+}
+
+/**
+ * One notification delivery window. Tap to pick a time; the clear icon
+ * turns the window off (-1). Without any window set, suppressed
+ * notifications are summarized immediately instead of batched.
+ */
+@Composable
+private fun BatchWindowRow(
+    label: String,
+    minutesOfDay: Int,
+    onChange: (Int) -> Unit,
+) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val isSet = minutesOfDay >= 0
+    val timeLabel = if (isSet) {
+        "%02d:%02d".format(minutesOfDay / 60, minutesOfDay % 60)
+    } else {
+        stringResource(R.string.batch_window_off)
+    }
+
+    ListItem(
+        headlineContent = { Text(label) },
+        supportingContent = { Text(timeLabel) },
+        trailingContent = {
+            if (isSet) {
+                IconButton(onClick = { onChange(-1) }) {
+                    Icon(
+                        imageVector = Icons.Outlined.Delete,
+                        contentDescription = stringResource(R.string.batch_window_clear),
+                        tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                    )
+                }
+            }
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                val initial = if (isSet) minutesOfDay else 12 * 60
+                android.app.TimePickerDialog(
+                    context,
+                    { _, hour, minute -> onChange(hour * 60 + minute) },
+                    initial / 60,
+                    initial % 60,
+                    true,
+                ).show()
+            },
+    )
 }
 
 @Composable

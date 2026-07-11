@@ -1,11 +1,20 @@
 package com.defang.launcher.ui.launcher
 
 import android.text.format.DateFormat
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,10 +28,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.defang.launcher.R
 import com.defang.launcher.domain.model.HomeScreenMode
 import kotlinx.coroutines.delay
 import java.time.LocalDateTime
@@ -33,6 +44,8 @@ import java.util.Locale
 fun HomeScreen(
     tidbit: String,
     mode: HomeScreenMode,
+    usage: List<HomeUsageRow>,
+    onUsageTap: () -> Unit,
     onAppsTap: () -> Unit,
 ) {
     var now by remember { mutableStateOf(LocalDateTime.now()) }
@@ -92,6 +105,16 @@ fun HomeScreen(
             )
         }
 
+        if (usage.isNotEmpty()) {
+            HomeUsagePanel(
+                usage = usage,
+                modifier = Modifier
+                    .padding(top = 24.dp)
+                    .padding(horizontal = 48.dp)
+                    .clickable(onClick = onUsageTap),
+            )
+        }
+
         Spacer(modifier = Modifier.weight(1f))
 
         if (mode != HomeScreenMode.EMPTY && tidbit.isNotBlank()) {
@@ -108,5 +131,65 @@ fun HomeScreen(
         }
 
         Spacer(modifier = Modifier.weight(1.5f))
+    }
+}
+
+/**
+ * Today's time in watched apps, rendered natively — the launcher hosts no
+ * AppWidgetHost, so the system widget can't live here. Deliberately muted:
+ * this is a mirror, not a scoreboard. Tapping opens the weekly report.
+ */
+@Composable
+private fun HomeUsagePanel(
+    usage: List<HomeUsageRow>,
+    modifier: Modifier = Modifier,
+) {
+    val dim = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.45f)
+    Column(modifier = modifier.fillMaxWidth()) {
+        usage.forEach { row ->
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 3.dp),
+            ) {
+                Text(
+                    text = row.label,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = dim,
+                    maxLines = 1,
+                    modifier = Modifier.weight(1f),
+                )
+                Box(
+                    modifier = Modifier
+                        .width(72.dp)
+                        .height(4.dp)
+                        .background(
+                            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.08f),
+                            RoundedCornerShape(2.dp),
+                        ),
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .fillMaxWidth(
+                                (row.minutes.toFloat() / row.limitMinutes).coerceIn(0f, 1f)
+                            )
+                            .background(dim, RoundedCornerShape(2.dp)),
+                    )
+                }
+                Text(
+                    text = stringResource(
+                        R.string.widget_usage_value, row.minutes, row.limitMinutes,
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = dim,
+                    modifier = Modifier
+                        .width(76.dp)
+                        .padding(start = 8.dp),
+                    textAlign = TextAlign.End,
+                )
+            }
+        }
     }
 }

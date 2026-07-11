@@ -8,7 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.defang.launcher.data.local.datastore.PreferencesDataStore
 import com.defang.launcher.data.repository.AppConfigRepository
+import com.defang.launcher.data.repository.SessionRepository
 import com.defang.launcher.data.local.db.entity.AppConfigEntity
+import com.defang.launcher.domain.model.AppTier
 import com.defang.launcher.domain.model.ContentTrack
 import com.defang.launcher.domain.model.HomeScreenMode
 import com.defang.launcher.util.TidbitSelector
@@ -27,6 +29,13 @@ data class AppInfo(
     val label: String,
 )
 
+/** One row of the optional home screen usage panel. */
+data class HomeUsageRow(
+    val label: String,
+    val minutes: Long,
+    val limitMinutes: Int,
+)
+
 data class LauncherUiState(
     val apps: List<AppInfo> = emptyList(),
     val query: String = "",
@@ -39,6 +48,7 @@ class LauncherViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val prefs: PreferencesDataStore,
     private val appConfigRepo: AppConfigRepository,
+    private val sessionRepo: SessionRepository,
     private val tidbitSelector: TidbitSelector,
 ) : ViewModel() {
 
@@ -71,6 +81,55 @@ class LauncherViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(
             homeTidbit = tidbitSelector.daily(ContentTrack.GENERAL),
         )
+    }
+
+    val homeUsageEnabled: StateFlow<Boolean> = prefs.homeUsageEnabled.stateIn(
+        viewModelScope, SharingStarted.Eagerly, false
+    )
+
+    private val _homeUsage = MutableStateFlow<List<HomeUsageRow>>(emptyList())
+    val homeUsage: StateFlow<List<HomeUsageRow>> = _homeUsage
+
+    /**
+     * Recomputes today's usage panel — called on resume, which is exactly when
+     * the number can have changed (a session just ended and we're back home).
+     * Only watched apps with time on the clock today appear; a clean day shows
+     * nothing at all.
+     */
+    fun refreshHomeUsage() {
+        viewModelScope.launch {
+            if (!prefs.homeUsageEnabled.first()) {
+                _homeUsage.value = emptyList()
+                return@launch
+            }
+            val zone = java.time.ZoneId.systemDefault()
+            val dayStart = java.time.LocalDate.now(zone)
+                .atStartOfDay(zone).toInstant().toEpochMilli()
+            val now = System.currentTimeMillis()
+
+            val minutesByPkg = sessionRepo.getSessionsSince(dayStart)
+                .groupBy { it.packageName }
+                .mapValues { (_, sessions) ->
+                    sessions.sumOf { s ->
+                        val end = if (s.endTime > s.startTime) s.endTime else now
+                        end - s.startTime
+                    } / 60_000
+                }
+
+            _homeUsage.value = appConfigRepo.observeAll().first()
+                .filter { it.tier == AppTier.WATCHED.dbValue }
+                .mapNotNull { config ->
+                    val minutes = minutesByPkg[config.packageName] ?: return@mapNotNull null
+                    if (minutes <= 0) return@mapNotNull null
+                    HomeUsageRow(
+                        label = config.appLabel,
+                        minutes = minutes,
+                        limitMinutes = config.sessionLimitMinutes.coerceAtLeast(1),
+                    )
+                }
+                .sortedByDescending { it.minutes }
+                .take(3)
+        }
     }
 
     fun onQueryChange(q: String) {

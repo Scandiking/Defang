@@ -173,6 +173,40 @@
         <item quantity="other">%d notifications waiting</item>
     </plurals>
 
+    <!-- Notification delivery windows -->
+    <string name="settings_batch_window_1">Delivery window 1</string>
+    <string name="settings_batch_window_2">Delivery window 2</string>
+    <string name="batch_window_off">Off — summaries arrive immediately</string>
+    <string name="batch_window_clear">Turn off this window</string>
+
+    <!-- Usage report -->
+    <string name="usage_report_title">Usage report</string>
+    <string name="usage_report_desc">Weekly time in watched apps — evidence, not guilt</string>
+    <string name="usage_this_week">Last 7 days</string>
+    <string name="usage_per_day">Per day</string>
+    <string name="usage_per_app">Per app</string>
+    <string name="usage_app_line">%1$s · %2$d sessions</string>
+    <string name="usage_no_sessions">No watched-app sessions in the last 7 days.</string>
+    <string name="usage_drift_title">Intent honesty</string>
+    <string name="usage_drift_body">%1$d of %2$d declared-intent sessions ran past 8 minutes (%3$d%%).</string>
+    <string name="usage_drift_none">No declared-intent sessions yet.</string>
+    <string name="usage_no_prev_week">No data for the 7 days before.</string>
+    <string name="usage_down_vs_prev">Down %1$d%% from the previous 7 days.</string>
+    <string name="usage_up_vs_prev">Up %1$d%% from the previous 7 days.</string>
+    <string name="usage_hours_minutes">%1$dh %2$dm</string>
+    <string name="usage_minutes">%1$d min</string>
+    <string name="usage_footnote">Measured from Defang\'s own session log — gated sessions only. All data stays on this device.</string>
+
+    <!-- Home screen usage panel -->
+    <string name="settings_home_usage">Today\'s usage on home screen</string>
+    <string name="settings_home_usage_desc">Small bars under the clock — only shown on days with watched-app time</string>
+
+    <!-- Usage widget -->
+    <string name="widget_usage_label">Defang — today</string>
+    <string name="widget_usage_desc">Today\'s time in each watched app vs your limit</string>
+    <string name="widget_no_sessions">No sessions today.</string>
+    <string name="widget_usage_value">%1$d/%2$d min</string>
+
     <!-- Misc -->
     <string name="minutes_short">%1$dm</string>
     <string name="time_format_mm_ss">%1$d:%2$02d</string>

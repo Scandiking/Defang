@@ -16,6 +16,7 @@ import com.defang.launcher.service.overlay.EndCardOverlay
 import com.defang.launcher.service.overlay.IntentGateOverlay
 import com.defang.launcher.service.overlay.OverlayManager
 import com.defang.launcher.service.overlay.SessionTimerOverlay
+import com.defang.launcher.ui.widget.UsageWidgetProvider
 import com.defang.launcher.util.BrowserUrlExtractor
 import com.defang.launcher.util.GrayscaleController
 import com.defang.launcher.util.OfflinePromptSelector
@@ -433,7 +434,10 @@ class DefangAccessibilityService : AccessibilityService() {
 
     private suspend fun endCurrentSession() {
         grayscale.disable()
-        currentSessionId?.let { id -> recordSession.end(id, extensionUsedThisSession) }
+        currentSessionId?.let { id ->
+            recordSession.end(id, extensionUsedThisSession)
+            UsageWidgetProvider.requestRefresh(this)
+        }
         currentSessionId = null
         currentWatchedPackage = null
         currentTimerOverlay?.cancel()
