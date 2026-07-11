@@ -197,6 +197,13 @@
     <string name="usage_minutes">%1$d min</string>
     <string name="usage_footnote">Measured from Defang\'s own session log — gated sessions only. All data stays on this device.</string>
 
+    <!-- Google install lockdown warning -->
+    <string name="lockdown_title">About installing updates</string>
+    <string name="lockdown_body">From September 2026, Google blocks installing apps from developers who have not registered with Google, paid a fee, and handed over government ID. Defang\'s developer will not do that — the requirement is the same class of control this app exists to push back against.\n\nWhat it means for you: this installed copy keeps working, unaffected. Installing future updates will require either F-Droid, or Google\'s multi-step \"advanced flow\" (Developer Mode plus a 24-hour waiting period). That flow runs through Google Play Services and Google can tighten it at any time.\n\nMore at keepandroidopen.org — in a browser, when you choose to.</string>
+    <string name="lockdown_dismiss">Understood</string>
+    <string name="settings_lockdown">Google\'s install lockdown</string>
+    <string name="settings_lockdown_desc">What September 2026 means for updating this app</string>
+
     <!-- Home screen usage panel -->
     <string name="settings_home_usage">Today\'s usage on home screen</string>
     <string name="settings_home_usage_desc">Small bars under the clock — only shown on days with watched-app time</string>

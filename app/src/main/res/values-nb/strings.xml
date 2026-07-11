@@ -198,6 +198,13 @@
     <string name="usage_minutes">%1$d min</string>
     <string name="usage_footnote">Målt fra Defangs egen øktlogg — kun økter gjennom porten. Alle data blir på denne enheten.</string>
 
+    <!-- Google install lockdown warning -->
+    <string name="lockdown_title">Om installering av oppdateringer</string>
+    <string name="lockdown_body">Fra september 2026 blokkerer Google installering av apper fra utviklere som ikke har registrert seg hos Google, betalt et gebyr og levert legitimasjon. Defangs utvikler kommer ikke til å gjøre det — kravet er samme type kontroll som denne appen finnes for å dytte tilbake mot.\n\nHva det betyr for deg: denne installerte kopien fortsetter å virke, upåvirket. Fremtidige oppdateringer krever enten F-Droid, eller Googles flertrinns «avanserte flyt» (utviklermodus pluss 24 timers ventetid). Den flyten går gjennom Google Play Services, og Google kan stramme den inn når som helst.\n\nMer på keepandroidopen.org — i en nettleser, når du selv velger det.</string>
+    <string name="lockdown_dismiss">Forstått</string>
+    <string name="settings_lockdown">Googles installasjonslås</string>
+    <string name="settings_lockdown_desc">Hva september 2026 betyr for oppdatering av denne appen</string>
+
     <!-- Home screen usage panel -->
     <string name="settings_home_usage">Dagens bruk på hjemskjermen</string>
     <string name="settings_home_usage_desc">Små søyler under klokka — vises bare på dager med tid i overvåkede apper</string>

@@ -31,6 +31,15 @@ class PreferencesDataStore @Inject constructor(
 
     suspend fun setOnboardingDone() = store.edit { it[KEY_ONBOARDING_DONE] = true }
 
+    // ── Distribution lockdown warning ─────────────────────────────────────────
+    // Shown once after onboarding: Google's September 2026 sideload lockdown
+    // and what it means for installing Defang updates. See PRD §10.
+    private val KEY_LOCKDOWN_WARNED = booleanPreferencesKey("lockdown_warned")
+
+    val isLockdownWarned: Flow<Boolean> = store.data.map { it[KEY_LOCKDOWN_WARNED] ?: false }
+
+    suspend fun setLockdownWarned() = store.edit { it[KEY_LOCKDOWN_WARNED] = true }
+
     // ── Daily extension ──────────────────────────────────────────────────────
     // We store the calendar date string (yyyy-MM-dd) on which the extension was used.
     private val KEY_EXTENSION_DATE = stringPreferencesKey("extension_date")

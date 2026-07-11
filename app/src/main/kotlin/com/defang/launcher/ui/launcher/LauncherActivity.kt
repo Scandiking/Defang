@@ -15,6 +15,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.stringResource
+import com.defang.launcher.R
 import com.defang.launcher.ui.onboarding.OnboardingActivity
 import com.defang.launcher.ui.settings.SettingsActivity
 import com.defang.launcher.ui.theme.DefangTheme
@@ -39,6 +41,31 @@ class LauncherActivity : ComponentActivity() {
 
                 if (state.needsOnboarding) {
                     startActivity(Intent(this, OnboardingActivity::class.java))
+                }
+
+                if (state.showLockdownWarning) {
+                    androidx.compose.material3.AlertDialog(
+                        onDismissRequest = { viewModel.dismissLockdownWarning() },
+                        title = {
+                            androidx.compose.material3.Text(
+                                stringResource(R.string.lockdown_title)
+                            )
+                        },
+                        text = {
+                            androidx.compose.material3.Text(
+                                stringResource(R.string.lockdown_body)
+                            )
+                        },
+                        confirmButton = {
+                            androidx.compose.material3.TextButton(
+                                onClick = { viewModel.dismissLockdownWarning() },
+                            ) {
+                                androidx.compose.material3.Text(
+                                    stringResource(R.string.lockdown_dismiss)
+                                )
+                            }
+                        },
+                    )
                 }
 
                 if (showDrawer) {

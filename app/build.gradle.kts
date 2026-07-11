@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -5,6 +7,15 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
 }
+
+// Release signing credentials live in local.properties (gitignored). When they
+// are absent — clean clones, CI, F-Droid's builders — the release build simply
+// stays unsigned; F-Droid signs with its own key.
+val localProps = Properties().apply {
+    val f = rootProject.file("local.properties")
+    if (f.exists()) f.inputStream().use { stream -> this.load(stream) }
+}
+val releaseStoreFile: String? = localProps.getProperty("RELEASE_STORE_FILE")
 
 android {
     namespace = "com.defang.launcher"
@@ -20,6 +31,17 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        if (releaseStoreFile != null) {
+            create("release") {
+                storeFile = rootProject.file(releaseStoreFile)
+                storePassword = localProps.getProperty("RELEASE_STORE_PASSWORD")
+                keyAlias = localProps.getProperty("RELEASE_KEY_ALIAS")
+                keyPassword = localProps.getProperty("RELEASE_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -27,6 +49,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            if (releaseStoreFile != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
         debug {
             isMinifyEnabled = false
@@ -82,9 +107,6 @@ dependencies {
     implementation(libs.lifecycle.viewmodel)
     implementation(libs.lifecycle.runtime)
     implementation(libs.lifecycle.runtime.compose)
-
-    // FreeDroidWarn
-    implementation(libs.freedroidwarn)
 
     // Testing
     testImplementation(libs.junit)

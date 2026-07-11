@@ -41,6 +41,7 @@ data class LauncherUiState(
     val query: String = "",
     val needsOnboarding: Boolean = false,
     val homeTidbit: String = "",
+    val showLockdownWarning: Boolean = false,
 )
 
 @HiltViewModel
@@ -72,6 +73,9 @@ class LauncherViewModel @Inject constructor(
                 apps = allApps,
                 needsOnboarding = !onboardingDone,
                 homeTidbit = tidbitSelector.daily(ContentTrack.GENERAL),
+                // One-time heads-up about Google's install lockdown — after
+                // onboarding so it isn't the first thing a new user sees
+                showLockdownWarning = onboardingDone && !prefs.isLockdownWarned.first(),
             )
         }
     }
@@ -81,6 +85,11 @@ class LauncherViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(
             homeTidbit = tidbitSelector.daily(ContentTrack.GENERAL),
         )
+    }
+
+    fun dismissLockdownWarning() {
+        _uiState.value = _uiState.value.copy(showLockdownWarning = false)
+        viewModelScope.launch { prefs.setLockdownWarned() }
     }
 
     val homeUsageEnabled: StateFlow<Boolean> = prefs.homeUsageEnabled.stateIn(
