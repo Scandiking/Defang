@@ -96,14 +96,14 @@ app/src/main/kotlin/com/defang/launcher/
 ## Roadmap
 
 **Phase 1 (current)**
-- ~~ Intent gate with countdown and declared-purpose cards
-- ~~ Session timer HUD
-- ~~ End card with extension friction
-- ~~ Cool-down lockout
+- Intent gate with countdown and declared-purpose cards
+- Session timer HUD
+- End card with extension friction
+- Cool-down lockout
 
 **Phase 2 (planned)**
 - Notification batching — hold notifications from watched apps and deliver them on a schedule
-- ~~ Grayscale overlay during sessions
+- Grayscale overlay during sessions
 - Usage stats and weekly report
 - Widget for daily session summary
 
