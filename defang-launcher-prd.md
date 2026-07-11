@@ -435,6 +435,7 @@ For expanding the awareness content library, onboarding copy, and future tidbit 
 | [forbrukerradet.no/manipulerende-design](https://www.forbrukerradet.no/manipulerende-design/) | Norwegian Consumer Council — manipulative design. Norwegian-language. Directly relevant for the `values-nb` translation and for legally-grounded categorizations. |
 | [forbrukerradet.no/dark-patterns](https://www.forbrukerradet.no/dark-patterns/) | Norwegian Consumer Council — dark patterns enforcement reports. Forbrukerrådet has been active in EEA enforcement actions (notably against Grindr, Facebook), making their categorizations legally anchored, not just academic. |
 | [yourbrainonporn.com](https://yourbrainonporn.com) | Primary source for adult content track tidbits. Covers neuroscience, counter-research, and the PIED evidence base. Note the male-skew acknowledged in the PRD. |
+| Technoference literature | Parental distraction tidbits. Key papers: Tronick et al. 1978 (still-face); McDaniel & Radesky 2018 (technoference); Reed, Hirsh-Pasek & Golinkoff 2017 (interrupted word learning); Radesky et al. 2014 (caregiver absorption); Leong et al. 2017 (gaze-coupled infant–adult brain waves); Myruski et al. 2018 (still-face with phones). |
 
 ---
 
@@ -548,6 +549,17 @@ These are bundled with the app. Goal is 40+ at launch. This is a working draft �
 - Pornography shapes the sexual expectations that male partners bring into relationships, regardless of whether women themselves watch it. Women are affected by their partners' pornography use whether or not they are users themselves. This indirect effect is largely absent from public discussion of the topic.
 - The body standards in mainstream pornography for female performers involve surgery, grooming norms, and physical configurations that are not representative of the range of real bodies. This affects female viewers' relationship with their own bodies and male viewers' expectations of real partners — simultaneously, in opposite directions, from the same content.
 
+**Parental distraction (technoference)**
+
+*Shown mixed into the general and social tracks — not a separate mode. A parent gated on the way into Instagram while holding their child should encounter these among all the other tidbits; ambush placement is the point. Same framing discipline as everything else: the mechanism, not the guilt.*
+
+- In the still-face experiment, infants become visibly distressed within moments when a parent's face stops responding. An infant cannot tell the difference between a parent whose face has gone still and a parent looking down at a phone.
+- Researchers have a word for phones interrupting parent–child interaction: technoference. The notification that pulled your eyes away was timed by a model optimising your re-engagement. The model does not know you were looking at your child.
+- In a controlled study, toddlers learned a new word from a parent — unless the teaching was interrupted by a phone call. Language grows in conversational turns, and an interrupted turn teaches nothing.
+- Infants develop through "serve and return": the child signals, the adult responds. Caregivers absorbed in a phone respond to fewer of these bids — and more harshly to the ones that break through.
+- Mutual gaze between an adult and an infant measurably synchronises their brain waves — a coupling that supports early communication and learning. No app metric records what its notification interrupted.
+- The engagement model competing for your attention has no category for what it is pulling you away from. Time spent looking at your child is, to the model, simply inventory it has not captured yet.
+
 **Social validation engineering**
 - The "like" was originally called the "awesome" button at Facebook. It was renamed because "like" is more ambiguous — people give likes to things they don't endorse, which increases the signal volume and keeps you checking.
 - Instagram shows you who viewed your story in a specific order, optimized to keep you checking back to see if a particular person has viewed it yet.
@@ -606,6 +618,10 @@ Shown on the end-card and cool-down lockout screen. One is displayed at a time; 
 - Walk to the kitchen and drink a glass of water.
 - Step outside for 2 minutes. Just stand there.
 - Walk to a different room for no reason.
+- Balance on one leg while you count to 20. Switch.
+- Open the front door and check the weather with your body, not an app.
+- Roll your shoulders ten times. Slowly.
+- Walk up and down the stairs once, if you have stairs. Slowly is fine.
 
 **Space**
 - Tidy the coffee table.
@@ -614,6 +630,10 @@ Shown on the end-card and cool-down lockout screen. One is displayed at a time; 
 - Make your bed (or straighten it).
 - Wipe the nearest surface.
 - Put your phone face-down on a different surface than where you usually leave it.
+- Hang up one item from the clothes chair.
+- Water one plant that looks like it needs it.
+- Straighten the shoes by the door.
+- Put away five things from the drying rack or dishwasher.
 
 **Sensory**
 - Look out the window. Name three things you can see.
@@ -621,14 +641,25 @@ Shown on the end-card and cool-down lockout screen. One is displayed at a time; 
 - Open a window and notice what the air smells like.
 - Make a cup of something hot and hold it with both hands.
 - Notice the temperature of the room. Is it comfortable?
+- Wash your hands slowly with warm water. Pay attention to it.
+- Eat a piece of fruit without doing anything else at the same time.
+- Step outside and take three slow breaths of outdoor air.
+- Find the softest thing within reach. Confirm by touch.
 
 **Social analog (no screen)**
 - Think of one person you haven't talked to in a while. You don't have to contact them — just think of them.
 - Write one sentence by hand. Anything.
 - If someone else is nearby, say something to them that isn't about logistics.
+- If your child is in the room, watch what they're doing for one minute. Just watch.
+- If you have a pet, give it two minutes of full attention.
+- Recall the last good conversation you had. What made it good?
 
 **Micro-creative**
 - Pick up a book — any book — and read one page.
 - Draw something badly. It doesn't matter what.
 - Hum or whistle something.
 - Rearrange one object on a shelf until it looks better to you.
+- Fold a piece of paper into something. Anything counts.
+- Stack three nearby objects into a small tower.
+- Recite a whole chorus from memory. Out loud or in your head.
+- Describe the room you're in, in one handwritten sentence.

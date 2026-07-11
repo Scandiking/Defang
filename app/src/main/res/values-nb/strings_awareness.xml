@@ -37,6 +37,14 @@
         <item>Søvnmangel svekker prefrontal cortex — samme region som står for impulskontroll og evnen til å la være å åpne appen i utgangspunktet. Sen kveldsbruk gjør neste dags bruk vanskeligere å motstå.</item>
         <item>«Like»-knappen het opprinnelig «awesome»-knappen hos Facebook. Den ble omdøpt fordi «like» er mer tvetydig — folk liker ting de ikke støtter, noe som øker signalvolumet og holder deg sjekkende.</item>
         <item>Snapchat-streaks har ingen verdi. De er en kunstig sosial forpliktelse — en daglig tvungen handling utkledd som en vennskapsfunksjon.</item>
+
+        <!-- Foreldredistraksjon -->
+        <item>I still face-eksperimentet blir spedbarn synlig stresset i løpet av øyeblikk når forelderens ansikt slutter å respondere. Et spedbarn kan ikke skille mellom en forelder hvis ansikt har stivnet og en forelder som ser ned i en telefon.</item>
+        <item>Forskere har et ord for telefoner som avbryter samspillet mellom forelder og barn: technoference. Varselet som trakk blikket ditt bort, ble tidsbestemt av en modell som optimaliserer gjenengasjementet ditt. Modellen vet ikke at du så på barnet ditt.</item>
+        <item>I en kontrollert studie lærte småbarn et nytt ord av en forelder — med mindre opplæringen ble avbrutt av en telefonsamtale. Språk vokser i samtaleturer, og en avbrutt tur lærer bort ingenting.</item>
+        <item>Spedbarn utvikler seg gjennom «serve and return»: barnet signaliserer, den voksne svarer. Omsorgspersoner oppslukt av en telefon svarer på færre av disse initiativene — og mer irritert på dem som trenger gjennom.</item>
+        <item>Gjensidig blikkontakt mellom en voksen og et spedbarn synkroniserer målbart hjernebølgene deres — en kobling som støtter tidlig kommunikasjon og læring. Ingen app-metrikk registrerer hva varselet avbrøt.</item>
+        <item>Engasjementsmodellen som konkurrerer om oppmerksomheten din, har ingen kategori for hva den trekker deg bort fra. Tid brukt på å se på barnet ditt er, for modellen, bare varelager den ennå ikke har fanget.</item>
     </string-array>
 
     <!-- ════════ SOCIAL TRACK ════════ -->
@@ -65,6 +73,12 @@
         <item>Søvnmangel svekker prefrontal cortex — samme region som står for evnen til å la være å åpne appen i utgangspunktet.</item>
         <item>Instagram viser deg hvem som har sett Storyen din i en bestemt rekkefølge, optimalisert for å få deg til å sjekke igjen om en bestemt person har sett den ennå.</item>
         <item>«Like»-knappen het opprinnelig «awesome»-knappen hos Facebook. Den ble omdøpt fordi «like» er mer tvetydig — folk liker ting de ikke støtter, noe som øker signalvolumet og holder deg sjekkende.</item>
+
+        <!-- Foreldredistraksjon (delt med generelt spor) -->
+        <item>I still face-eksperimentet blir spedbarn synlig stresset i løpet av øyeblikk når forelderens ansikt slutter å respondere. Et spedbarn kan ikke skille mellom en forelder hvis ansikt har stivnet og en forelder som ser ned i en telefon.</item>
+        <item>Forskere har et ord for telefoner som avbryter samspillet mellom forelder og barn: technoference. Varselet som trakk blikket ditt bort, ble tidsbestemt av en modell som optimaliserer gjenengasjementet ditt. Modellen vet ikke at du så på barnet ditt.</item>
+        <item>I en kontrollert studie lærte småbarn et nytt ord av en forelder — med mindre opplæringen ble avbrutt av en telefonsamtale. Språk vokser i samtaleturer, og en avbrutt tur lærer bort ingenting.</item>
+        <item>Engasjementsmodellen som konkurrerer om oppmerksomheten din, har ingen kategori for hva den trekker deg bort fra. Tid brukt på å se på barnet ditt er, for modellen, bare varelager den ennå ikke har fanget.</item>
     </string-array>
 
     <!-- ════════ ADULT TRACK ════════ -->
@@ -91,6 +105,10 @@
         <item>Gå til kjøkkenet og drikk et glass vann.</item>
         <item>Gå ut i 2 minutter. Bare stå der.</item>
         <item>Gå til et annet rom uten grunn.</item>
+        <item>Stå på ett bein mens du teller til 20. Bytt.</item>
+        <item>Åpne ytterdøra og sjekk været med kroppen, ikke med en app.</item>
+        <item>Rull skuldrene ti ganger. Sakte.</item>
+        <item>Gå opp og ned trappa én gang, hvis du har trapp. Sakte går fint.</item>
     </string-array>
 
     <string-array name="offline_prompts_space">
@@ -100,6 +118,10 @@
         <item>Re opp senga (eller strekk på dyna).</item>
         <item>Tørk av nærmeste overflate.</item>
         <item>Legg telefonen med skjermen ned et annet sted enn der du pleier å ha den.</item>
+        <item>Heng opp ett plagg fra klesstolen.</item>
+        <item>Vann én plante som ser ut som den trenger det.</item>
+        <item>Rett opp skoene ved døra.</item>
+        <item>Rydd bort fem ting fra oppvaskstativet eller oppvaskmaskinen.</item>
     </string-array>
 
     <string-array name="offline_prompts_sensory">
@@ -108,12 +130,19 @@
         <item>Åpne et vindu og legg merke til hva lufta lukter.</item>
         <item>Lag en kopp med noe varmt og hold den med begge hender.</item>
         <item>Legg merke til temperaturen i rommet. Er den behagelig?</item>
+        <item>Vask hendene sakte med varmt vann. Legg merke til det.</item>
+        <item>Spis en frukt uten å gjøre noe annet samtidig.</item>
+        <item>Gå ut og ta tre langsomme åndedrag med uteluft.</item>
+        <item>Finn den mykeste tingen innen rekkevidde. Bekreft med hånden.</item>
     </string-array>
 
     <string-array name="offline_prompts_social">
         <item>Tenk på én person du ikke har snakket med på en stund. Du trenger ikke kontakte dem — bare tenk på dem.</item>
         <item>Skriv én setning for hånd. Hva som helst.</item>
         <item>Hvis noen er i nærheten, si noe til dem som ikke handler om logistikk.</item>
+        <item>Hvis barnet ditt er i rommet, se på hva det driver med i ett minutt. Bare se.</item>
+        <item>Hvis du har et kjæledyr, gi det to minutter med full oppmerksomhet.</item>
+        <item>Tenk tilbake på den siste gode samtalen du hadde. Hva gjorde den god?</item>
     </string-array>
 
     <string-array name="offline_prompts_creative">
@@ -121,6 +150,10 @@
         <item>Tegn noe dårlig. Det spiller ingen rolle hva.</item>
         <item>Nynn eller plystre på noe.</item>
         <item>Flytt på én gjenstand i en hylle til den ser bedre ut for deg.</item>
+        <item>Brett et papirark til noe. Hva som helst teller.</item>
+        <item>Stable tre ting i nærheten til et lite tårn.</item>
+        <item>Fremfør et helt refreng etter hukommelsen. Høyt eller inni deg.</item>
+        <item>Beskriv rommet du er i, i én håndskrevet setning.</item>
     </string-array>
 
 </resources>

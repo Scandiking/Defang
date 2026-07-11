@@ -71,6 +71,14 @@
         <!-- Social validation -->
         <item>The \"like\" was originally called the \"awesome\" button at Facebook. It was renamed because \"like\" is more ambiguous — people give likes to things they don\'t endorse, which increases the signal volume and keeps you checking.</item>
         <item>Snapchat streaks have no value. They are an artificial social obligation — a daily compulsory action dressed as a friendship feature.</item>
+
+        <!-- Parental distraction -->
+        <item>In the still-face experiment, infants become visibly distressed within moments when a parent\'s face stops responding. An infant cannot tell the difference between a parent whose face has gone still and a parent looking down at a phone.</item>
+        <item>Researchers have a word for phones interrupting parent–child interaction: technoference. The notification that pulled your eyes away was timed by a model optimising your re-engagement. The model does not know you were looking at your child.</item>
+        <item>In a controlled study, toddlers learned a new word from a parent — unless the teaching was interrupted by a phone call. Language grows in conversational turns, and an interrupted turn teaches nothing.</item>
+        <item>Infants develop through \"serve and return\": the child signals, the adult responds. Caregivers absorbed in a phone respond to fewer of these bids — and more harshly to the ones that break through.</item>
+        <item>Mutual gaze between an adult and an infant measurably synchronises their brain waves — a coupling that supports early communication and learning. No app metric records what its notification interrupted.</item>
+        <item>The engagement model competing for your attention has no category for what it is pulling you away from. Time spent looking at your child is, to the model, simply inventory it has not captured yet.</item>
     </string-array>
 
 
@@ -124,6 +132,12 @@
         <!-- Validation -->
         <item>Instagram shows you who viewed your Story in a specific order, optimised to keep you checking back to see if a particular person has viewed it yet.</item>
         <item>The \"like\" was originally called the \"awesome\" button at Facebook. It was renamed because \"like\" is more ambiguous — people give likes to things they don\'t endorse, which increases signal volume and keeps you checking.</item>
+
+        <!-- Parental distraction (shared with general track) -->
+        <item>In the still-face experiment, infants become visibly distressed within moments when a parent\'s face stops responding. An infant cannot tell the difference between a parent whose face has gone still and a parent looking down at a phone.</item>
+        <item>Researchers have a word for phones interrupting parent–child interaction: technoference. The notification that pulled your eyes away was timed by a model optimising your re-engagement. The model does not know you were looking at your child.</item>
+        <item>In a controlled study, toddlers learned a new word from a parent — unless the teaching was interrupted by a phone call. Language grows in conversational turns, and an interrupted turn teaches nothing.</item>
+        <item>The engagement model competing for your attention has no category for what it is pulling you away from. Time spent looking at your child is, to the model, simply inventory it has not captured yet.</item>
     </string-array>
 
 
@@ -197,6 +211,12 @@
         <item>Harrison and Horne, "The impact of sleep deprivation on decision making", Journal of Experimental Psychology: Applied, 2000. Muzur, Pace-Schott and Hobson, "The prefrontal cortex in sleep", Trends in Cognitive Sciences, 2002.</item>
         <item>Accounts by early Facebook engineers (Rosenstein, Pearlman), reported in The Guardian, 2017.</item>
         <item>Design analysis. On streaks as social obligation among teenagers, see press investigations (e.g. BBC, 2017).</item>
+        <item>Tronick, Als, Adamson, Wise and Brazelton, "The Infant\'s Response to Entrapment between Contradictory Messages in Face-to-Face Interaction", Journal of the American Academy of Child Psychiatry, 1978. The phone-as-still-face extension is supported by later replications (e.g. Myruski et al., "Digital disruption? Maternal mobile device use and infant social-emotional functioning", Developmental Science, 2018).</item>
+        <item>McDaniel and Radesky, "Technoference: Parent Distraction With Technology and Associations With Child Behavior Problems", Child Development, 2018. Notification timing optimisation: platform engineering publications (Meta, LinkedIn, Twitter, 2016–2020).</item>
+        <item>Reed, Hirsh-Pasek and Golinkoff, "Learning on Hold: Cell Phones Sidetrack Parent-Child Interactions", Developmental Psychology, 2017.</item>
+        <item>Serve and return: Center on the Developing Child, Harvard University. Caregiver absorption and harsher responses: Radesky et al., "Patterns of Mobile Device Use by Caregivers and Children During Meals in Fast Food Restaurants", Pediatrics, 2014.</item>
+        <item>Leong et al., "Speaker gaze increases information coupling between infant and adult brains", PNAS, 2017.</item>
+        <item>Design analysis of engagement-optimisation objectives.</item>
     </string-array>
 
     <string-array name="tidbits_social_sources" translatable="false">
@@ -224,6 +244,10 @@
         <item>Harrison and Horne, "The impact of sleep deprivation on decision making", Journal of Experimental Psychology: Applied, 2000.</item>
         <item>Not officially documented. Based on widely reported user experiments and reverse-engineering; treat as informed inference.</item>
         <item>Accounts by early Facebook engineers (Rosenstein, Pearlman), reported in The Guardian, 2017.</item>
+        <item>Tronick, Als, Adamson, Wise and Brazelton, "The Infant\'s Response to Entrapment between Contradictory Messages in Face-to-Face Interaction", Journal of the American Academy of Child Psychiatry, 1978. The phone-as-still-face extension is supported by later replications (e.g. Myruski et al., Developmental Science, 2018).</item>
+        <item>McDaniel and Radesky, "Technoference: Parent Distraction With Technology and Associations With Child Behavior Problems", Child Development, 2018.</item>
+        <item>Reed, Hirsh-Pasek and Golinkoff, "Learning on Hold: Cell Phones Sidetrack Parent-Child Interactions", Developmental Psychology, 2017.</item>
+        <item>Design analysis of engagement-optimisation objectives.</item>
     </string-array>
 
     <string-array name="tidbits_adult_sources" translatable="false">
@@ -253,6 +277,10 @@
         <item>Walk to the kitchen and drink a glass of water.</item>
         <item>Step outside for 2 minutes. Just stand there.</item>
         <item>Walk to a different room for no reason.</item>
+        <item>Balance on one leg while you count to 20. Switch.</item>
+        <item>Open the front door and check the weather with your body, not an app.</item>
+        <item>Roll your shoulders ten times. Slowly.</item>
+        <item>Walk up and down the stairs once, if you have stairs. Slowly is fine.</item>
     </string-array>
 
     <string-array name="offline_prompts_space">
@@ -262,6 +290,10 @@
         <item>Make your bed (or straighten it).</item>
         <item>Wipe the nearest surface.</item>
         <item>Put your phone face-down on a different surface than where you usually leave it.</item>
+        <item>Hang up one item from the clothes chair.</item>
+        <item>Water one plant that looks like it needs it.</item>
+        <item>Straighten the shoes by the door.</item>
+        <item>Put away five things from the drying rack or dishwasher.</item>
     </string-array>
 
     <string-array name="offline_prompts_sensory">
@@ -270,12 +302,19 @@
         <item>Open a window and notice what the air smells like.</item>
         <item>Make a cup of something hot and hold it with both hands.</item>
         <item>Notice the temperature of the room. Is it comfortable?</item>
+        <item>Wash your hands slowly with warm water. Pay attention to it.</item>
+        <item>Eat a piece of fruit without doing anything else at the same time.</item>
+        <item>Step outside and take three slow breaths of outdoor air.</item>
+        <item>Find the softest thing within reach. Confirm by touch.</item>
     </string-array>
 
     <string-array name="offline_prompts_social">
         <item>Think of one person you haven\'t talked to in a while. You don\'t have to contact them — just think of them.</item>
         <item>Write one sentence by hand. Anything.</item>
         <item>If someone else is nearby, say something to them that isn\'t about logistics.</item>
+        <item>If your child is in the room, watch what they\'re doing for one minute. Just watch.</item>
+        <item>If you have a pet, give it two minutes of full attention.</item>
+        <item>Recall the last good conversation you had. What made it good?</item>
     </string-array>
 
     <string-array name="offline_prompts_creative">
@@ -283,6 +322,10 @@
         <item>Draw something badly. It doesn\'t matter what.</item>
         <item>Hum or whistle something.</item>
         <item>Rearrange one object on a shelf until it looks better to you.</item>
+        <item>Fold a piece of paper into something. Anything counts.</item>
+        <item>Stack three nearby objects into a small tower.</item>
+        <item>Recite a whole chorus from memory. Out loud or in your head.</item>
+        <item>Describe the room you\'re in, in one handwritten sentence.</item>
     </string-array>
 
 </resources>
