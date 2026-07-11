@@ -7,6 +7,8 @@ import android.provider.Settings
 import com.defang.launcher.data.local.datastore.PreferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -36,30 +38,52 @@ class GrayscaleController @Inject constructor(
         context.checkSelfPermission(Manifest.permission.WRITE_SECURE_SETTINGS) ==
             PackageManager.PERMISSION_GRANTED
 
+    // enable() and disable() are check-then-act over suspending DataStore reads,
+    // and the accessibility service calls enable() on every window event from a
+    // watched app. Without mutual exclusion two interleaved enable() calls both
+    // pass the "already applied" check; the second one then snapshots the
+    // already-gray daltonizer as the user's "previous" state, and every disable()
+    // from then on restores gray — permanently. The mutex makes each operation
+    // atomic within the process (settings UI shares this singleton too).
+    private val lock = Mutex()
+
     /** Turns grayscale on for a watched session. Idempotent. */
-    suspend fun enable() {
-        if (!hasPermission()) return
-        if (!prefs.grayscaleEnabled.first()) return
-        if (prefs.grayscaleApplied.first()) return // already ours — keep saved state intact
+    suspend fun enable() = lock.withLock {
+        if (!hasPermission()) return@withLock
+        if (!prefs.grayscaleEnabled.first()) return@withLock
+        if (prefs.grayscaleApplied.first()) return@withLock // already ours — keep saved state intact
 
         val resolver = context.contentResolver
-        val prevEnabled = Settings.Secure.getInt(resolver, DALTONIZER_ENABLED, 0)
-        val prevMode = Settings.Secure.getInt(resolver, DALTONIZER_MODE, -1)
+        var prevEnabled = Settings.Secure.getInt(resolver, DALTONIZER_ENABLED, 0)
+        var prevMode = Settings.Secure.getInt(resolver, DALTONIZER_MODE, -1)
+        if (prevEnabled == 1 && prevMode == MODE_MONOCHROMACY) {
+            // The "previous" state is exactly our own gray signature — almost
+            // certainly residue of an earlier unclean session, not a deliberate
+            // user choice. Recording it would make disable() restore gray forever.
+            // Cost of this assumption: a user who genuinely runs system-wide
+            // monochromacy gets color correction switched off after each watched
+            // session — recoverable in system settings, unlike permanent gray.
+            prevEnabled = 0
+            prevMode = -1
+        }
         prefs.saveDaltonizerState(prevEnabled, prevMode)
 
+        // Mark applied before touching the setting: a crash between the two then
+        // triggers recoverIfStale(), which harmlessly re-restores the saved state.
+        // The old order (write setting, then mark) left gray on with no recovery.
+        prefs.setGrayscaleApplied(true)
         try {
             Settings.Secure.putInt(resolver, DALTONIZER_MODE, MODE_MONOCHROMACY)
             Settings.Secure.putInt(resolver, DALTONIZER_ENABLED, 1)
         } catch (_: SecurityException) {
-            return
+            prefs.setGrayscaleApplied(false)
         }
-        prefs.setGrayscaleApplied(true)
     }
 
     /** Restores the user's original color-correction state. Idempotent. */
-    suspend fun disable() {
-        if (!hasPermission()) return
-        if (!prefs.grayscaleApplied.first()) return
+    suspend fun disable() = lock.withLock {
+        if (!hasPermission()) return@withLock
+        if (!prefs.grayscaleApplied.first()) return@withLock
 
         val resolver = context.contentResolver
         val prevEnabled = prefs.savedDaltonizerEnabled.first()
@@ -71,7 +95,7 @@ class GrayscaleController @Inject constructor(
                 Settings.Secure.putInt(resolver, DALTONIZER_MODE, prevMode)
             }
         } catch (_: SecurityException) {
-            return
+            return@withLock
         }
         prefs.setGrayscaleApplied(false)
     }
