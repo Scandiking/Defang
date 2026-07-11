@@ -1,0 +1,18 @@
+Defang er en Android-launcher med et friksjonslag mot manipulerende design. Den er en fartsdump, ikke en mur: du kan fortsatt åpne Instagram, du kan fortsatt overstyre tidtakeren. Ingenting her er umulig å omgå — det er med vilje. En mur avler omgåelse; en fartsdump avler pause.
+
+Hva den gjør:
+
+• Intensjonsport — å trykke på en overvåket app viser en fullskjerms pause med nedtelling før «Åpne likevel» aktiveres. Erklær hva du kom for, eller gå tilbake.
+• Økt-tidtaker — et lite overlegg teller ned din egen forhåndssatte grense. På null vises sluttkortet. Å forlenge koster friksjon: 30 sekunders venting, en skriftlig grunn, og det virker én gang per dag. Ingen «15 minutter til»-knapp å trykke seg i søvne på.
+• Nedkjøling — etter en økt er gjenåpning låst i en periode du valgte på forhånd.
+• Gråtoner per app — overvåkede apper vises fargeløse mens kamera, kart og bilder beholder fargene.
+• Varselbatching — pling fra overvåkede apper kommer som en dempet oppsummering på tidspunkter du velger, ikke når en engasjementsmodell tror du er sårbar. Ekte kontakter slipper alltid gjennom.
+• Faktabiter — korte, spesifikke, kildebelagte fakta om maskineriet: variable belønningsskjemaer, optimalisert varseltiming, hva algoritmen velger ut. De gjorde dette mot deg; det minste du kan gjøre er å vite hvordan.
+• Offline-forslag — når en økt slutter, et lite fysisk forslag. «Rydd stuebordet» er ikke en spøk; det er en fullførbar oppgave med ærlig dopamin.
+• Bruksrapport — ukentlig tid per app, per dag, og hvor ofte «bare sjekke en DM» ble til 20 minutter skrolling. Bevis, ikke skyld.
+
+Nytteapper — kamera, kalkulator, telefon, kart — åpner umiddelbart, alltid. Launcheren står aldri i veien for livet ditt; den står i veien for løkka.
+
+Ingen telemetri. Alle data blir på enheten. Engelsk og norsk.
+
+Krever tilgjengelighetstjenesten (deteksjon av forgrunnsapp), varseltilgang (batching) og vis-over-andre-apper (overlegg). Gråtoner per app trenger en engangs adb-tildeling av WRITE_SECURE_SETTINGS — appen virker uten, minus den funksjonen.

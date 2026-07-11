@@ -1,0 +1,7 @@
+Første F-Droid-utgivelse.
+
+• Intensjonsport, økt-tidtaker med én daglig forlengelse, nedkjølingslås
+• Gråtoner per app, varselbatching med leveringsvinduer
+• Faktabit-bibliotek med kilder (engelsk + norsk)
+• Offline aktivitetsforslag, egne oppgaver
+• Ukentlig bruksrapport, brukspanel på hjemskjermen, widget

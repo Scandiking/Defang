@@ -1,0 +1,32 @@
+# F-Droid build metadata for Defang.
+#
+# This file is NOT read from this repo — it is the file to submit to
+# https://gitlab.com/fdroid/fdroiddata as metadata/com.defang.launcher.yml
+# (fork fdroiddata, add this file, open a merge request).
+# Kept here so the submitted copy has a reviewed source of truth.
+
+Categories:
+  - System
+License: GPL-3.0-only
+AuthorName: Scandiking
+SourceCode: https://github.com/Scandiking/Defang
+IssueTracker: https://github.com/Scandiking/Defang/issues
+Changelog: https://github.com/Scandiking/Defang/releases
+
+AutoName: Defang
+
+RepoType: git
+Repo: https://github.com/Scandiking/Defang.git
+
+Builds:
+  - versionName: 0.1.1
+    versionCode: 2
+    commit: v0.1.1
+    subdir: app
+    gradle:
+      - yes
+
+AutoUpdateMode: Version
+UpdateCheckMode: Tags ^v[0-9]+\.[0-9]+\.[0-9]+$
+CurrentVersion: 0.1.1
+CurrentVersionCode: 2

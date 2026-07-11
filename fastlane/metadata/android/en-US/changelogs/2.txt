@@ -1,0 +1,7 @@
+First F-Droid release.
+
+• Intent gate, session timer with once-daily extension, cool-down lockout
+• Per-app grayscale, notification batching with delivery windows
+• Awareness tidbit library with sources (English + Norwegian)
+• Offline activity prompts, custom tasks
+• Weekly usage report, home screen usage panel, usage widget

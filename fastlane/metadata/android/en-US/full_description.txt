@@ -1,0 +1,18 @@
+Defang is an Android launcher with an anti-dark-pattern friction layer. It is a speed bump, not a wall: you can still open Instagram, you can still override the timer. Nothing here is impossible to bypass — that is deliberate. A wall breeds circumvention; a speed bump breeds pause.
+
+What it does:
+
+• Intent gate — tapping a watched app shows a full-screen pause with a countdown before "Open anyway" activates. Declare what you came for, or go back.
+• Session timer — a small overlay counts down your own preset limit. At zero, the end card appears. Extending costs friction: a 30-second wait, a written reason, and it works once per day. No "15 more minutes" button to tap into oblivion.
+• Cool-down — after a session ends, reopening is locked for a period you chose in advance.
+• Per-app grayscale — watched apps render colorless while your camera, maps, and photos keep their colors.
+• Notification batching — pings from watched apps arrive as a muted summary at times you pick, not when an engagement model predicts you're vulnerable. Real contacts always come through.
+• Awareness tidbits — short, specific, sourced facts about the machinery: variable reward schedules, notification timing optimization, what the algorithm selects for. They did this to you; the least you can do is know how.
+• Offline prompts — when a session ends, a small physical suggestion. "Tidy the coffee table" is not a joke; it's a completable task with honest dopamine.
+• Usage report — weekly time per app, per day, and how often "just checking a DM" became a 20-minute scroll. Evidence, not guilt.
+
+Utility apps — camera, calculator, phone, maps — open instantly, always. The launcher never gets in the way of your life; it gets in the way of the loop.
+
+No telemetry. All data stays on the device. English and Norwegian.
+
+Requires the accessibility service (foreground app detection), notification access (batching), and display-over-apps permission (overlays). Per-app grayscale needs a one-time adb grant of WRITE_SECURE_SETTINGS — the app works without it, minus that feature.

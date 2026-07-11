@@ -1,0 +1,1 @@
+Launcher som legger fartsdumper mellom deg og appene som er designet mot deg
