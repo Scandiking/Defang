@@ -26,6 +26,18 @@ Social media apps are engineered to pull you in without asking. Defang puts a sp
 
 ---
 
+## Screenshots
+
+| Intent gate | Onboarding | Setup | Watched apps |
+|:---:|:---:|:---:|:---:|
+| ![Intent gate overlay with countdown](assets/Screenshots/Intent_gate.png) | ![Onboarding — first screen](assets/Screenshots/Setup_screen-1.png) | ![Onboarding — setup intro](assets/Screenshots/Setup_screen-2.png) | ![Watched apps picker](assets/Screenshots/Watched_apps.png) |
+
+| Timings | Tidbit library | Your own tasks | Grayscale setup |
+|:---:|:---:|:---:|:---:|
+| ![Gate delay, session limit, and cool-down sliders](assets/Screenshots/Timer_adjustment.png) | ![Library of tidbits on attention engineering](assets/Screenshots/Tidbit_library.png) | ![Custom tasks suggested on the end card](assets/Screenshots/Add_own_tasks.png) | ![Grayscale permission dialog](assets/Screenshots/Grayscale_grant.png) |
+
+---
+
 ## Watched apps (defaults)
 
 Instagram, Snapchat, TikTok, Reddit, X/Twitter, Facebook, YouTube, Tinder, Bumble, Hinge, OkCupid, Grindr, Badoo, Match, Happn, Meetic.
