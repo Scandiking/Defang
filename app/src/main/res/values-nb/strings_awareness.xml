@@ -41,10 +41,10 @@
         <!-- Foreldredistraksjon -->
         <item>I still face-eksperimentet blir spedbarn synlig stresset i løpet av øyeblikk når forelderens ansikt slutter å respondere. Et spedbarn kan ikke skille mellom en forelder hvis ansikt har stivnet og en forelder som ser ned i en telefon.</item>
         <item>Forskere har et ord for telefoner som avbryter samspillet mellom forelder og barn: technoference. Varselet som trakk blikket ditt bort, ble tidsbestemt av en modell som optimaliserer gjenengasjementet ditt. Modellen vet ikke at du så på barnet ditt.</item>
-        <item>I en kontrollert studie lærte småbarn et nytt ord av en forelder — med mindre opplæringen ble avbrutt av en telefonsamtale. Språk vokser i samtaleturer, og en avbrutt tur lærer bort ingenting.</item>
+        <item>I en kontrollert studie lærte småbarn et nytt ord av en forelder — men bare når ingen telefonsamtale avbrøt dem. Språk vokser når barn og voksen svarer hverandre etter tur, og en avbrutt tur lærer barnet ingenting av.</item>
         <item>Spedbarn utvikler seg gjennom «serve and return»: barnet signaliserer, den voksne svarer. Omsorgspersoner oppslukt av en telefon svarer på færre av disse initiativene — og mer irritert på dem som trenger gjennom.</item>
         <item>Gjensidig blikkontakt mellom en voksen og et spedbarn synkroniserer målbart hjernebølgene deres — en kobling som støtter tidlig kommunikasjon og læring. Ingen app-metrikk registrerer hva varselet avbrøt.</item>
-        <item>Engasjementsmodellen som konkurrerer om oppmerksomheten din, har ingen kategori for hva den trekker deg bort fra. Tid brukt på å se på barnet ditt er, for modellen, bare varelager den ennå ikke har fanget.</item>
+        <item>Modellen som kjemper om oppmerksomheten din, har ingen kategori for hva den trekker deg bort fra. For den er tiden du bruker på å se på barnet ditt, bare oppmerksomhet den ennå ikke har fanget.</item>
     </string-array>
 
     <!-- ════════ SOCIAL TRACK ════════ -->
@@ -77,8 +77,8 @@
         <!-- Foreldredistraksjon (delt med generelt spor) -->
         <item>I still face-eksperimentet blir spedbarn synlig stresset i løpet av øyeblikk når forelderens ansikt slutter å respondere. Et spedbarn kan ikke skille mellom en forelder hvis ansikt har stivnet og en forelder som ser ned i en telefon.</item>
         <item>Forskere har et ord for telefoner som avbryter samspillet mellom forelder og barn: technoference. Varselet som trakk blikket ditt bort, ble tidsbestemt av en modell som optimaliserer gjenengasjementet ditt. Modellen vet ikke at du så på barnet ditt.</item>
-        <item>I en kontrollert studie lærte småbarn et nytt ord av en forelder — med mindre opplæringen ble avbrutt av en telefonsamtale. Språk vokser i samtaleturer, og en avbrutt tur lærer bort ingenting.</item>
-        <item>Engasjementsmodellen som konkurrerer om oppmerksomheten din, har ingen kategori for hva den trekker deg bort fra. Tid brukt på å se på barnet ditt er, for modellen, bare varelager den ennå ikke har fanget.</item>
+        <item>I en kontrollert studie lærte småbarn et nytt ord av en forelder — men bare når ingen telefonsamtale avbrøt dem. Språk vokser når barn og voksen svarer hverandre etter tur, og en avbrutt tur lærer barnet ingenting av.</item>
+        <item>Modellen som kjemper om oppmerksomheten din, har ingen kategori for hva den trekker deg bort fra. For den er tiden du bruker på å se på barnet ditt, bare oppmerksomhet den ennå ikke har fanget.</item>
     </string-array>
 
     <!-- ════════ ADULT TRACK ════════ -->
