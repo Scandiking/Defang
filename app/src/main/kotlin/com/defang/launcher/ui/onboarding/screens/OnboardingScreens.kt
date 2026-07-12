@@ -7,11 +7,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -33,6 +35,13 @@ fun OnboardingPage(
     onSkip: () -> Unit,
     showSkip: Boolean = true,
 ) {
+    // Surface, not raw Column: the window background is hardcoded black
+    // (themes.xml), so without this the light color scheme paints dark
+    // text on a black window.
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background,
+    ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -72,15 +81,20 @@ fun OnboardingPage(
         Spacer(Modifier.weight(1f))
         Spacer(Modifier.height(48.dp))
 
+        // Deliberately quiet CTA — a bright accent here would be the exact
+        // dopamine cue this app exists to remove.
         Button(
             onClick = onPrimary,
             modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
+                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                contentColor = MaterialTheme.colorScheme.onBackground,
             ),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)),
         ) {
             Text(text = primaryLabel, style = MaterialTheme.typography.labelLarge)
         }
+    }
     }
 }
 

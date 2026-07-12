@@ -39,8 +39,13 @@ class LauncherActivity : ComponentActivity() {
             DefangTheme {
                 val state by viewModel.uiState.collectAsState()
 
-                if (state.needsOnboarding) {
-                    startActivity(Intent(this, OnboardingActivity::class.java))
+                // LaunchedEffect, not a bare call: startActivity during
+                // composition re-fires on every recomposition and can stack
+                // several OnboardingActivity instances.
+                androidx.compose.runtime.LaunchedEffect(state.needsOnboarding) {
+                    if (state.needsOnboarding) {
+                        startActivity(Intent(this@LauncherActivity, OnboardingActivity::class.java))
+                    }
                 }
 
                 if (state.showLockdownWarning) {
