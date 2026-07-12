@@ -4,8 +4,14 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Minimal "D" for Defang -->
-    <path
-        android:fillColor="#FFB07D4A"
-        android:pathData="M36,28 L52,28 C65,28 74,38 74,54 C74,70 65,80 52,80 L36,80 Z M46,40 L46,68 L51,68 C58,68 63,62 63,54 C63,46 58,40 51,40 Z" />
+    <!-- Chipped fang shaped as an F — traced from assets/Defang_logo.png (512x700 grid) -->
+    <group
+        android:scaleX="0.0743"
+        android:scaleY="0.0743"
+        android:translateX="35"
+        android:translateY="28">
+        <path
+            android:fillColor="#FFF5F5F5"
+            android:pathData="M48,0 L462,0 Q512,0 508,50 C503,92 476,132 432,153 Q423,155 410,156 L190,156 Q158,158 154,178 Q153,197 170,202 L320,203 C358,203 374,218 374,242 C374,266 358,281 320,283 L172,285 Q156,287 154,306 Q153,323 168,335 L222,337 C256,339 277,353 277,377 C277,389 272,398 267,407 L66,688 Q56,700 40,700 Q2,700 0,660 L0,48 Q0,0 48,0 Z" />
+    </group>
 </vector>
