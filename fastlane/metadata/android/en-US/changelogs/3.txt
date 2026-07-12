@@ -1,0 +1,1 @@
+New fang app icon, with Android 13 themed-icon support. Onboarding now follows the system light/dark theme and no longer paints dark text on a black background. Quieter onboarding button. Fixed onboarding occasionally launching twice.

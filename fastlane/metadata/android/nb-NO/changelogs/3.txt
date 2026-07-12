@@ -1,0 +1,1 @@
+Nytt hoggtann-appikon, med støtte for temaikoner i Android 13. Introduksjonen følger nå systemets lyse/mørke tema og viser ikke lenger mørk tekst på svart bakgrunn. Roligere intro-knapp. Fikset at introduksjonen kunne åpnes to ganger.
