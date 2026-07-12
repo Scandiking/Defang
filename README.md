@@ -2,6 +2,8 @@
 
 > Android launcher that adds friction to apps that exploit your attention.
 
+<img src="assets/Defang_logo.png">
+
 Social media apps are engineered to pull you in without asking. Defang puts a speed bump between you and the mindless scroll: before any watched app opens, you declare your intent, wait out a short countdown, and decide if this is actually how you want to spend the next $n$ minutes.
 
 ---
