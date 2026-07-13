@@ -36,7 +36,7 @@
     <!-- ── Intent gate overlay ── -->
     <string name="gate_question">What are you opening this for?</string>
     <string name="gate_offline_suggestion">Do this instead: %1$s</string>
-    <string name="gate_slide_hint">Slide to open</string>
+    <string name="gate_slide_hint">Trace the path to open</string>
     <string name="gate_go_back">← Go back</string>
     <string name="gate_intent_post">Post something</string>
     <string name="gate_intent_dm">Check a DM</string>

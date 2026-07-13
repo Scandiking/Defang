@@ -1,7 +1,11 @@
 package com.defang.launcher.service.accessibility
 
 import android.accessibilityservice.AccessibilityService
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.os.Build
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import com.defang.launcher.data.repository.AppConfigRepository
@@ -87,11 +91,38 @@ class DefangAccessibilityService : AccessibilityService() {
     // re-fire the gate before the user can even clear the address bar.
     private val gateSuppressedUntilMs = mutableMapOf<String, Long>()
 
+    // Lock screen desaturation: gray goes on at screen-off so the lock screen
+    // (and everything glanced at before unlocking) renders colorless; color
+    // returns at unlock unless a session or gate is active.
+    private val screenReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            when (intent?.action) {
+                Intent.ACTION_SCREEN_OFF -> serviceScope.launch { grayscale.enable() }
+                Intent.ACTION_USER_PRESENT -> serviceScope.launch {
+                    if (currentWatchedPackage == null && pendingGate.isEmpty()) {
+                        grayscale.disable()
+                    }
+                }
+            }
+        }
+    }
+
     override fun onServiceConnected() {
         super.onServiceConnected()
         isRunning = true
         // If we crashed mid-session with grayscale on, restore color now
         serviceScope.launch { grayscale.recoverIfStale() }
+
+        val filter = IntentFilter().apply {
+            addAction(Intent.ACTION_SCREEN_OFF)
+            addAction(Intent.ACTION_USER_PRESENT)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(screenReceiver, filter, RECEIVER_NOT_EXPORTED)
+        } else {
+            @Suppress("UnspecifiedRegisterReceiverFlag")
+            registerReceiver(screenReceiver, filter)
+        }
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
@@ -120,6 +151,12 @@ class DefangAccessibilityService : AccessibilityService() {
                 // Treating them as app switches would end the session and lift
                 // grayscale mid-use.
                 if (isTransientOverlay(pkg)) return
+                // The task switcher hovers over the session the same way — keep
+                // the session alive and render it colorless while it's open
+                if (event.className?.toString().orEmpty().contains("RecentsActivity")) {
+                    serviceScope.launch { grayscale.enable() }
+                    return
+                }
                 Log.d(TAG, "windowState pkg=$pkg")
                 val isBrowser = pkg in browserUrlExtractor.browserPackages
                 // Extract URL synchronously while we still have the window context.
@@ -538,6 +575,7 @@ class DefangAccessibilityService : AccessibilityService() {
     override fun onDestroy() {
         super.onDestroy()
         isRunning = false
+        runCatching { unregisterReceiver(screenReceiver) }
         runBlocking { endCurrentSession() }
     }
 
