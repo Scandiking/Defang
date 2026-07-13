@@ -45,6 +45,28 @@ class SelectContentTrackUseCase @Inject constructor() {
         "pornhub", "xvideos", "xhamster", "xnxx", "onlyfans",
         "brazzers", "redtube", "youporn", "tube8", "spankbang",
         "eporner", "thisvid", "porntrex", "tnaflix",
+        // Top-ranked sites per theporndude.com category listings, 2026-07-13
+        "hqporner", "beeg", "yourporn", "motherless", "xmoviesforyou",
+        "youjizz", "pornone", "3movs", "porndig", "cumlouder", "txxx",
+        "porndoe", "pornhat", "ok.xxx", "porn00",
+        "camsoda", "stripchat", "sinparty", "livejasmin", "streamate",
+        "bongacams", "jerkmate", "cam4", "myfreecams", "flirtify",
+        "flirtbate", "amateurtv", "xlovecam", "imlive",
+        "bangbros", "spicevids", "iknowthatgirl", "letsdoeit", "adulttime",
+        "faphouse", "candyai", "hentaiedpro", "teamskeet", "mylf",
+        "puretaboo", "naughtyamerica", "girlfriendgpt", "mofos", "evilangel",
+        "vixen", "adultprime", "pornbox", "familystrokes", "swappz",
+        "javhd", "czechav",
+        "tikporn", "fikfap", "fyptt", "kwiky", "xfree", "xxxtik",
+        "xxxfollow", "ogfap", "avrebo", "sharesome",
+        "fapello", "simpcity", "pimpbunny", "coomerparty", "erothots",
+        "xxbrits", "leakgallery", "porn4fans", "porntn", "thothub",
+        "borntobefuck",
+        "vrporn", "povr", "sexlikereal", "vrbangers", "virtualrealporn",
+        "badoinkvr", "braindancevr", "virtualtaboo", "darkroomvr", "wankzvr",
+        "wifebucket", "exploitedcollegegirls", "netvideogirls", "trueamateurs",
+        "backroomcastingcouch", "czechcasting", "bangbus", "privatesociety",
+        "woodmancastingx", "lovehomeporn", "letspostit",
     )
 
     fun forPackage(packageName: String): ContentTrack = when {
