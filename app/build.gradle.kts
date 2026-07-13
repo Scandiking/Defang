@@ -25,8 +25,8 @@ android {
         applicationId = "com.defang.launcher"
         minSdk = 26
         targetSdk = 35
-        versionCode = 4
-        versionName = "0.1.3"
+        versionCode = 5
+        versionName = "0.1.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -77,6 +77,13 @@ android {
 
     buildFeatures {
         compose = true
+    }
+
+    // Google-encrypted dependency block (Play Console telemetry) — F-Droid
+    // rejects APKs containing it, and we don't publish to Play anyway.
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
     }
 }
 

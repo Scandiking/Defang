@@ -1,0 +1,1 @@
+Fjerner Googles avhengighetsmetadata-blokk fra APK-en (kreves for F-Droid-inkludering). Ingen funksjonelle endringer.

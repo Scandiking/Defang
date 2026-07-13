@@ -1,0 +1,1 @@
+Removes Google's dependency-metadata signing block from the APK (required for F-Droid inclusion). No functional changes.
