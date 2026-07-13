@@ -2,6 +2,7 @@ package com.defang.launcher.service.accessibility
 
 import android.accessibilityservice.AccessibilityService
 import android.content.Intent
+import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import com.defang.launcher.data.repository.AppConfigRepository
 import com.defang.launcher.domain.model.AppConfig
@@ -88,8 +89,14 @@ class DefangAccessibilityService : AccessibilityService() {
 
     override fun onServiceConnected() {
         super.onServiceConnected()
+        isRunning = true
         // If we crashed mid-session with grayscale on, restore color now
         serviceScope.launch { grayscale.recoverIfStale() }
+    }
+
+    override fun onUnbind(intent: Intent?): Boolean {
+        isRunning = false
+        return super.onUnbind(intent)
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
@@ -108,6 +115,7 @@ class DefangAccessibilityService : AccessibilityService() {
 
         when (event.eventType) {
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
+                Log.d(TAG, "windowState pkg=$pkg")
                 val isBrowser = pkg in browserUrlExtractor.browserPackages
                 // Extract URL synchronously while we still have the window context.
                 // Reset the throttle so a fresh navigation always gets checked immediately.
@@ -148,6 +156,7 @@ class DefangAccessibilityService : AccessibilityService() {
     // ── Foreground change ─────────────────────────────────────────────────────
 
     private suspend fun handleForegroundChange(pkg: String, browserUrl: String?) {
+        Log.d(TAG, "fgChange pkg=$pkg watched=$currentWatchedPackage pending=$pendingGate")
         // Navigating away from whatever we were watching — end that session
         if (pkg != currentWatchedPackage && currentWatchedPackage != null) {
             endCurrentSession()
@@ -160,9 +169,10 @@ class DefangAccessibilityService : AccessibilityService() {
         }
 
         // Regular app: look up config in DB, fall back to hardcoded default list
-        val config = resolveConfig(pkg) ?: return
+        val config = resolveConfig(pkg)
+        if (config == null) { Log.d(TAG, "no config for $pkg"); return }
         if (config.tier != AppTier.WATCHED) return
-        if (pkg in pendingGate) return
+        if (pkg in pendingGate) { Log.d(TAG, "gate already pending for $pkg"); return }
         if (pkg == currentWatchedPackage) {
             // Session active — in-app navigation or return from home screen.
             // Re-apply grayscale in case the launcher lifted it.
@@ -171,6 +181,7 @@ class DefangAccessibilityService : AccessibilityService() {
         }
 
         if (config.isInCooldown) {
+            Log.d(TAG, "cooldown active for $pkg until ${config.cooldownEndsAt}")
             showCooldownScreen(pkg, config.cooldownEndsAt)
             return
         }
@@ -183,11 +194,13 @@ class DefangAccessibilityService : AccessibilityService() {
 
         // Gate passed recently — restart the session silently instead of re-gating
         if (withinRegateGrace(pkg)) {
+            Log.d(TAG, "regate grace for $pkg — silent session")
             startSession(pkg, null, effectiveConfig.sessionLimitMinutes,
                 effectiveConfig.cooldownMinutes, contentTrack)
             return
         }
 
+        Log.d(TAG, "showing intent gate for $pkg")
         pendingGate.add(pkg)
         showIntentGate(pkg, contentTrack, effectiveConfig)
     }
@@ -230,9 +243,9 @@ class DefangAccessibilityService : AccessibilityService() {
         serviceScope.launch {
             currentGateOverlay = IntentGateOverlay(
                 context = this@DefangAccessibilityService,
-                config = config,
                 contentTrack = contentTrack,
                 tidbitSelector = tidbitSelector,
+                offlinePrompt = offlinePromptSelector.next(),
                 onIntentDeclared = { intent ->
                     pendingGate.remove(pkg)
                     lastGatePassedMs[pkg] = System.currentTimeMillis()
@@ -252,6 +265,7 @@ class DefangAccessibilityService : AccessibilityService() {
                 },
             )
             overlayManager.showFullscreen(currentGateOverlay!!.view)
+            Log.d(TAG, "gate overlay shown for $pkg")
         }
     }
 
@@ -499,10 +513,23 @@ class DefangAccessibilityService : AccessibilityService() {
 
     override fun onDestroy() {
         super.onDestroy()
+        isRunning = false
         runBlocking { endCurrentSession() }
     }
 
     companion object {
+        private const val TAG = "DefangSvc"
+
+        /**
+         * True while the system holds a live binding to this service. The
+         * secure setting alone can lie: after an `adb install -r` the service
+         * can be listed as enabled yet sit dead in the accessibility manager
+         * ("Crashed services") until it is toggled off and on again.
+         */
+        @Volatile
+        var isRunning: Boolean = false
+            private set
+
         /** After passing the gate, re-opens within this window skip the gate. */
         const val REGATE_GRACE_MS = 5 * 60_000L
 

@@ -35,8 +35,8 @@
 
     <!-- ── Intent gate overlay ── -->
     <string name="gate_question">What are you opening this for?</string>
-    <string name="gate_opening_in">Opening in %1$d…</string>
-    <string name="gate_open_anyway">Open anyway</string>
+    <string name="gate_offline_suggestion">Do this instead: %1$s</string>
+    <string name="gate_slide_hint">Slide to open</string>
     <string name="gate_go_back">← Go back</string>
     <string name="gate_intent_post">Post something</string>
     <string name="gate_intent_dm">Check a DM</string>
@@ -164,6 +164,8 @@
     <!-- App tier search -->
     <string name="tier_search_hint">Search by app or package name</string>
     <string name="tier_search_clear">Clear search</string>
+    <string name="tier_hidden">Hidden</string>
+    <string name="tier_hidden_desc">Hidden apps disappear from the app drawer but still show up when you search there.</string>
 
     <!-- Sanitized notification summaries -->
     <string name="notif_channel_name">Neutral notifications</string>

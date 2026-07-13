@@ -36,8 +36,8 @@
 
     <!-- ── Intent gate overlay ── -->
     <string name="gate_question">Hva skal du åpne denne for?</string>
-    <string name="gate_opening_in">Åpner om %1$d…</string>
-    <string name="gate_open_anyway">Åpne likevel</string>
+    <string name="gate_offline_suggestion">Gjør heller dette: %1$s</string>
+    <string name="gate_slide_hint">Skyv for å åpne</string>
     <string name="gate_go_back">← Gå tilbake</string>
     <string name="gate_intent_post">Poste noe</string>
     <string name="gate_intent_dm">Sjekke en melding</string>
@@ -165,6 +165,8 @@
     <!-- App tier search -->
     <string name="tier_search_hint">Søk etter app eller pakkenavn</string>
     <string name="tier_search_clear">Tøm søk</string>
+    <string name="tier_hidden">Skjult</string>
+    <string name="tier_hidden_desc">Skjulte apper forsvinner fra app-listen, men dukker opp når du søker der.</string>
 
     <!-- Sanitized notification summaries -->
     <string name="notif_channel_name">Nøytrale varsler</string>

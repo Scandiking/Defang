@@ -419,6 +419,8 @@ No external deadline. Suggested phasing:
 
 **Phase 2:** Per-app grayscale + notification batching. Higher permission complexity; validate against Phase 1 behavior data before building.
 
+Also in Phase 2 — **active unlock on the intent gate:** replace the passive countdown with a deliberate motor task, e.g. a slider dragged slowly along a path that resets if moved too fast. A passive wait can be sat out on autopilot; an active task forces conscious engagement. Design constraint: it must measure deliberateness, not skill — no score, no flow, no satisfying feedback. An osu-style precision game would become its own dopamine loop and defeat the purpose.
+
 **Phase 3:** Usage dashboard widget + intent honesty score. Data layer is built in Phase 1; visualization is the only addition.
 
 **Phase 4 (if needed):** VPN-based API blocking or browser per-domain rules, if Phase 1–3 friction proves insufficient or Instagram actively defeats the overlays.
