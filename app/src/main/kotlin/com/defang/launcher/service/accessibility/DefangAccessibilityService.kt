@@ -115,6 +115,11 @@ class DefangAccessibilityService : AccessibilityService() {
 
         when (event.eventType) {
             AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> {
+                // Volume panel, notification shade, keyboards: windows that
+                // float above the current app without it losing the foreground.
+                // Treating them as app switches would end the session and lift
+                // grayscale mid-use.
+                if (isTransientOverlay(pkg)) return
                 Log.d(TAG, "windowState pkg=$pkg")
                 val isBrowser = pkg in browserUrlExtractor.browserPackages
                 // Extract URL synchronously while we still have the window context.
@@ -170,8 +175,13 @@ class DefangAccessibilityService : AccessibilityService() {
 
         // Regular app: look up config in DB, fall back to hardcoded default list
         val config = resolveConfig(pkg)
-        if (config == null) { Log.d(TAG, "no config for $pkg"); return }
-        if (config.tier != AppTier.WATCHED) return
+        if (config == null || config.tier != AppTier.WATCHED) {
+            // Unwatched app in front, no session — clear any gray lingering
+            // from an abandoned gate (left via notification or lock screen)
+            grayscale.disable()
+            if (config == null) Log.d(TAG, "no config for $pkg")
+            return
+        }
         if (pkg in pendingGate) { Log.d(TAG, "gate already pending for $pkg"); return }
         if (pkg == currentWatchedPackage) {
             // Session active — in-app navigation or return from home screen.
@@ -201,6 +211,9 @@ class DefangAccessibilityService : AccessibilityService() {
         }
 
         Log.d(TAG, "showing intent gate for $pkg")
+        // Gray before the gate is even visible — otherwise the app flashes
+        // in full color for the moment between app start and unlock
+        grayscale.enable()
         pendingGate.add(pkg)
         showIntentGate(pkg, contentTrack, effectiveConfig)
     }
@@ -233,6 +246,7 @@ class DefangAccessibilityService : AccessibilityService() {
             return
         }
 
+        grayscale.enable() // gray before the gate is visible, as in the app path
         pendingGate.add(pkg)
         showIntentGate(pkg, ContentTrack.ADULT, config)
     }
@@ -413,6 +427,16 @@ class DefangAccessibilityService : AccessibilityService() {
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
+
+    // Installed keyboard packages — an IME opening inside a watched app fires
+    // TYPE_WINDOW_STATE_CHANGED just like an app switch would
+    private val imePackages: Set<String> by lazy {
+        (getSystemService(INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager)
+            .inputMethodList.map { it.packageName }.toSet()
+    }
+
+    private fun isTransientOverlay(pkg: String): Boolean =
+        pkg == "com.android.systemui" || pkg in imePackages
 
     /**
      * Looks up app config in Room; falls back to the hardcoded default watched list
