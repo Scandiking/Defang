@@ -25,8 +25,8 @@ android {
         applicationId = "com.defang.launcher"
         minSdk = 26
         targetSdk = 35
-        versionCode = 3
-        versionName = "0.1.2"
+        versionCode = 4
+        versionName = "0.1.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -44,6 +44,13 @@ android {
 
     buildTypes {
         release {
+            // No embedded git revision: the released APK must be
+            // byte-identical to F-Droid's build from the tag commit
+            // (reproducible builds), and the revision necessarily differs
+            // between a working-tree build and a clean tag checkout.
+            vcsInfo {
+                include = false
+            }
             isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),

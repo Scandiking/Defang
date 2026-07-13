@@ -1,0 +1,1 @@
+Aktiverer reproduserbare bygg: deterministiske linjeskift og ingen innebygd VCS-info i APK-en. Ingen funksjonelle endringer.

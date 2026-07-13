@@ -1,0 +1,1 @@
+Enables reproducible builds: deterministic line endings and no embedded VCS info in the APK. No functional changes.
