@@ -6,6 +6,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import com.defang.launcher.service.accessibility.DefangAccessibilityService
 
@@ -39,6 +41,11 @@ object AccessibilityServiceHelper {
     /**
      * Enables the service by writing secure settings directly. Returns true on
      * success. No-ops (returns false) without the WRITE_SECURE_SETTINGS grant.
+     *
+     * If the service is already listed in the setting but has no live binding
+     * (the post-reinstall "Crashed services" wedge), it is removed and re-added
+     * after a short delay — two immediate writes would coalesce and the
+     * accessibility manager would never see the removal, so no rebind happens.
      */
     fun tryEnableSelf(context: Context): Boolean {
         val granted = context.checkSelfPermission(
@@ -49,18 +56,33 @@ object AccessibilityServiceHelper {
         return try {
             val resolver = context.contentResolver
             val flat = component(context).flattenToString()
-            val current = Settings.Secure.getString(
+            val services = Settings.Secure.getString(
                 resolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
-            ).orEmpty()
+            ).orEmpty().split(':').filter { it.isNotBlank() }
+            // Keep TalkBack etc. intact — only our own entry is touched
+            val without = services.filterNot { it.equals(flat, ignoreCase = true) }
 
-            // Append rather than overwrite — keep TalkBack etc. intact
-            if (current.split(':').none { it.equals(flat, ignoreCase = true) }) {
-                val updated = if (current.isBlank()) flat else "$current:$flat"
+            fun enable() = runCatching {
                 Settings.Secure.putString(
-                    resolver, Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, updated
+                    resolver,
+                    Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
+                    (without + flat).joinToString(":"),
                 )
+                Settings.Secure.putInt(resolver, Settings.Secure.ACCESSIBILITY_ENABLED, 1)
             }
-            Settings.Secure.putInt(resolver, Settings.Secure.ACCESSIBILITY_ENABLED, 1)
+
+            if (without.size != services.size) {
+                // Listed but dead (callers only reach here when there is no
+                // live binding) — clear the entry, then re-add to force a rebind
+                Settings.Secure.putString(
+                    resolver,
+                    Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,
+                    without.joinToString(":"),
+                )
+                Handler(Looper.getMainLooper()).postDelayed({ enable() }, 300)
+            } else {
+                enable()
+            }
             true
         } catch (_: SecurityException) {
             false
@@ -91,8 +113,11 @@ object AccessibilityServiceHelper {
      * Returns true if the service is (now) enabled without user action.
      */
     fun ensureEnabled(context: Context): Boolean {
-        if (isEnabled(context)) return true
+        // The live binding is the ground truth — the setting string can claim
+        // "enabled" while the binding is dead after a reinstall
+        if (DefangAccessibilityService.isRunning) return true
         if (tryEnableSelf(context)) return true
+        if (isEnabled(context)) return true // listed, no way to force a rebind ourselves
         openAccessibilitySettings(context)
         return false
     }
