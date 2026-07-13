@@ -35,6 +35,9 @@ interface AppConfigDao {
     @Query("UPDATE app_config SET tier = :tier WHERE packageName = :pkg")
     suspend fun setTier(pkg: String, tier: Int)
 
+    @Query("UPDATE app_config SET hidden = :hidden WHERE packageName = :pkg")
+    suspend fun setHidden(pkg: String, hidden: Boolean)
+
     /** Apply new global defaults to every watched app at once. */
     @Query("""
         UPDATE app_config

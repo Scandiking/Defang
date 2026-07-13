@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -145,14 +146,24 @@ class LauncherViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(query = q)
     }
 
-    val filteredApps: List<AppInfo>
-        get() {
-            val q = _uiState.value.query.trim()
-            return if (q.isEmpty()) _uiState.value.apps
-            else _uiState.value.apps.filter {
-                it.label.contains(q, ignoreCase = true)
-            }
+    /** Packages the user has hidden from the drawer — they only appear via search. */
+    val hiddenPackages: StateFlow<Set<String>> = appConfigRepo.observeAll()
+        .map { list -> list.filter { it.hidden }.map { it.packageName }.toSet() }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptySet())
+
+    /**
+     * Drawer list: hidden apps are excluded while browsing, but a non-empty
+     * search query matches them again — rarely-used apps (airport, bank, tax)
+     * stay installed without occupying the list.
+     */
+    fun filteredApps(hidden: Set<String>): List<AppInfo> {
+        val q = _uiState.value.query.trim()
+        return if (q.isEmpty()) {
+            _uiState.value.apps.filterNot { it.packageName in hidden }
+        } else {
+            _uiState.value.apps.filter { it.label.contains(q, ignoreCase = true) }
         }
+    }
 
     private fun loadInstalledApps(): List<AppInfo> {
         val pm: PackageManager = context.packageManager

@@ -74,8 +74,9 @@ class LauncherActivity : ComponentActivity() {
                 }
 
                 if (showDrawer) {
+                    val hiddenPackages by viewModel.hiddenPackages.collectAsState()
                     LauncherScreen(
-                        apps = viewModel.filteredApps,
+                        apps = viewModel.filteredApps(hiddenPackages),
                         query = state.query,
                         onQueryChange = { viewModel.onQueryChange(it) },
                         onAppTap = { pkg -> launchApp(pkg) },

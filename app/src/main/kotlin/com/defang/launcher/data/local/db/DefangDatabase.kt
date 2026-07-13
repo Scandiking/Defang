@@ -9,7 +9,7 @@ import com.defang.launcher.data.local.db.entity.SessionEntity
 
 @Database(
     entities = [AppConfigEntity::class, SessionEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = true,
 )
 abstract class DefangDatabase : RoomDatabase() {

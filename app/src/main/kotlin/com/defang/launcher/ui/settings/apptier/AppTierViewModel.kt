@@ -23,6 +23,7 @@ data class AppTierItem(
     val packageName: String,
     val label: String,
     val tier: AppTier,
+    val hidden: Boolean,
 )
 
 @HiltViewModel
@@ -45,6 +46,7 @@ class AppTierViewModel @Inject constructor(
                     packageName = entity.packageName,
                     label = entity.appLabel,
                     tier = AppTier.fromDbValue(entity.tier),
+                    hidden = entity.hidden,
                 )
             }
         }
@@ -63,6 +65,12 @@ class AppTierViewModel @Inject constructor(
     fun setTier(packageName: String, tier: AppTier) {
         viewModelScope.launch {
             repo.setTier(packageName, tier.dbValue)
+        }
+    }
+
+    fun setHidden(packageName: String, hidden: Boolean) {
+        viewModelScope.launch {
+            repo.setHidden(packageName, hidden)
         }
     }
 }

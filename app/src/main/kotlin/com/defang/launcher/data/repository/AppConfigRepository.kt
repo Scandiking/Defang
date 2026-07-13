@@ -22,6 +22,9 @@ class AppConfigRepository @Inject constructor(
 
     suspend fun setTier(packageName: String, tier: Int) = dao.setTier(packageName, tier)
 
+    suspend fun setHidden(packageName: String, hidden: Boolean) =
+        dao.setHidden(packageName, hidden)
+
     suspend fun setCooldown(packageName: String, endsAtEpoch: Long) =
         dao.setCooldown(packageName, endsAtEpoch)
 

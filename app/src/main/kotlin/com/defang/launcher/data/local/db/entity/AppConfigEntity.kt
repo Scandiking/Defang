@@ -24,4 +24,6 @@ data class AppConfigEntity(
     val gateDelaySeconds: Int = 8,
     /** Epoch millis when the cool-down ends, 0 if not in cool-down */
     val cooldownEndsAt: Long = 0L,
+    /** Hidden from the app drawer unless the user searches for it */
+    val hidden: Boolean = false,
 )

@@ -2,6 +2,7 @@ package com.defang.launcher.ui.settings.apptier
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -10,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,6 +45,13 @@ fun AppTierScreen(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
         )
 
+        Text(
+            text = stringResource(R.string.tier_hidden_desc),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(horizontal = 16.dp),
+        )
+
         OutlinedTextField(
             value = query,
             onValueChange = viewModel::onQueryChange,
@@ -69,6 +78,7 @@ fun AppTierScreen(
                 AppTierRow(
                     item = item,
                     onTierChange = { tier -> viewModel.setTier(item.packageName, tier) },
+                    onHiddenChange = { hidden -> viewModel.setHidden(item.packageName, hidden) },
                 )
                 HorizontalDivider(color = MaterialTheme.colorScheme.surfaceVariant)
             }
@@ -80,47 +90,62 @@ fun AppTierScreen(
 private fun AppTierRow(
     item: AppTierItem,
     onTierChange: (AppTier) -> Unit,
+    onHiddenChange: (Boolean) -> Unit,
 ) {
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
+            .padding(horizontal = 16.dp, vertical = 8.dp),
     ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = item.label,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground,
+        Text(
+            text = item.label,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground,
+        )
+        Text(
+            text = item.packageName,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            // Utility radio
+            RadioButton(
+                selected = item.tier == AppTier.UTILITY,
+                onClick = { onTierChange(AppTier.UTILITY) },
             )
             Text(
-                text = item.packageName,
-                style = MaterialTheme.typography.labelSmall,
+                text = stringResource(R.string.tier_utility),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            // Watched radio
+            RadioButton(
+                selected = item.tier == AppTier.WATCHED,
+                onClick = { onTierChange(AppTier.WATCHED) },
+            )
+            Text(
+                text = stringResource(R.string.tier_watched),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            // Hidden from the drawer — still reachable via drawer search
+            Checkbox(
+                checked = item.hidden,
+                onCheckedChange = onHiddenChange,
+            )
+            Text(
+                text = stringResource(R.string.tier_hidden),
+                style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-
-        // Utility radio
-        RadioButton(
-            selected = item.tier == AppTier.UTILITY,
-            onClick = { onTierChange(AppTier.UTILITY) },
-        )
-        Text(
-            text = stringResource(R.string.tier_utility),
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(end = 16.dp),
-        )
-
-        // Watched radio
-        RadioButton(
-            selected = item.tier == AppTier.WATCHED,
-            onClick = { onTierChange(AppTier.WATCHED) },
-        )
-        Text(
-            text = stringResource(R.string.tier_watched),
-            style = MaterialTheme.typography.labelLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
     }
 }
