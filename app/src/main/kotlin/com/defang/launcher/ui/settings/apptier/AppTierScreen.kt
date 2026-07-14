@@ -85,7 +85,6 @@ fun AppTierScreen(
         }
     }
 }
-
 @Composable
 private fun AppTierRow(
     item: AppTierItem,

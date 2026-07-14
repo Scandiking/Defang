@@ -59,7 +59,7 @@ class IntentGateOverlay(
         // Tidbit — first thing the user sees
         val tvTidbit = TextView(context).apply {
             text = tidbitSelector.next(contentTrack)
-            textSize = 20f
+            textSize = 15f
             setTextColor(Color.rgb(210, 210, 210))
             gravity = Gravity.CENTER
             setPadding(0, 0, 0, if (offlinePrompt != null) 48 else 80)
@@ -67,20 +67,7 @@ class IntentGateOverlay(
         }
         root.addView(tvTidbit)
 
-        // Offline prompt — the real-world alternative, before the unlock
-        if (offlinePrompt != null) {
-            val tvPrompt = TextView(context).apply {
-                text = context.getString(
-                    com.defang.launcher.R.string.gate_offline_suggestion, offlinePrompt
-                )
-                textSize = 15f
-                setTextColor(Color.rgb(160, 160, 160))
-                gravity = Gravity.CENTER
-                setPadding(0, 0, 0, 64)
-                setLineSpacing(0f, 1.3f)
-            }
-            root.addView(tvPrompt)
-        }
+
 
         // Slide hint — small and dim
         val tvHint = TextView(context).apply {
@@ -103,6 +90,21 @@ class IntentGateOverlay(
             ).also { it.bottomMargin = (24 * density).toInt() }
         }
         root.addView(slider)
+
+        // Offline prompt — the real-world alternative, before the unlock
+        if (offlinePrompt != null) {
+            val tvPrompt = TextView(context).apply {
+                text = context.getString(
+                    com.defang.launcher.R.string.gate_offline_suggestion, offlinePrompt
+                )
+                textSize = 20f
+                setTextColor(Color.rgb(160, 160, 160))
+                gravity = Gravity.CENTER
+                setPadding(0, 0, 0, 64)
+                setLineSpacing(0f, 1.3f)
+            }
+            root.addView(tvPrompt)
+        }
 
         val btnBack = Button(context).apply {
             text = context.getString(com.defang.launcher.R.string.gate_go_back)
