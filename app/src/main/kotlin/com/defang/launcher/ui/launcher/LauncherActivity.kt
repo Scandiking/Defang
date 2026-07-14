@@ -21,6 +21,7 @@ import com.defang.launcher.ui.onboarding.OnboardingActivity
 import com.defang.launcher.ui.settings.SettingsActivity
 import com.defang.launcher.ui.theme.DefangTheme
 import com.defang.launcher.util.AccessibilityServiceHelper
+import com.defang.launcher.util.UsageStatsHelper
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -133,6 +134,10 @@ class LauncherActivity : ComponentActivity() {
         // Self-enables silently if WRITE_SECURE_SETTINGS was granted via adb;
         // otherwise opens accessibility settings with our row highlighted.
         AccessibilityServiceHelper.ensureEnabled(this)
+        // Powers the usage-stats foreground poll fallback (apps that evade the
+        // accessibility event entirely). No silent-enable path exists for this
+        // permission — sends to settings once, then leaves it alone.
+        UsageStatsHelper.ensureEnabled(this)
         viewModel.refreshHomeTidbit()
         viewModel.refreshHomeUsage()
     }

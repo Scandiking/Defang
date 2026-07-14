@@ -100,7 +100,7 @@ fun HomeScreen(
             Text(
                 text = dateStr,
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(top = 4.dp),
             )
         }
@@ -124,7 +124,7 @@ fun HomeScreen(
                     fontStyle = FontStyle.Italic,
                     lineHeight = 22.sp,
                 ),
-                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.35f),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(horizontal = 40.dp),
             )
@@ -144,7 +144,7 @@ private fun HomeUsagePanel(
     usage: List<HomeUsageRow>,
     modifier: Modifier = Modifier,
 ) {
-    val dim = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.45f)
+    val dim = MaterialTheme.colorScheme.onSurfaceVariant
     Column(modifier = modifier.fillMaxWidth()) {
         usage.forEach { row ->
             Row(

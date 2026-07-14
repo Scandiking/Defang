@@ -1,6 +1,7 @@
 package com.defang.launcher.util
 
 import android.Manifest
+import android.app.KeyguardManager
 import android.content.Context
 import android.content.pm.PackageManager
 import android.provider.Settings
@@ -37,6 +38,18 @@ class GrayscaleController @Inject constructor(
     private fun hasPermission(): Boolean =
         context.checkSelfPermission(Manifest.permission.WRITE_SECURE_SETTINGS) ==
             PackageManager.PERMISSION_GRANTED
+
+    /**
+     * Ground truth for "is the lock screen currently showing" — a colorful lock
+     * screen is a cue in the exact habit loop this app exists to interrupt, so
+     * it must render grayscale unconditionally, independent of session/gate
+     * state. Checked fresh on every call rather than cached.
+     */
+    fun isDeviceLocked(): Boolean {
+        val keyguardManager =
+            context.getSystemService(Context.KEYGUARD_SERVICE) as? KeyguardManager
+        return keyguardManager?.isKeyguardLocked == true
+    }
 
     // enable() and disable() are check-then-act over suspending DataStore reads,
     // and the accessibility service calls enable() on every window event from a
@@ -84,6 +97,11 @@ class GrayscaleController @Inject constructor(
     suspend fun disable() = lock.withLock {
         if (!hasPermission()) return@withLock
         if (!prefs.grayscaleApplied.first()) return@withLock
+        // Never restore color while the lock screen is showing — whichever
+        // call site asked, this always wins. The one legitimate "restore
+        // color" moment (ACTION_USER_PRESENT) fires exactly when the keyguard
+        // has just been dismissed, so it isn't blocked by this check.
+        if (isDeviceLocked()) return@withLock
 
         val resolver = context.contentResolver
         val prevEnabled = prefs.savedDaltonizerEnabled.first()

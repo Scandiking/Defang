@@ -1,6 +1,8 @@
 package com.defang.launcher.service.accessibility
 
 import android.accessibilityservice.AccessibilityService
+import android.app.usage.UsageEvents
+import android.app.usage.UsageStatsManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -26,6 +28,7 @@ import com.defang.launcher.util.BrowserUrlExtractor
 import com.defang.launcher.util.GrayscaleController
 import com.defang.launcher.util.OfflinePromptSelector
 import com.defang.launcher.util.TidbitSelector
+import com.defang.launcher.util.UsageStatsHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -80,16 +83,31 @@ class DefangAccessibilityService : AccessibilityService() {
     // Packages currently showing the intent gate (prevents re-trigger on internal windows)
     private val pendingGate = mutableSetOf<String>()
 
-    // Package → when the user last passed the gate. Within REGATE_GRACE_MS a
-    // re-open starts the session directly instead of showing the gate again
-    // (in-app tab switches also fire TYPE_WINDOW_STATE_CHANGED).
-    private val lastGatePassedMs = mutableMapOf<String, Long>()
-
     // Package → suppress-gate deadline set when the user taps "Go back" on the gate.
     // Needed for browsers: the adult URL is still sitting in the URL bar after
     // dismissal, so without this the very next content-changed event would
     // re-fire the gate before the user can even clear the address bar.
     private val gateSuppressedUntilMs = mutableMapOf<String, Long>()
+
+    // Fallback for watched apps that never deliver a TYPE_WINDOW_STATE_CHANGED
+    // event at all (observed with Snapchat — window is structurally normal,
+    // no FLAG_SECURE, but the event simply never arrives; likely an
+    // anti-accessibility-service measure on the app's part). Polls
+    // UsageStatsManager for the current foreground package as a backstop.
+    // Routed through the same handleForegroundChange as real accessibility
+    // events — that function already de-dupes via pendingGate/currentWatchedPackage,
+    // so firing on both paths for apps that DO deliver events is harmless.
+    //
+    // Also covers a second, unrelated gap: swiping a watched app away in the
+    // task switcher removes its task without any new, different app ever
+    // coming to the foreground in a way accessibility events (or the poll's
+    // own MOVE_TO_FOREGROUND tracking) would catch — the session would
+    // otherwise survive indefinitely. Task removal still stops the app's
+    // activity, which reliably emits MOVE_TO_BACKGROUND for that specific
+    // package regardless of what (if anything) becomes foreground next, so
+    // that's checked for directly rather than inferred from a foreground change.
+    private var foregroundPollJob: Job? = null
+    private var lastUsageEventQueryMs: Long = 0L
 
     // Lock screen desaturation: gray goes on at screen-off so the lock screen
     // (and everything glanced at before unlocking) renders colorless; color
@@ -110,8 +128,15 @@ class DefangAccessibilityService : AccessibilityService() {
     override fun onServiceConnected() {
         super.onServiceConnected()
         isRunning = true
-        // If we crashed mid-session with grayscale on, restore color now
-        serviceScope.launch { grayscale.recoverIfStale() }
+        serviceScope.launch {
+            // If we crashed mid-session with grayscale on, restore color now —
+            // unless the device happens to be locked right now, in which case
+            // recoverIfStale()'s disable() call already no-ops and this then
+            // applies gray outright, so a service restart while locked can
+            // never leave the lock screen in color.
+            grayscale.recoverIfStale()
+            if (grayscale.isDeviceLocked()) grayscale.enable()
+        }
 
         val filter = IntentFilter().apply {
             addAction(Intent.ACTION_SCREEN_OFF)
@@ -123,11 +148,66 @@ class DefangAccessibilityService : AccessibilityService() {
             @Suppress("UnspecifiedRegisterReceiverFlag")
             registerReceiver(screenReceiver, filter)
         }
+
+        lastUsageEventQueryMs = System.currentTimeMillis()
+        foregroundPollJob = serviceScope.launch { pollForegroundAppLoop() }
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
         isRunning = false
+        foregroundPollJob?.cancel()
+        foregroundPollJob = null
         return super.onUnbind(intent)
+    }
+
+    // ── Usage-stats foreground poll (fallback) ──────────────────────────────────
+
+    private suspend fun pollForegroundAppLoop() {
+        while (true) {
+            delay(FOREGROUND_POLL_INTERVAL_MS)
+            // Self-heals a missed SCREEN_OFF broadcast or an errant disable()
+            // call: the lock screen must never sit in color for more than one
+            // poll tick, independent of the usage-stats permission below.
+            if (grayscale.isDeviceLocked()) grayscale.enable()
+            if (!UsageStatsHelper.isEnabled(this)) continue
+            processUsageEventsSinceLastPoll()
+        }
+    }
+
+    /**
+     * Walks every usage event since the last poll tick, in order — not just the
+     * final state — so a close-then-reopen of the same watched app within a
+     * single poll window (e.g. swipe away in recents, immediately relaunch)
+     * is seen as two distinct transitions rather than collapsed into "no change."
+     */
+    private suspend fun processUsageEventsSinceLastPoll() {
+        val usageStatsManager =
+            getSystemService(Context.USAGE_STATS_SERVICE) as? UsageStatsManager ?: return
+        val now = System.currentTimeMillis()
+        val events = usageStatsManager.queryEvents(lastUsageEventQueryMs, now)
+        lastUsageEventQueryMs = now
+        val event = UsageEvents.Event()
+        while (events.hasNextEvent()) {
+            events.getNextEvent(event)
+            val pkg = event.packageName ?: continue
+            when (event.eventType) {
+                UsageEvents.Event.MOVE_TO_BACKGROUND -> {
+                    // The watched app's task ending — including removal from the
+                    // task switcher, which never fires a normal foreground-change
+                    // event for anything else — reliably shows up here regardless
+                    // of what (if anything) becomes foreground next.
+                    if (pkg == currentWatchedPackage) {
+                        Log.d(TAG, "usageStatsPoll backgrounded pkg=$pkg")
+                        endCurrentSession()
+                    }
+                }
+                UsageEvents.Event.MOVE_TO_FOREGROUND -> {
+                    if (pkg == packageName) continue // our own UI, nothing to gate
+                    Log.d(TAG, "usageStatsPoll pkg=$pkg")
+                    handleForegroundChange(pkg, null)
+                }
+            }
+        }
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
@@ -239,14 +319,6 @@ class DefangAccessibilityService : AccessibilityService() {
             config.copy(sessionLimitMinutes = ADULT_SESSION_LIMIT_MINUTES)
         } else config
 
-        // Gate passed recently — restart the session silently instead of re-gating
-        if (withinRegateGrace(pkg)) {
-            Log.d(TAG, "regate grace for $pkg — silent session")
-            startSession(pkg, null, effectiveConfig.sessionLimitMinutes,
-                effectiveConfig.cooldownMinutes, contentTrack)
-            return
-        }
-
         Log.d(TAG, "showing intent gate for $pkg")
         // Gray before the gate is even visible — otherwise the app flashes
         // in full color for the moment between app start and unlock
@@ -278,10 +350,6 @@ class DefangAccessibilityService : AccessibilityService() {
 
         val config = defaultBrowserConfig(pkg)
             .copy(sessionLimitMinutes = ADULT_SESSION_LIMIT_MINUTES)
-        if (withinRegateGrace(pkg)) {
-            startSession(pkg, null, config.sessionLimitMinutes, config.cooldownMinutes, ContentTrack.ADULT)
-            return
-        }
 
         grayscale.enable() // gray before the gate is visible, as in the app path
         pendingGate.add(pkg)
@@ -299,7 +367,6 @@ class DefangAccessibilityService : AccessibilityService() {
                 offlinePrompt = offlinePromptSelector.next(),
                 onIntentDeclared = { intent ->
                     pendingGate.remove(pkg)
-                    lastGatePassedMs[pkg] = System.currentTimeMillis()
                     currentGateOverlay?.cancel()
                     overlayManager.dismissFullscreen()
                     serviceScope.launch {
@@ -526,12 +593,8 @@ class DefangAccessibilityService : AccessibilityService() {
         overlayManager.dismissAll()
     }
 
-    private fun withinRegateGrace(pkg: String): Boolean =
-        System.currentTimeMillis() - (lastGatePassedMs[pkg] ?: 0L) < REGATE_GRACE_MS
-
     private suspend fun startCooldown(pkg: String, cooldownMinutes: Int) {
         val endsAt = System.currentTimeMillis() + cooldownMinutes * 60_000L
-        lastGatePassedMs.remove(pkg) // cool-down overrides the re-gate grace window
         appConfigRepo.setCooldown(pkg, endsAt)
     }
 
@@ -575,12 +638,17 @@ class DefangAccessibilityService : AccessibilityService() {
     override fun onDestroy() {
         super.onDestroy()
         isRunning = false
+        foregroundPollJob?.cancel()
+        foregroundPollJob = null
         runCatching { unregisterReceiver(screenReceiver) }
         runBlocking { endCurrentSession() }
     }
 
     companion object {
         private const val TAG = "DefangSvc"
+
+        /** Cadence for the usage-stats foreground poll fallback. */
+        const val FOREGROUND_POLL_INTERVAL_MS = 2_000L
 
         /**
          * True while the system holds a live binding to this service. The
@@ -591,9 +659,6 @@ class DefangAccessibilityService : AccessibilityService() {
         @Volatile
         var isRunning: Boolean = false
             private set
-
-        /** After passing the gate, re-opens within this window skip the gate. */
-        const val REGATE_GRACE_MS = 5 * 60_000L
 
         /** Hard session limit for adult content, overriding configured defaults. */
         const val ADULT_SESSION_LIMIT_MINUTES = 1

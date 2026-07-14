@@ -107,18 +107,49 @@ object AccessibilityServiceHelper {
         context.startActivity(intent)
     }
 
+    /** Last time we auto-navigated to the settings screen after a failed silent rebind. */
+    private var lastAutoPromptMs = 0L
+    private const val AUTO_PROMPT_COOLDOWN_MS = 60_000L
+
     /**
      * One call for "make sure the service is on": silently self-enables when
      * permitted, otherwise sends the user to the highlighted settings row.
      * Returns true if the service is (now) enabled without user action.
+     *
+     * [tryEnableSelf] only reports whether the settings write succeeded, not
+     * whether the accessibility manager actually rebound the service — on some
+     * OEM builds the remove-then-re-add trick is silently ignored and the
+     * service stays in "Crashed services" forever with no live binding. So a
+     * successful write still needs to be verified against [isRunning] after
+     * the rebind has had time to land; only then do we know the silent path
+     * actually worked.
      */
     fun ensureEnabled(context: Context): Boolean {
         // The live binding is the ground truth — the setting string can claim
         // "enabled" while the binding is dead after a reinstall
         if (DefangAccessibilityService.isRunning) return true
-        if (tryEnableSelf(context)) return true
+        if (tryEnableSelf(context)) {
+            verifyRebindLanded(context.applicationContext)
+            return true
+        }
         if (isEnabled(context)) return true // listed, no way to force a rebind ourselves
         openAccessibilitySettings(context)
         return false
+    }
+
+    /**
+     * Checks back after the internal rebind delay to confirm the service
+     * actually reconnected. If it didn't, the silent path has failed on this
+     * device — fall back to the settings screen so the user isn't left with
+     * a dead gate and no signal that anything is wrong.
+     */
+    private fun verifyRebindLanded(appContext: Context) {
+        Handler(Looper.getMainLooper()).postDelayed({
+            if (DefangAccessibilityService.isRunning) return@postDelayed
+            val now = System.currentTimeMillis()
+            if (now - lastAutoPromptMs < AUTO_PROMPT_COOLDOWN_MS) return@postDelayed
+            lastAutoPromptMs = now
+            openAccessibilitySettings(appContext)
+        }, 1_500)
     }
 }
