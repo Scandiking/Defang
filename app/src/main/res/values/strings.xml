@@ -121,6 +121,7 @@
     <string name="settings_gate_delay">Gate delay</string>
     <string name="unit_seconds">%1$d sec</string>
     <string name="unit_minutes">%1$d min</string>
+    <string name="settings_permissions_section">Permissions</string>
     <string name="settings_grayscale">Grayscale</string>
     <string name="settings_grayscale_desc">Watched apps render in black and white during a session</string>
     <string name="settings_grayscale_setup">Setup required — tap for instructions</string>

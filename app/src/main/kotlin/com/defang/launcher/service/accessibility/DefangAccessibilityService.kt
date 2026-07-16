@@ -459,7 +459,6 @@ class DefangAccessibilityService : AccessibilityService() {
             },
         )
         overlayManager.showFullscreen(currentEndCard!!.view)
-        goHome()
     }
 
     private suspend fun handleExtensionRequest(
@@ -527,7 +526,6 @@ class DefangAccessibilityService : AccessibilityService() {
             },
         )
         overlayManager.showFullscreen(currentEndCard!!.view)
-        goHome()
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

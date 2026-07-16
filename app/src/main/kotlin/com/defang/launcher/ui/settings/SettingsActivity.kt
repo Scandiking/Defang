@@ -352,6 +352,46 @@ private fun SettingsMenuScreen(
             )
             HorizontalDivider()
             ListItem(
+                headlineContent = { Text(stringResource(R.string.usage_report_title)) },
+                supportingContent = { Text(stringResource(R.string.usage_report_desc)) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onUsage() },
+            )
+            HorizontalDivider()
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_awareness_library)) },
+                supportingContent = {
+                    Text(stringResource(R.string.settings_awareness_library_desc))
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onLibrary() },
+            )
+            HorizontalDivider()
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_onboarding_replay)) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onReplayOnboarding() },
+            )
+            HorizontalDivider()
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_lockdown)) },
+                supportingContent = { Text(stringResource(R.string.settings_lockdown_desc)) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { whyDialog = lockdownInfo },
+            )
+            HorizontalDivider()
+
+            // PERMISSIONS
+            Text(
+                text = stringResource(R.string.settings_permissions_section),
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            )
+            ListItem(
                 headlineContent = { Text(stringResource(R.string.settings_grayscale)) },
                 supportingContent = {
                     Text(
@@ -377,7 +417,6 @@ private fun SettingsMenuScreen(
                         else Modifier
                     ),
             )
-            HorizontalDivider()
             ListItem(
                 headlineContent = { Text(stringResource(R.string.settings_sanitize)) },
                 supportingContent = {
@@ -403,7 +442,6 @@ private fun SettingsMenuScreen(
                     onChange = onBatchWindow2Change,
                 )
             }
-            HorizontalDivider()
             ListItem(
                 headlineContent = { Text(stringResource(R.string.settings_notification_access)) },
                 supportingContent = {
@@ -413,40 +451,6 @@ private fun SettingsMenuScreen(
                     .fillMaxWidth()
                     .clickable { onNotificationAccess() },
             )
-            HorizontalDivider()
-            ListItem(
-                headlineContent = { Text(stringResource(R.string.usage_report_title)) },
-                supportingContent = { Text(stringResource(R.string.usage_report_desc)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onUsage() },
-            )
-            HorizontalDivider()
-            ListItem(
-                headlineContent = { Text(stringResource(R.string.settings_awareness_library)) },
-                supportingContent = {
-                    Text(stringResource(R.string.settings_awareness_library_desc))
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onLibrary() },
-            )
-            HorizontalDivider()
-            ListItem(
-                headlineContent = { Text(stringResource(R.string.settings_lockdown)) },
-                supportingContent = { Text(stringResource(R.string.settings_lockdown_desc)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { whyDialog = lockdownInfo },
-            )
-            HorizontalDivider()
-            ListItem(
-                headlineContent = { Text(stringResource(R.string.settings_onboarding_replay)) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onReplayOnboarding() },
-            )
-            HorizontalDivider()
             ListItem(
                 headlineContent = { Text(stringResource(R.string.perm_accessibility_title)) },
                 supportingContent = { Text(stringResource(R.string.perm_accessibility_body)) },
