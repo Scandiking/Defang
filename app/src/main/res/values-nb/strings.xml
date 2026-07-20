@@ -38,6 +38,7 @@
     <string name="gate_question">Hva skal du åpne denne for?</string>
     <string name="gate_offline_suggestion">Gjør heller dette: %1$s</string>
     <string name="gate_slide_hint">Følg mønsteret for å åpne</string>
+    <string name="gate_wait_countdown">Vent %1$d s</string>
     <string name="gate_go_back">Gå tilbake</string>
     <string name="gate_intent_post">Poste noe</string>
     <string name="gate_intent_dm">Sjekke en melding</string>

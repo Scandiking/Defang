@@ -365,6 +365,7 @@ class DefangAccessibilityService : AccessibilityService() {
                 contentTrack = contentTrack,
                 tidbitSelector = tidbitSelector,
                 offlinePrompt = offlinePromptSelector.next(),
+                delaySeconds = config.gateDelaySeconds,
                 onIntentDeclared = { intent ->
                     pendingGate.remove(pkg)
                     currentGateOverlay?.cancel()

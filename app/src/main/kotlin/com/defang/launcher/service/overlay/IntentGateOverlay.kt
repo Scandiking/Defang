@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.os.CountDownTimer
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -30,10 +31,15 @@ import kotlin.random.Random
  *      square, triangle, parabola — random orientation); the thumb must be
  *      traced along the whole path in one continuous motion, and lifting the
  *      finger snaps it back to the start.
- *   5. "Go back" button.
+ *   5. Countdown — the configured gate delay (AppConfig.gateDelaySeconds).
+ *   6. "Go back" button.
  *
  * The slide is a deliberateness gate, not a skill game (PRD §Phase 2): no
  * progress fill, no animation, no reward feedback — just a thumb on a track.
+ *
+ * Tracing the path and waiting out the delay are BOTH required: the app opens
+ * only once the trace is complete AND the countdown has finished, in either
+ * order. The puzzle is something to do while waiting, not a way to skip it.
  *
  * This is a View-based overlay (not Compose) because it runs inside the
  * AccessibilityService process — there is no Activity lifecycle to host Compose.
@@ -43,10 +49,17 @@ class IntentGateOverlay(
     private val contentTrack: ContentTrack,
     private val tidbitSelector: TidbitSelector,
     private val offlinePrompt: String?,
+    private val delaySeconds: Int,
     private val onIntentDeclared: (intent: String?) -> Unit,
     private val onGoBack: () -> Unit,
 ) {
     val view: View by lazy { buildView() }
+
+    private var countdownTimer: CountDownTimer? = null
+    private var timerDone = false
+    private var slideDone = false
+    private var unlocked = false
+    private lateinit var tvCountdown: TextView
 
     private fun buildView(): View {
         val root = LinearLayout(context).apply {
@@ -82,14 +95,26 @@ class IntentGateOverlay(
         val density = context.resources.displayMetrics.density
         val slider = PathSlideView(
             context = context,
-            onComplete = { onIntentDeclared(null) },
+            onComplete = {
+                slideDone = true
+                maybeUnlock()
+            },
         ).apply {
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 (260 * density).toInt(),
-            ).also { it.bottomMargin = (24 * density).toInt() }
+            ).also { it.bottomMargin = (8 * density).toInt() }
         }
         root.addView(slider)
+
+        // Countdown — dim, below the track; both trace and wait are required
+        tvCountdown = TextView(context).apply {
+            textSize = 13f
+            setTextColor(Color.rgb(96, 96, 96))
+            gravity = Gravity.CENTER
+            setPadding(0, 0, 0, (16 * density).toInt())
+        }
+        root.addView(tvCountdown)
 
         // Offline prompt — the real-world alternative, before the unlock
         if (offlinePrompt != null) {
@@ -119,11 +144,40 @@ class IntentGateOverlay(
         }
         root.addView(btnBack)
 
+        startCountdown(delaySeconds)
         return root
     }
 
+    private fun startCountdown(seconds: Int) {
+        if (seconds <= 0) {
+            timerDone = true
+            return
+        }
+        countdownTimer = object : CountDownTimer(seconds * 1000L, 1000L) {
+            override fun onTick(millisUntilFinished: Long) {
+                val remaining = (millisUntilFinished / 1000).toInt() + 1
+                tvCountdown.text = context.getString(
+                    com.defang.launcher.R.string.gate_wait_countdown, remaining
+                )
+            }
+
+            override fun onFinish() {
+                tvCountdown.text = ""
+                timerDone = true
+                maybeUnlock()
+            }
+        }.start()
+    }
+
+    private fun maybeUnlock() {
+        if (timerDone && slideDone && !unlocked) {
+            unlocked = true
+            onIntentDeclared(null)
+        }
+    }
+
     fun cancel() {
-        // Nothing time-based to stop — kept so callers can treat all overlays alike.
+        countdownTimer?.cancel()
     }
 }
 
