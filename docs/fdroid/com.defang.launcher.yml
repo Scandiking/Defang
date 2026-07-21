@@ -4,6 +4,11 @@
 # https://gitlab.com/fdroid/fdroiddata as metadata/com.defang.launcher.yml
 # (fork fdroiddata, add this file, open a merge request).
 # Kept here so the submitted copy has a reviewed source of truth.
+#
+# NOTE: with AutoUpdateMode: Version + UpdateCheckMode: Tags, F-Droid's bot
+# auto-detects new v* tags and appends Builds entries itself, so the live
+# GitLab copy advances without a manual MR. Re-sync this file to the live
+# copy after each auto-update to keep it truthful.
 
 Categories:
   - System
@@ -18,15 +23,33 @@ AutoName: Defang
 RepoType: git
 Repo: https://github.com/Scandiking/Defang.git
 
+Binaries: https://github.com/Scandiking/Defang/releases/download/v%v/defang-v%v.apk
+
 Builds:
-  - versionName: 0.1.1
-    versionCode: 2
-    commit: v0.1.1
+  - versionName: 0.1.4
+    versionCode: 5
+    commit: 4a36f9adf334c8e2b5800f72acda76558e9c5b73
     subdir: app
     gradle:
       - yes
 
+  - versionName: 0.1.5
+    versionCode: 6
+    commit: 9d308103615d18dd857ab964902248fa9f76b917
+    subdir: app
+    gradle:
+      - yes
+
+  - versionName: 0.1.6
+    versionCode: 7
+    commit: e2130d67bc0cb403e2ad065c35711bfdeac6c233
+    subdir: app
+    gradle:
+      - yes
+
+AllowedAPKSigningKeys: 7f3cffb2d584ffdb19d6667b335129c4466d8d0884aa966cacf016bb2b5123b0
+
 AutoUpdateMode: Version
 UpdateCheckMode: Tags ^v[0-9]+\.[0-9]+\.[0-9]+$
-CurrentVersion: 0.1.1
-CurrentVersionCode: 2
+CurrentVersion: 0.1.6
+CurrentVersionCode: 7
