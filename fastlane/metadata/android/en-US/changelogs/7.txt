@@ -1,0 +1,1 @@
+Restores the gate delay: unlocking now requires both the countdown and the trace puzzle again, never either alone. Fixes a stray navigation that could wipe the session end card. Weekly usage report drops the intent-drift figure (data over guilt). Session limit can now go as low as 1 minute.

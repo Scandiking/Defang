@@ -1,0 +1,1 @@
+Gjenoppretter portforsinkelsen: opplåsing krever nå både nedtellingen og sporingsoppgaven igjen, aldri bare én av dem. Fikser en feilaktig navigering som kunne slette øktens sluttkort. Ukesrapporten for bruk fjerner intensjonsavvik-tallet (data framfor skyld). Øktgrensen kan nå settes så lavt som 1 minutt.
