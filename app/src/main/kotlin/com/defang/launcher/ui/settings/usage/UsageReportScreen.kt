@@ -39,7 +39,7 @@ import java.util.Locale
 
 /**
  * Weekly usage report: rolling last 7 days vs the 7 before, per-day bars,
- * per-app totals, and the intent drift figure. Data over guilt (PRD goal 5).
+ * and per-app totals. Data over guilt (PRD goal 5).
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -151,25 +151,6 @@ fun UsageReportScreen(
                 SectionHeader(stringResource(R.string.usage_per_app))
                 Text(
                     text = stringResource(R.string.usage_no_sessions),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                )
-            }
-
-            // ── Intent honesty ──
-            SectionHeader(stringResource(R.string.usage_drift_title))
-            if (r.declaredSessions > 0) {
-                val pct = r.driftSessions * 100 / r.declaredSessions
-                Text(
-                    text = stringResource(
-                        R.string.usage_drift_body,
-                        r.driftSessions, r.declaredSessions, pct,
-                    ),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            } else {
-                Text(
-                    text = stringResource(R.string.usage_drift_none),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
                 )

@@ -18,8 +18,6 @@ import javax.inject.Inject
  * legible data on the user's own patterns — evidence, not guilt).
  *
  * "Week" is the rolling last 7 days, compared against the 7 days before that.
- * Intent drift follows the PRD heuristic: a session with a declared intent
- * (quick task by definition) that ran longer than 8 minutes is drift.
  */
 @HiltViewModel
 class UsageReportViewModel @Inject constructor(
@@ -44,8 +42,6 @@ class UsageReportViewModel @Inject constructor(
         val totalMinutesPrevWeek: Long,
         val perApp: List<AppUsage>,       // sorted by minutes desc
         val perDay: List<DayUsage>,       // oldest → today, always 7 entries
-        val declaredSessions: Int,
-        val driftSessions: Int,
     )
 
     private val _report = MutableStateFlow<Report?>(null)
@@ -101,16 +97,11 @@ class UsageReportViewModel @Inject constructor(
             )
         }
 
-        val declared = thisWeek.filter { it.intentDeclared != null }
-        val drift = declared.count { it.durationMs() > DRIFT_THRESHOLD_MS }
-
         return Report(
             totalMinutesThisWeek = thisWeek.sumOf { it.durationMs() } / 60_000,
             totalMinutesPrevWeek = prevWeek.sumOf { it.durationMs() } / 60_000,
             perApp = perApp,
             perDay = perDay,
-            declaredSessions = declared.size,
-            driftSessions = drift,
         )
     }
 
@@ -120,9 +111,6 @@ class UsageReportViewModel @Inject constructor(
     private fun SessionEntity.durationMs(): Long = endTime - startTime
 
     companion object {
-        /** PRD heuristic: declared intent = quick task; longer than this = drift. */
-        const val DRIFT_THRESHOLD_MS = 8 * 60_000L
-
         /** Open sessions older than this are treated as unclosed garbage. */
         const val STALE_OPEN_SESSION_MS = 24 * 60 * 60_000L
     }

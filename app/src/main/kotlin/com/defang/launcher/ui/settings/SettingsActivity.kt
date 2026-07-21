@@ -510,9 +510,9 @@ private fun TimingSettingsScreen(
                 label = stringResource(R.string.settings_session_limit),
                 value = sessionLimit,
                 valueLabel = stringResource(R.string.unit_minutes, sessionLimit),
-                valueRange = 5f..60f,
-                steps = 10,  // (60-5)/5 - 1 = 10 steps for step=5
-                onValueChange = { onSessionLimitChange(it.roundToInt()) },
+                valueRange = 1f..60f,
+                steps = 58,  // (60-1)/1 - 1 = 58 steps for step=1
+                onValueChange = { onSessionLimitChange(it.roundToInt().coerceIn(1, 60)) },
             )
 
             SettingSlider(

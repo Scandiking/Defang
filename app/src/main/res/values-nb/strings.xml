@@ -192,14 +192,11 @@
     <string name="usage_per_app">Per app</string>
     <string name="usage_app_line">%1$s · %2$d økter</string>
     <string name="usage_no_sessions">Ingen økter i overvåkede apper de siste 7 dagene.</string>
-    <string name="usage_drift_title">Intensjonsærlighet</string>
-    <string name="usage_drift_body">%1$d av %2$d økter med erklært intensjon varte over 8 minutter (%3$d%%).</string>
-    <string name="usage_drift_none">Ingen økter med erklært intensjon ennå.</string>
     <string name="usage_no_prev_week">Ingen data for de 7 dagene før.</string>
     <string name="usage_down_vs_prev">Ned %1$d%% fra de forrige 7 dagene.</string>
     <string name="usage_up_vs_prev">Opp %1$d%% fra de forrige 7 dagene.</string>
-    <string name="usage_hours_minutes">%1$dt %2$dm</string>
-    <string name="usage_minutes">%1$d min</string>
+    <string name="usage_hours_minutes">%1$d timer og %2$d minutter</string>
+    <string name="usage_minutes">%1$d minutter</string>
     <string name="usage_footnote">Målt fra Defangs egen øktlogg — kun økter gjennom porten. Alle data blir på denne enheten.</string>
 
     <!-- Google install lockdown warning -->

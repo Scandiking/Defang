@@ -71,6 +71,7 @@ fun HomeScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .pointerInput(Unit) {
                 detectVerticalDragGestures(
                     onDragStart  = { dragTotal = 0f },
