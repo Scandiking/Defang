@@ -109,6 +109,17 @@ class DefangAccessibilityService : AccessibilityService() {
     private var foregroundPollJob: Job? = null
     private var lastUsageEventQueryMs: Long = 0L
 
+    // Debounce for same-package session teardown. Instagram opens reels and
+    // DM-shared content in a SEPARATE task, so the usage poll sees a
+    // MOVE_TO_BACKGROUND for the app immediately followed by a
+    // MOVE_TO_FOREGROUND for the same app. Ending the session on the bare
+    // background event tears the session down and re-arms the gate on every
+    // such excursion (inbox → reel → back → gate, repeat). Defer the teardown;
+    // if the app returns to the foreground within the grace window the pending
+    // end is cancelled and the session survives. A genuine departure (task
+    // swiped away, switched to home) sees no re-foreground and ends for real.
+    private var pendingEndJob: Job? = null
+
     // Lock screen desaturation: gray goes on at screen-off so the lock screen
     // (and everything glanced at before unlocking) renders colorless; color
     // returns at unlock unless a session or gate is active.
@@ -197,8 +208,8 @@ class DefangAccessibilityService : AccessibilityService() {
                     // event for anything else — reliably shows up here regardless
                     // of what (if anything) becomes foreground next.
                     if (pkg == currentWatchedPackage) {
-                        Log.d(TAG, "usageStatsPoll backgrounded pkg=$pkg")
-                        endCurrentSession()
+                        Log.d(TAG, "usageStatsPoll backgrounded pkg=$pkg (debouncing end)")
+                        scheduleSessionEnd(pkg)
                     }
                 }
                 UsageEvents.Event.MOVE_TO_FOREGROUND -> {
@@ -302,6 +313,9 @@ class DefangAccessibilityService : AccessibilityService() {
         if (pkg in pendingGate) { Log.d(TAG, "gate already pending for $pkg"); return }
         if (pkg == currentWatchedPackage) {
             // Session active — in-app navigation or return from home screen.
+            // The app is back in front, so cancel any pending debounced teardown
+            // from a separate-task excursion (Instagram reels, DM content).
+            cancelPendingSessionEnd()
             // Re-apply grayscale in case the launcher lifted it.
             grayscale.enable()
             return
@@ -573,7 +587,34 @@ class DefangAccessibilityService : AccessibilityService() {
         cooldownEndsAt = 0L,
     )
 
+    /**
+     * Defers a session teardown by [SESSION_END_DEBOUNCE_MS]. If the same app
+     * comes back to the foreground within that window, [cancelPendingSessionEnd]
+     * (called from handleForegroundChange) drops this and the session lives on.
+     */
+    private fun scheduleSessionEnd(pkg: String) {
+        pendingEndJob?.cancel()
+        pendingEndJob = serviceScope.launch {
+            delay(SESSION_END_DEBOUNCE_MS)
+            pendingEndJob = null
+            // Still the watched app and it never returned to the foreground —
+            // the app really left. End for real.
+            if (pkg == currentWatchedPackage) {
+                Log.d(TAG, "debounced session end pkg=$pkg")
+                endCurrentSession()
+            }
+        }
+    }
+
+    private fun cancelPendingSessionEnd() {
+        pendingEndJob?.cancel()
+        pendingEndJob = null
+    }
+
     private suspend fun endCurrentSession() {
+        // Called from the debounce job (already nulled itself) and from every
+        // other teardown path; clear any stale pending end so it can't fire late.
+        cancelPendingSessionEnd()
         grayscale.disable()
         currentSessionId?.let { id ->
             recordSession.end(id, extensionUsedThisSession)
@@ -648,6 +689,14 @@ class DefangAccessibilityService : AccessibilityService() {
 
         /** Cadence for the usage-stats foreground poll fallback. */
         const val FOREGROUND_POLL_INTERVAL_MS = 2_000L
+
+        /**
+         * Grace period before a usage-poll MOVE_TO_BACKGROUND actually tears
+         * down a session. MUST exceed [FOREGROUND_POLL_INTERVAL_MS] so a
+         * same-app re-foreground landing in the next poll batch can cancel the
+         * teardown. Covers Instagram opening reels / DM content in a separate task.
+         */
+        const val SESSION_END_DEBOUNCE_MS = 3_000L
 
         /**
          * True while the system holds a live binding to this service. The
