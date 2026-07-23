@@ -82,6 +82,18 @@
     <!-- App tier config -->
     <string name="tier_config_title">App-oppsett</string>
     <string name="tier_config_subtitle">Disse appene overvåkes som standard. Juster ved behov.</string>
+
+    <!-- Overvåkede nettsteder (URL-gating i nettleser) -->
+    <string name="settings_sites_title">Overvåkede nettsteder</string>
+    <string name="settings_sites_desc">Sett port på bestemte nettsteder i nettleseren</string>
+    <string name="sites_desc">Nettsteder du legger til får en port når de åpnes i en nettleser. Voksennettsteder får ett minutts bånd; andre får vanlig økt og nedkjøling.</string>
+    <string name="sites_url_hint">eksempel.no eller eksempel.no/sti</string>
+    <string name="sites_adult">Voksen (1-min bånd)</string>
+    <string name="sites_enabled">På</string>
+    <string name="sites_add">Legg til</string>
+    <string name="sites_empty">Ingen nettsteder lagt til ennå.</string>
+    <string name="sites_delete">Fjern nettsted</string>
+    <string name="sites_invalid">Skriv inn et gyldig domene, f.eks. eksempel.no</string>
     <string name="tier_utility">Verktøy</string>
     <string name="tier_watched">Overvåket</string>
     <string name="tier_utility_desc">Åpnes umiddelbart, ingen friksjon</string>

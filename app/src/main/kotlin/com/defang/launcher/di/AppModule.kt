@@ -7,6 +7,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.defang.launcher.data.local.db.DefangDatabase
 import com.defang.launcher.data.local.db.dao.AppConfigDao
 import com.defang.launcher.data.local.db.dao.SessionDao
+import com.defang.launcher.data.local.db.dao.WatchedUrlDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,11 +26,28 @@ object AppModule {
         }
     }
 
+    // v3: user-configurable watched websites (URL gating)
+    private val MIGRATION_2_3 = object : Migration(2, 3) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS watched_url (
+                    pattern TEXT NOT NULL PRIMARY KEY,
+                    label TEXT NOT NULL,
+                    isAdult INTEGER NOT NULL DEFAULT 0,
+                    enabled INTEGER NOT NULL DEFAULT 1,
+                    cooldownEndsAt INTEGER NOT NULL DEFAULT 0
+                )
+                """.trimIndent()
+            )
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): DefangDatabase =
         Room.databaseBuilder(context, DefangDatabase::class.java, "defang.db")
-            .addMigrations(MIGRATION_1_2)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
             .fallbackToDestructiveMigration()
             .build()
 
@@ -38,4 +56,7 @@ object AppModule {
 
     @Provides
     fun provideSessionDao(db: DefangDatabase): SessionDao = db.sessionDao()
+
+    @Provides
+    fun provideWatchedUrlDao(db: DefangDatabase): WatchedUrlDao = db.watchedUrlDao()
 }

@@ -81,6 +81,18 @@
     <!-- App tier config -->
     <string name="tier_config_title">App setup</string>
     <string name="tier_config_subtitle">These apps are watched by default. Adjust if needed.</string>
+
+    <!-- Watched websites (browser URL gating) -->
+    <string name="settings_sites_title">Watched websites</string>
+    <string name="settings_sites_desc">Gate specific sites in your browser</string>
+    <string name="sites_desc">Sites you add are gated when opened in a browser. Adult sites get a 1-minute leash; others get the standard session and cool-down.</string>
+    <string name="sites_url_hint">example.com or example.com/path</string>
+    <string name="sites_adult">Adult (1-min leash)</string>
+    <string name="sites_enabled">On</string>
+    <string name="sites_add">Add</string>
+    <string name="sites_empty">No sites added yet.</string>
+    <string name="sites_delete">Remove site</string>
+    <string name="sites_invalid">Enter a valid domain, e.g. example.com</string>
     <string name="tier_utility">Utility</string>
     <string name="tier_watched">Watched</string>
     <string name="tier_utility_desc">Opens instantly, no friction</string>

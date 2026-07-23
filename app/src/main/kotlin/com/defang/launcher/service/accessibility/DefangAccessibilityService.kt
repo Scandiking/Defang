@@ -11,9 +11,11 @@ import android.os.Build
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import com.defang.launcher.data.repository.AppConfigRepository
+import com.defang.launcher.data.repository.WatchedUrlRepository
 import com.defang.launcher.domain.model.AppConfig
 import com.defang.launcher.domain.model.AppTier
 import com.defang.launcher.domain.model.ContentTrack
+import com.defang.launcher.domain.model.WatchedUrl
 import com.defang.launcher.domain.model.toDomain
 import com.defang.launcher.domain.usecase.GetDailyExtensionStatusUseCase
 import com.defang.launcher.domain.usecase.RecordSessionUseCase
@@ -66,12 +68,20 @@ class DefangAccessibilityService : AccessibilityService() {
     @Inject lateinit var tidbitSelector: TidbitSelector
     @Inject lateinit var offlinePromptSelector: OfflinePromptSelector
     @Inject lateinit var browserUrlExtractor: BrowserUrlExtractor
+    @Inject lateinit var watchedUrlRepo: WatchedUrlRepository
     @Inject lateinit var grayscale: GrayscaleController
 
     private val serviceScope = CoroutineScope(Dispatchers.Main + Job())
 
+    // Reactive in-memory cache of user-configured watched websites. Read on the
+    // event thread for every browser URL, so kept off the DB — collected once
+    // from Room and updated live when the user edits the list.
+    @Volatile private var watchedUrls: List<WatchedUrl> = emptyList()
+
     // Current session state
     private var currentWatchedPackage: String? = null
+    // For browser-domain sessions, the matched watch key (pattern); null for apps.
+    private var currentWatchedPattern: String? = null
     private var currentSessionId: Long? = null
     private var sessionStartMs: Long = 0L
     private var currentTimerOverlay: SessionTimerOverlay? = null
@@ -162,6 +172,12 @@ class DefangAccessibilityService : AccessibilityService() {
 
         lastUsageEventQueryMs = System.currentTimeMillis()
         foregroundPollJob = serviceScope.launch { pollForegroundAppLoop() }
+
+        // Keep the watched-website cache live so edits in Settings take effect
+        // without restarting the service.
+        serviceScope.launch {
+            watchedUrlRepo.observeAll().collect { watchedUrls = it }
+        }
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
@@ -321,13 +337,14 @@ class DefangAccessibilityService : AccessibilityService() {
             return
         }
 
+        val contentTrack = selectContentTrack.forPackage(pkg)
+
         if (config.isInCooldown) {
             Log.d(TAG, "cooldown active for $pkg until ${config.cooldownEndsAt}")
-            showCooldownScreen(pkg, config.cooldownEndsAt)
+            showCooldownScreen(pkg, pattern = null, config.appLabel, contentTrack, config.cooldownEndsAt)
             return
         }
 
-        val contentTrack = selectContentTrack.forPackage(pkg)
         // Adult content gets a hard short leash regardless of configured defaults
         val effectiveConfig = if (contentTrack == ContentTrack.ADULT) {
             config.copy(sessionLimitMinutes = ADULT_SESSION_LIMIT_MINUTES)
@@ -338,41 +355,84 @@ class DefangAccessibilityService : AccessibilityService() {
         // in full color for the moment between app start and unlock
         grayscale.enable()
         pendingGate.add(pkg)
-        showIntentGate(pkg, contentTrack, effectiveConfig)
+        showIntentGate(pkg, gateKey = pkg, pattern = null, contentTrack, effectiveConfig)
     }
 
     // ── Browser URL handling ──────────────────────────────────────────────────
 
     private suspend fun handleBrowserUrl(pkg: String, rawUrl: String) {
-        val hostname = browserUrlExtractor.extractHostname(rawUrl) ?: return
-        val track = selectContentTrack.forDomain(hostname)
+        val (host, path) = browserUrlExtractor.extractHostAndPath(rawUrl) ?: return
 
-        if (track != ContentTrack.ADULT) {
-            // Non-adult page — end any active browser adult session
+        // 1. User-configured watched sites (host-suffix + path-prefix). When more
+        //    than one matches, the most specific wins (longest path, then adult).
+        val match = watchedUrls
+            .filter { it.enabled && it.matches(host, path) }
+            .maxWithOrNull(compareBy({ it.pathPrefix.length }, { it.isAdult }))
+        // 2. Built-in hardcoded adult domains — unchanged fallback.
+        val adultBuiltin = match == null &&
+            selectContentTrack.forDomain(host) == ContentTrack.ADULT
+
+        if (match == null && !adultBuiltin) {
+            // Not a watched URL — end any active browser session on this browser
             if (currentWatchedPackage == pkg) endCurrentSession()
             return
         }
 
-        // Adult domain detected
-        if (pkg in pendingGate) return           // gate already showing
-        if (currentWatchedPackage == pkg) return // already in an active browser adult session
-        if (System.currentTimeMillis() < (gateSuppressedUntilMs[pkg] ?: 0L)) {
-            // User just tapped "Go back" — the adult URL is still in the URL bar.
-            // Give them time to navigate away without instantly re-firing the gate.
+        val isAdult = match?.isAdult ?: true          // built-in fallback is always adult
+        val watchKey = match?.pattern ?: "adult:$host"
+
+        if (watchKey in pendingGate) return           // gate already showing
+        if (currentWatchedPackage == pkg && currentWatchedPattern == watchKey) {
+            // Same watched target still in front — keep the session and cancel any
+            // debounced teardown from browser task churn.
+            cancelPendingSessionEnd()
+            return
+        }
+        if (System.currentTimeMillis() < (gateSuppressedUntilMs[watchKey] ?: 0L)) {
+            // User just tapped "Go back" — the URL is still in the bar. Give them
+            // time to navigate away without instantly re-firing the gate.
             return
         }
 
-        val config = defaultBrowserConfig(pkg)
-            .copy(sessionLimitMinutes = ADULT_SESSION_LIMIT_MINUTES)
+        // Switched to a different watched target inside the same browser — end old
+        if (currentWatchedPackage == pkg) endCurrentSession()
 
+        // Per-pattern cool-down (custom entries carry a real deadline)
+        if (match != null && System.currentTimeMillis() < match.cooldownEndsAt) {
+            Log.d(TAG, "cooldown active for $watchKey until ${match.cooldownEndsAt}")
+            val track = if (isAdult) ContentTrack.ADULT else ContentTrack.GENERAL
+            showCooldownScreen(pkg, watchKey, match.label, track, match.cooldownEndsAt)
+            return
+        }
+
+        val track = if (isAdult) ContentTrack.ADULT else ContentTrack.GENERAL
+        val sessionLimit = if (isAdult) ADULT_SESSION_LIMIT_MINUTES else 15
+        val config = defaultBrowserConfig(pkg).copy(
+            appLabel = match?.label ?: "Browser",
+            sessionLimitMinutes = sessionLimit,
+        )
+
+        Log.d(TAG, "showing intent gate for $watchKey (adult=$isAdult)")
         grayscale.enable() // gray before the gate is visible, as in the app path
-        pendingGate.add(pkg)
-        showIntentGate(pkg, ContentTrack.ADULT, config)
+        pendingGate.add(watchKey)
+        showIntentGate(pkg, gateKey = watchKey, pattern = watchKey, track, config)
     }
 
     // ── Intent gate ───────────────────────────────────────────────────────────
 
-    private fun showIntentGate(pkg: String, contentTrack: ContentTrack, config: AppConfig) {
+    /**
+     * [gateKey] identifies the gate for dedup/suppression — the package for apps,
+     * the watch pattern for browser domains. [pattern] is the browser watch
+     * pattern (null for apps) recorded on the session so cool-down is keyed
+     * per-domain rather than per-browser-package.
+     */
+    private fun showIntentGate(
+        pkg: String,
+        gateKey: String,
+        pattern: String?,
+        contentTrack: ContentTrack,
+        config: AppConfig,
+    ) {
         serviceScope.launch {
             currentGateOverlay = IntentGateOverlay(
                 context = this@DefangAccessibilityService,
@@ -381,24 +441,24 @@ class DefangAccessibilityService : AccessibilityService() {
                 offlinePrompt = offlinePromptSelector.next(),
                 delaySeconds = config.gateDelaySeconds,
                 onIntentDeclared = { intent ->
-                    pendingGate.remove(pkg)
+                    pendingGate.remove(gateKey)
                     currentGateOverlay?.cancel()
                     overlayManager.dismissFullscreen()
                     serviceScope.launch {
-                        startSession(pkg, intent, config.sessionLimitMinutes,
+                        startSession(pkg, pattern, intent, config.sessionLimitMinutes,
                             config.cooldownMinutes, contentTrack)
                     }
                 },
                 onGoBack = {
-                    pendingGate.remove(pkg)
-                    gateSuppressedUntilMs[pkg] = System.currentTimeMillis() + GO_BACK_SUPPRESS_MS
+                    pendingGate.remove(gateKey)
+                    gateSuppressedUntilMs[gateKey] = System.currentTimeMillis() + GO_BACK_SUPPRESS_MS
                     currentGateOverlay?.cancel()
                     overlayManager.dismissAll()
                     goHome()
                 },
             )
             overlayManager.showFullscreen(currentGateOverlay!!.view)
-            Log.d(TAG, "gate overlay shown for $pkg")
+            Log.d(TAG, "gate overlay shown for $gateKey")
         }
     }
 
@@ -406,6 +466,7 @@ class DefangAccessibilityService : AccessibilityService() {
 
     private suspend fun startSession(
         pkg: String,
+        pattern: String?,
         intentDeclared: String?,
         sessionLimitMinutes: Int,
         cooldownMinutes: Int,
@@ -414,6 +475,7 @@ class DefangAccessibilityService : AccessibilityService() {
         val sessionId = recordSession.start(pkg, intentDeclared)
         currentSessionId = sessionId
         currentWatchedPackage = pkg
+        currentWatchedPattern = pattern
         sessionStartMs = System.currentTimeMillis()
         extensionUsedThisSession = false
         grayscale.enable()
@@ -423,7 +485,7 @@ class DefangAccessibilityService : AccessibilityService() {
             sessionLimitMs = sessionLimitMinutes * 60_000L,
             onSessionExpired = {
                 serviceScope.launch {
-                    onSessionExpired(pkg, sessionId, cooldownMinutes, contentTrack)
+                    onSessionExpired(pkg, pattern, sessionId, cooldownMinutes, contentTrack)
                 }
             },
         )
@@ -432,6 +494,7 @@ class DefangAccessibilityService : AccessibilityService() {
 
     private suspend fun onSessionExpired(
         pkg: String,
+        pattern: String?,
         sessionId: Long,
         cooldownMinutes: Int,
         contentTrack: ContentTrack,
@@ -458,13 +521,13 @@ class DefangAccessibilityService : AccessibilityService() {
             extensionAvailable = extensionAvailable,
             onRequestExtension = { reason ->
                 serviceScope.launch {
-                    handleExtensionRequest(pkg, sessionId, cooldownMinutes, contentTrack, reason)
+                    handleExtensionRequest(pkg, pattern, sessionId, cooldownMinutes, contentTrack, reason)
                 }
             },
             onGoHome = {
                 serviceScope.launch {
                     endCurrentSession()
-                    startCooldown(pkg, cooldownMinutes)
+                    startCooldown(pkg, pattern, cooldownMinutes)
                     overlayManager.dismissAll()
                     goHome()
                 }
@@ -478,6 +541,7 @@ class DefangAccessibilityService : AccessibilityService() {
 
     private suspend fun handleExtensionRequest(
         pkg: String,
+        pattern: String?,
         sessionId: Long,
         cooldownMinutes: Int,
         contentTrack: ContentTrack,
@@ -499,7 +563,7 @@ class DefangAccessibilityService : AccessibilityService() {
             sessionLimitMs = 10 * 60_000L,
             onSessionExpired = {
                 serviceScope.launch {
-                    onSessionExpiredNoExtension(pkg, newSessionId, cooldownMinutes, contentTrack)
+                    onSessionExpiredNoExtension(pkg, pattern, newSessionId, cooldownMinutes, contentTrack)
                 }
             },
         )
@@ -508,6 +572,7 @@ class DefangAccessibilityService : AccessibilityService() {
 
     private suspend fun onSessionExpiredNoExtension(
         pkg: String,
+        pattern: String?,
         sessionId: Long,
         cooldownMinutes: Int,
         contentTrack: ContentTrack,
@@ -531,7 +596,7 @@ class DefangAccessibilityService : AccessibilityService() {
             onGoHome = {
                 serviceScope.launch {
                     endCurrentSession()
-                    startCooldown(pkg, cooldownMinutes)
+                    startCooldown(pkg, pattern, cooldownMinutes)
                     overlayManager.dismissAll()
                     goHome()
                 }
@@ -622,6 +687,7 @@ class DefangAccessibilityService : AccessibilityService() {
         }
         currentSessionId = null
         currentWatchedPackage = null
+        currentWatchedPattern = null
         currentTimerOverlay?.cancel()
         currentTimerOverlay = null
         currentGateOverlay?.cancel()
@@ -633,20 +699,35 @@ class DefangAccessibilityService : AccessibilityService() {
         overlayManager.dismissAll()
     }
 
-    private suspend fun startCooldown(pkg: String, cooldownMinutes: Int) {
+    /**
+     * Writes the cool-down deadline. Browser-domain sessions ([pattern] set) key
+     * it per-pattern in the watched-URL table; app sessions key it per-package.
+     */
+    private suspend fun startCooldown(pkg: String, pattern: String?, cooldownMinutes: Int) {
         val endsAt = System.currentTimeMillis() + cooldownMinutes * 60_000L
-        appConfigRepo.setCooldown(pkg, endsAt)
+        if (pattern != null) watchedUrlRepo.setCooldown(pattern, endsAt)
+        else appConfigRepo.setCooldown(pkg, endsAt)
     }
 
-    private fun showCooldownScreen(pkg: String, cooldownEndsAt: Long) {
+    /**
+     * [pattern] is the browser watch pattern (null for apps): on expiry an app
+     * re-runs the foreground flow, while a browser re-reads the current URL so
+     * the gate can fire for the page still on screen.
+     */
+    private fun showCooldownScreen(
+        pkg: String,
+        pattern: String?,
+        label: String,
+        track: ContentTrack,
+        cooldownEndsAt: Long,
+    ) {
         serviceScope.launch {
-            val config = resolveConfig(pkg) ?: defaultBrowserConfig(pkg)
             currentCooldownOverlay?.cancel()
             currentCooldownOverlay = CooldownOverlay(
                 context = this@DefangAccessibilityService,
-                appLabel = config.appLabel,
+                appLabel = label,
                 cooldownEndsAt = cooldownEndsAt,
-                tidbit = tidbitSelector.next(selectContentTrack.forPackage(pkg)),
+                tidbit = tidbitSelector.next(track),
                 onGoHome = {
                     currentCooldownOverlay?.cancel()
                     currentCooldownOverlay = null
@@ -655,11 +736,20 @@ class DefangAccessibilityService : AccessibilityService() {
                 },
                 onExpired = {
                     // Cool-down ran out while staring at the screen — drop the
-                    // lockout and run the normal gate flow for the app beneath
+                    // lockout and run the normal gate flow for what's beneath.
                     currentCooldownOverlay?.cancel()
                     currentCooldownOverlay = null
                     overlayManager.dismissFullscreen()
-                    serviceScope.launch { handleForegroundChange(pkg, null) }
+                    serviceScope.launch {
+                        if (pattern != null) {
+                            val url = browserUrlExtractor.extractUrl(
+                                this@DefangAccessibilityService, pkg
+                            )
+                            if (url != null) handleBrowserUrl(pkg, url)
+                        } else {
+                            handleForegroundChange(pkg, null)
+                        }
+                    }
                 },
             )
             overlayManager.showFullscreen(currentCooldownOverlay!!.view)

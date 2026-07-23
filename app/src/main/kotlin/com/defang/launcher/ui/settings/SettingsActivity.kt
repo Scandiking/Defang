@@ -60,7 +60,7 @@ import com.defang.launcher.util.NotificationListenerHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.roundToInt
 
-private enum class SettingsPage { Menu, Timing, Apps, Library, Tasks, Usage }
+private enum class SettingsPage { Menu, Timing, Apps, Sites, Library, Tasks, Usage }
 
 @AndroidEntryPoint
 class SettingsActivity : ComponentActivity() {
@@ -113,6 +113,7 @@ class SettingsActivity : ComponentActivity() {
                             onBatchWindow2Change = globalVm::setBatchWindow2,
                             onTiming = { page = SettingsPage.Timing },
                             onApps = { page = SettingsPage.Apps },
+                            onSites = { page = SettingsPage.Sites },
                             onLibrary = { page = SettingsPage.Library },
                             onTasks = { page = SettingsPage.Tasks },
                             onUsage = { page = SettingsPage.Usage },
@@ -169,6 +170,11 @@ class SettingsActivity : ComponentActivity() {
                         onBack = { page = SettingsPage.Menu },
                     )
 
+                    SettingsPage.Sites ->
+                        com.defang.launcher.ui.settings.sites.WatchedSitesScreen(
+                            onBack = { page = SettingsPage.Menu },
+                        )
+
                     SettingsPage.Library -> AwarenessLibraryScreen(
                         onBack = { page = SettingsPage.Menu },
                     )
@@ -217,6 +223,7 @@ private fun SettingsMenuScreen(
     onBatchWindow2Change: (Int) -> Unit,
     onTiming: () -> Unit,
     onApps: () -> Unit,
+    onSites: () -> Unit,
     onLibrary: () -> Unit,
     onTasks: () -> Unit,
     onUsage: () -> Unit,
@@ -324,6 +331,14 @@ private fun SettingsMenuScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onApps() },
+            )
+            HorizontalDivider()
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_sites_title)) },
+                supportingContent = { Text(stringResource(R.string.settings_sites_desc)) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onSites() },
             )
             HorizontalDivider()
             ListItem(

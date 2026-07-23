@@ -124,6 +124,26 @@ class BrowserUrlExtractor @Inject constructor() {
         }
     }
 
+    /**
+     * Splits a raw URL into (host, path), both lowercased, with the leading
+     * "www." stripped from the host so it matches host-suffix patterns. Path
+     * keeps its leading slash ("/" when absent). Returns null if no host.
+     */
+    fun extractHostAndPath(rawUrl: String?): Pair<String, String>? {
+        if (rawUrl.isNullOrBlank()) return null
+        return try {
+            val withScheme = if (rawUrl.startsWith("http")) rawUrl else "https://$rawUrl"
+            val uri = java.net.URI(withScheme)
+            val host = uri.host?.lowercase()?.removePrefix("www.") ?: return null
+            val path = uri.path?.lowercase()?.ifEmpty { "/" } ?: "/"
+            host to path
+        } catch (_: Exception) {
+            // Fall back to the hostname regex; path is unknown so treat as root.
+            val host = extractHostname(rawUrl)?.removePrefix("www.") ?: return null
+            host to "/"
+        }
+    }
+
     // ── Private helpers ───────────────────────────────────────────────────────
 
     private fun looksLikeUrl(text: String): Boolean =
