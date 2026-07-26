@@ -59,6 +59,18 @@ class TidbitSelector @Inject constructor(
         return library[index]
     }
 
+    /**
+     * A gate warning for the given addiction [level] on this [track]. Each level
+     * has several interchangeable variants; one is picked at random per call so
+     * repeated gates at the same level don't always show the same line. [level]
+     * is clamped to the available range.
+     */
+    fun lineForLevel(track: ContentTrack, level: Int): String {
+        val arrays = levelArraysFor(track)
+        val variants = context.resources.getStringArray(arrays[level.coerceIn(0, arrays.lastIndex)])
+        return if (variants.isEmpty()) "" else variants.random()
+    }
+
     private fun libraryFor(track: ContentTrack): Array<String> {
         val resId = when (track) {
             ContentTrack.GENERAL -> R.array.tidbits_general
@@ -66,5 +78,39 @@ class TidbitSelector @Inject constructor(
             ContentTrack.ADULT   -> R.array.tidbits_adult
         }
         return context.resources.getStringArray(resId)
+    }
+
+    /** Per-level variant arrays, indexed by addiction level (0 = mildest). */
+    private fun levelArraysFor(track: ContentTrack): IntArray = when (track) {
+        ContentTrack.GENERAL -> GENERAL_LEVELS
+        ContentTrack.SOCIAL  -> SOCIAL_LEVELS
+        ContentTrack.ADULT   -> ADULT_LEVELS
+    }
+
+    private companion object {
+        val GENERAL_LEVELS = intArrayOf(
+            R.array.tidbits_general_lvl0, R.array.tidbits_general_lvl1,
+            R.array.tidbits_general_lvl2, R.array.tidbits_general_lvl3,
+            R.array.tidbits_general_lvl4, R.array.tidbits_general_lvl5,
+            R.array.tidbits_general_lvl6, R.array.tidbits_general_lvl7,
+            R.array.tidbits_general_lvl8, R.array.tidbits_general_lvl9,
+            R.array.tidbits_general_lvl10, R.array.tidbits_general_lvl11,
+        )
+        val SOCIAL_LEVELS = intArrayOf(
+            R.array.tidbits_social_lvl0, R.array.tidbits_social_lvl1,
+            R.array.tidbits_social_lvl2, R.array.tidbits_social_lvl3,
+            R.array.tidbits_social_lvl4, R.array.tidbits_social_lvl5,
+            R.array.tidbits_social_lvl6, R.array.tidbits_social_lvl7,
+            R.array.tidbits_social_lvl8, R.array.tidbits_social_lvl9,
+            R.array.tidbits_social_lvl10, R.array.tidbits_social_lvl11,
+        )
+        val ADULT_LEVELS = intArrayOf(
+            R.array.tidbits_adult_lvl0, R.array.tidbits_adult_lvl1,
+            R.array.tidbits_adult_lvl2, R.array.tidbits_adult_lvl3,
+            R.array.tidbits_adult_lvl4, R.array.tidbits_adult_lvl5,
+            R.array.tidbits_adult_lvl6, R.array.tidbits_adult_lvl7,
+            R.array.tidbits_adult_lvl8, R.array.tidbits_adult_lvl9,
+            R.array.tidbits_adult_lvl10, R.array.tidbits_adult_lvl11,
+        )
     }
 }

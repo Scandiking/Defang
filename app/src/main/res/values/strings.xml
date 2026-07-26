@@ -36,7 +36,8 @@
     <!-- ── Intent gate overlay ── -->
     <string name="gate_question">What are you opening this for?</string>
     <string name="gate_offline_suggestion">Do this instead: %1$s</string>
-    <string name="gate_slide_hint">Trace the path to open</string>
+    <string name="gate_slide_hint">Slide to open</string>
+    <string name="gate_open">Open</string>
     <string name="gate_wait_countdown">Wait %1$d s</string>
     <string name="gate_go_back">← Go back</string>
     <string name="gate_intent_post">Post something</string>
@@ -202,6 +203,7 @@
     <string name="usage_per_day">Per day</string>
     <string name="usage_per_app">Per app</string>
     <string name="usage_app_line">%1$s · %2$d sessions</string>
+    <string name="usage_total_label">Total</string>
     <string name="usage_no_sessions">No watched-app sessions in the last 7 days.</string>
     <string name="usage_no_prev_week">No data for the 7 days before.</string>
     <string name="usage_down_vs_prev">Down %1$d%% from the previous 7 days.</string>

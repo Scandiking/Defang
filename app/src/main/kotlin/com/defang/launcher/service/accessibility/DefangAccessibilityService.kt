@@ -18,6 +18,7 @@ import com.defang.launcher.domain.model.ContentTrack
 import com.defang.launcher.domain.model.WatchedUrl
 import com.defang.launcher.domain.model.toDomain
 import com.defang.launcher.domain.usecase.GetDailyExtensionStatusUseCase
+import com.defang.launcher.domain.usecase.GetTodayOpenCountUseCase
 import com.defang.launcher.domain.usecase.RecordSessionUseCase
 import com.defang.launcher.domain.usecase.SelectContentTrackUseCase
 import com.defang.launcher.service.overlay.CooldownOverlay
@@ -63,6 +64,7 @@ class DefangAccessibilityService : AccessibilityService() {
     @Inject lateinit var overlayManager: OverlayManager
     @Inject lateinit var appConfigRepo: AppConfigRepository
     @Inject lateinit var recordSession: RecordSessionUseCase
+    @Inject lateinit var getTodayOpenCount: GetTodayOpenCountUseCase
     @Inject lateinit var getDailyExtensionStatus: GetDailyExtensionStatusUseCase
     @Inject lateinit var selectContentTrack: SelectContentTrackUseCase
     @Inject lateinit var tidbitSelector: TidbitSelector
@@ -434,12 +436,20 @@ class DefangAccessibilityService : AccessibilityService() {
         config: AppConfig,
     ) {
         serviceScope.launch {
+            val opensToday = getTodayOpenCount.count()
             currentGateOverlay = IntentGateOverlay(
                 context = this@DefangAccessibilityService,
                 contentTrack = contentTrack,
                 tidbitSelector = tidbitSelector,
                 offlinePrompt = offlinePromptSelector.next(),
                 delaySeconds = config.gateDelaySeconds,
+                opensToday = opensToday,
+                onTimerFinished = {
+                    // Re-assert grayscale the moment the wait ends, while the gate
+                    // still fully covers the screen, so the feed is already gray
+                    // when "Open" reveals it — no color flash on the way in.
+                    serviceScope.launch { grayscale.enable() }
+                },
                 onIntentDeclared = { intent ->
                     pendingGate.remove(gateKey)
                     currentGateOverlay?.cancel()

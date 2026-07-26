@@ -116,6 +116,7 @@ fun UsageReportScreen(
                     )
                 }
             }
+            TotalRow(formatMinutes(r.perDay.sumOf { it.minutes }))
 
             // ── Per-app totals ──
             if (r.perApp.isNotEmpty()) {
@@ -147,6 +148,7 @@ fun UsageReportScreen(
                         )
                     }
                 }
+                TotalRow(formatMinutes(r.perApp.sumOf { it.minutes }))
             } else {
                 SectionHeader(stringResource(R.string.usage_per_app))
                 Text(
@@ -164,6 +166,26 @@ fun UsageReportScreen(
                 modifier = Modifier.padding(bottom = 24.dp),
             )
         }
+    }
+}
+
+@Composable
+private fun TotalRow(total: String) {
+    HorizontalDivider(modifier = Modifier.padding(top = 6.dp))
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 6.dp),
+    ) {
+        Text(
+            text = stringResource(R.string.usage_total_label),
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.weight(1f),
+        )
+        Text(
+            text = total,
+            style = MaterialTheme.typography.bodyMedium,
+        )
     }
 }
 

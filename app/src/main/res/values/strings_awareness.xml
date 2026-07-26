@@ -168,6 +168,209 @@
 
 
     <!-- ════════════════════════════════════════════
+         GATE ESCALATION LADDERS
+         Short, cigarette-warning style lines shown on the intent gate itself.
+         Ordered mildest → harshest: the slide-to-enter thumb maps its position
+         to a rung, and the harshest line lands at the point of entry. The full
+         cited library above remains the "detail" tier shown in Settings.
+         Keep each line to one short sentence.
+         ════════════════════════════════════════════ -->
+
+    <!-- 12 addiction levels (0–11), aligned with LEVEL_THRESHOLDS in
+         IntentGateOverlay. Level rises with total watched-app opens today, so
+         the line reflects the addiction the open-frequency is showing. Each
+         level has ≥3 interchangeable variants; one is chosen at random per gate
+         (TidbitSelector.lineForLevel). Keep every track's set of levels the same
+         length (12) and the bluntest lines at lvl11. -->
+
+    <!-- ── GENERAL levels ── -->
+    <string-array name="tidbits_general_lvl0">
+        <item>This app is built to be hard to put down.</item>
+        <item>It was designed to hold you longer than you planned.</item>
+        <item>Staying is the default here; leaving takes effort.</item>
+    </string-array>
+    <string-array name="tidbits_general_lvl1">
+        <item>The pull-to-refresh is a slot-machine lever.</item>
+        <item>The little delay before it loads is engineered suspense.</item>
+        <item>Refreshing pays out on a variable schedule, like a slot.</item>
+    </string-array>
+    <string-array name="tidbits_general_lvl2">
+        <item>Every idle open wires the habit deeper.</item>
+        <item>Each bored tap strengthens the reach-for-phone reflex.</item>
+        <item>Opening without a reason trains you to open without a reason.</item>
+    </string-array>
+    <string-array name="tidbits_general_lvl3">
+        <item>You opened it again without deciding to.</item>
+        <item>Your hand got here before your intention did.</item>
+        <item>That open wasn\'t a choice; it was a reflex.</item>
+    </string-array>
+    <string-array name="tidbits_general_lvl4">
+        <item>This is autopilot now, not intention.</item>
+        <item>You\'re running a script you didn\'t write.</item>
+        <item>The decision to open already stopped being a decision.</item>
+    </string-array>
+    <string-array name="tidbits_general_lvl5">
+        <item>The pleasure fades; the craving grows.</item>
+        <item>You feel it less each time, and want it more.</item>
+        <item>Diminishing returns, rising urge — that\'s the trap.</item>
+    </string-array>
+    <string-array name="tidbits_general_lvl6">
+        <item>You\'re spending attention you meant to keep.</item>
+        <item>The focus you needed today is leaking out here.</item>
+        <item>This is drawing down attention you can\'t refill.</item>
+    </string-array>
+    <string-array name="tidbits_general_lvl7">
+        <item>This is a loop now, and loops tighten.</item>
+        <item>Each pass makes the next pass easier and faster.</item>
+        <item>The circuit is getting shorter every time.</item>
+    </string-array>
+    <string-array name="tidbits_general_lvl8">
+        <item>You reach for it in every empty second.</item>
+        <item>Any pause and your hand finds this.</item>
+        <item>Silence now feels like a cue to open.</item>
+    </string-array>
+    <string-array name="tidbits_general_lvl9">
+        <item>It\'s eating your day in small, unnoticed bites.</item>
+        <item>Minutes vanish here without leaving a memory.</item>
+        <item>Add up these openings and it\'s hours.</item>
+    </string-array>
+    <string-array name="tidbits_general_lvl10">
+        <item>You\'ve stopped choosing. The reflex chose.</item>
+        <item>There\'s no decision left in this, only habit.</item>
+        <item>You didn\'t decide to be here; the pattern did.</item>
+    </string-array>
+    <string-array name="tidbits_general_lvl11">
+        <item>This is the behaviour of an addiction, plainly.</item>
+        <item>By every measure that matters, this is addiction.</item>
+        <item>Call it what it is: you\'re not in control here.</item>
+    </string-array>
+
+    <!-- ── SOCIAL levels ── -->
+    <string-array name="tidbits_social_lvl0">
+        <item>Built to be hard to put down.</item>
+        <item>Designed to keep you scrolling past when you meant to stop.</item>
+        <item>Leaving early is the one thing it\'s built to prevent.</item>
+    </string-array>
+    <string-array name="tidbits_social_lvl1">
+        <item>Infinite scroll has no bottom, on purpose.</item>
+        <item>There\'s no end screen because an end would free you.</item>
+        <item>The feed refills forever so the session never has to close.</item>
+    </string-array>
+    <string-array name="tidbits_social_lvl2">
+        <item>Each open is a pull of the same lever.</item>
+        <item>Every launch is another spin for the same payout.</item>
+        <item>You\'re feeding coins into the same machine.</item>
+    </string-array>
+    <string-array name="tidbits_social_lvl3">
+        <item>You\'re back again. The app counted on that.</item>
+        <item>It predicted this open, and it was right.</item>
+        <item>Your return is a number on someone\'s dashboard.</item>
+    </string-array>
+    <string-array name="tidbits_social_lvl4">
+        <item>This is a habit now, not a choice.</item>
+        <item>You didn\'t plan this open; the habit did.</item>
+        <item>Choice left this a while ago.</item>
+    </string-array>
+    <string-array name="tidbits_social_lvl5">
+        <item>You\'re checking more than you\'re living.</item>
+        <item>More of your day is spent watching than doing.</item>
+        <item>The scrolling has started to outweigh the living.</item>
+    </string-array>
+    <string-array name="tidbits_social_lvl6">
+        <item>This is compulsive, and the app engineered it.</item>
+        <item>The pull you feel was designed on purpose.</item>
+        <item>That urge isn\'t yours; it was manufactured.</item>
+    </string-array>
+    <string-array name="tidbits_social_lvl7">
+        <item>You reach for it before you notice you\'re bored.</item>
+        <item>Boredom now skips straight to this.</item>
+        <item>The gap between feeling and opening has closed.</item>
+    </string-array>
+    <string-array name="tidbits_social_lvl8">
+        <item>You\'re the product, and you\'re on sale all day.</item>
+        <item>Your attention is the inventory being sold right now.</item>
+        <item>Every minute here is auctioned to an advertiser.</item>
+    </string-array>
+    <string-array name="tidbits_social_lvl9">
+        <item>You\'re using this as a parasocial substitute. Call a friend.</item>
+        <item>Strangers on a screen aren\'t the company you need. Call someone.</item>
+        <item>This is standing in for real connection. Reach out to a real person.</item>
+    </string-array>
+    <string-array name="tidbits_social_lvl10">
+        <item>You\'ve stopped deciding. The loop decides.</item>
+        <item>The loop is running you now, not the other way round.</item>
+        <item>There\'s no driver here anymore, just the loop.</item>
+    </string-array>
+    <string-array name="tidbits_social_lvl11">
+        <item>If this were a cigarette, you\'d be a chain smoker.</item>
+        <item>Swap the feed for cigarettes and you\'d be lighting the next off the last.</item>
+        <item>At this rate, in cigarette terms, you never put it down.</item>
+    </string-array>
+
+    <!-- ── ADULT levels ── -->
+    <string-array name="tidbits_adult_lvl0">
+        <item>This is a superstimulus your brain can\'t defend against.</item>
+        <item>Your reward system never evolved to meet anything this strong.</item>
+        <item>This exceeds every natural cue your brain was built for.</item>
+    </string-array>
+    <string-array name="tidbits_adult_lvl1">
+        <item>Novelty here is infinite; your reward system is not.</item>
+        <item>Endless new is exactly what the brain can\'t habituate to safely.</item>
+        <item>Unlimited novelty is the one input arousal can\'t switch off.</item>
+    </string-array>
+    <string-array name="tidbits_adult_lvl2">
+        <item>Every visit raises the bar for the next.</item>
+        <item>What works today will feel flat tomorrow.</item>
+        <item>Each session resets the baseline higher.</item>
+    </string-array>
+    <string-array name="tidbits_adult_lvl3">
+        <item>You\'re back sooner than last time. That\'s the pattern.</item>
+        <item>The gap between visits is shrinking. That\'s the tell.</item>
+        <item>Returning faster each time is how this progresses.</item>
+    </string-array>
+    <string-array name="tidbits_adult_lvl4">
+        <item>This is escalation — the same mechanism as tolerance.</item>
+        <item>You need more or newer to feel the same. That\'s tolerance.</item>
+        <item>The drift toward stronger material isn\'t random; it\'s tolerance.</item>
+    </string-array>
+    <string-array name="tidbits_adult_lvl5">
+        <item>It\'s rewiring arousal toward a screen.</item>
+        <item>Your arousal is being trained to a pixel pattern.</item>
+        <item>A screen is becoming the trigger your body answers to.</item>
+    </string-array>
+    <string-array name="tidbits_adult_lvl6">
+        <item>It desensitises you to a real partner.</item>
+        <item>A real person can\'t compete with infinite novelty, and that\'s the harm.</item>
+        <item>This dulls your response to an actual partner.</item>
+    </string-array>
+    <string-array name="tidbits_adult_lvl7">
+        <item>The urge gets louder; the payoff gets quieter.</item>
+        <item>You want it more and enjoy it less each time.</item>
+        <item>Rising craving, falling reward — the addiction signature.</item>
+    </string-array>
+    <string-array name="tidbits_adult_lvl8">
+        <item>This is compulsive use, by its own definition.</item>
+        <item>Continuing against your own intention is the definition of compulsive.</item>
+        <item>You\'ve told yourself to stop and you\'re here — that\'s compulsion.</item>
+    </string-array>
+    <string-array name="tidbits_adult_lvl9">
+        <item>PIED is documented in healthy young men — this is how.</item>
+        <item>Porn-induced ED shows up in young men with no other cause. This is the path.</item>
+        <item>The mechanism behind PIED is exactly this, repeated.</item>
+    </string-array>
+    <string-array name="tidbits_adult_lvl10">
+        <item>You\'ve stopped deciding. The craving decides.</item>
+        <item>The craving is in the driver\'s seat now.</item>
+        <item>There\'s no choice left in this, only the pull.</item>
+    </string-array>
+    <string-array name="tidbits_adult_lvl11">
+        <item>This is an addiction running you, not a habit.</item>
+        <item>Past a certain point it isn\'t a habit; it\'s addiction, and this is past it.</item>
+        <item>This isn\'t a preference anymore. It\'s an addiction steering you.</item>
+    </string-array>
+
+
+    <!-- ════════════════════════════════════════════
          SOURCES
          Index-aligned with the tidbit arrays above (and with the translated
          arrays in values-nb, which are kept in the same order). Shown only in

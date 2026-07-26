@@ -14,32 +14,32 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.defang.launcher.domain.model.ContentTrack
 import com.defang.launcher.util.TidbitSelector
-import kotlin.math.cos
 import kotlin.math.hypot
-import kotlin.math.sin
-import kotlin.random.Random
 
 /**
  * Full-screen interstitial that appears before a watched app opens.
  *
  * Layout (top to bottom):
- *   1. Tidbit — the awareness fact, shown large and prominent immediately.
+ *   1. Tidbit — a short awareness warning, shown large and prominent. It
+ *      escalates in severity as the slider is dragged (see below).
  *   2. Offline prompt — a small real-world task offered as the alternative
  *      to opening the app at all.
  *   3. Slide hint.
- *   4. Path track — the active unlock. A randomly chosen shape (line, circle,
- *      square, triangle, parabola — random orientation); the thumb must be
- *      traced along the whole path in one continuous motion, and lifting the
- *      finger snaps it back to the start.
+ *   4. Slide-to-enter track — the active unlock. A plain horizontal bar; the
+ *      thumb is dragged left→right, and lifting the finger before the end snaps
+ *      it back to the start.
  *   5. Countdown — the configured gate delay (AppConfig.gateDelaySeconds).
  *   6. "Go back" button.
  *
  * The slide is a deliberateness gate, not a skill game (PRD §Phase 2): no
- * progress fill, no animation, no reward feedback — just a thumb on a track.
+ * progress fill, no animation, no reward feedback. Sliding is deliberately not
+ * a reward — as the thumb advances, the warning above escalates from mild to
+ * harsh, so committing to entry surfaces a worse truth rather than a payoff.
+ * The harshest line lands exactly at the point of entry.
  *
- * Tracing the path and waiting out the delay are BOTH required: the app opens
- * only once the trace is complete AND the countdown has finished, in either
- * order. The puzzle is something to do while waiting, not a way to skip it.
+ * Sliding to the end and waiting out the delay are BOTH required: the app opens
+ * only once the slide is complete AND the countdown has finished, in either
+ * order. The slide is something to do while waiting, not a way to skip it.
  *
  * This is a View-based overlay (not Compose) because it runs inside the
  * AccessibilityService process — there is no Activity lifecycle to host Compose.
@@ -50,6 +50,8 @@ class IntentGateOverlay(
     private val tidbitSelector: TidbitSelector,
     private val offlinePrompt: String?,
     private val delaySeconds: Int,
+    private val opensToday: Int,
+    private val onTimerFinished: () -> Unit,
     private val onIntentDeclared: (intent: String?) -> Unit,
     private val onGoBack: () -> Unit,
 ) {
@@ -57,9 +59,15 @@ class IntentGateOverlay(
 
     private var countdownTimer: CountDownTimer? = null
     private var timerDone = false
-    private var slideDone = false
     private var unlocked = false
     private lateinit var tvCountdown: TextView
+    private lateinit var tvTidbit: TextView
+    private lateinit var tvSlideHint: TextView
+    private lateinit var slideToOpen: SlideToOpenView
+
+    // The warning is picked once at build time: addictionLevel(opensToday) selects
+    // the level, then a random variant at that level (TidbitSelector.lineForLevel).
+    // One text per gate showing — it does not change while the gate is up.
 
     private fun buildView(): View {
         val root = LinearLayout(context).apply {
@@ -69,45 +77,27 @@ class IntentGateOverlay(
             setPadding(64, 96, 64, 96)
         }
 
-        // Tidbit — first thing the user sees
-        val tvTidbit = TextView(context).apply {
-            text = tidbitSelector.next(contentTrack)
-            textSize = 15f
+        // Tidbit — the one thing the user should read. Short, cigarette-warning
+        // style; a single line chosen by the frequency floor (more opens today →
+        // harsher). It does NOT change while the gate is up.
+        val level = addictionLevel(opensToday)
+        tvTidbit = TextView(context).apply {
+            text = tidbitSelector.lineForLevel(contentTrack, level)
+            textSize = 22f
             setTextColor(Color.rgb(210, 210, 210))
             gravity = Gravity.CENTER
             setPadding(0, 0, 0, if (offlinePrompt != null) 48 else 80)
-            setLineSpacing(0f, 1.4f)
+            setLineSpacing(0f, 1.3f)
         }
         root.addView(tvTidbit)
 
-
-
-        // Slide hint — small and dim
-        val tvHint = TextView(context).apply {
-            text = context.getString(com.defang.launcher.R.string.gate_slide_hint)
-            textSize = 13f
-            setTextColor(Color.rgb(120, 120, 120))
-            gravity = Gravity.CENTER
-            setPadding(0, 0, 0, 16)
-        }
-        root.addView(tvHint)
-
         val density = context.resources.displayMetrics.density
-        val slider = PathSlideView(
-            context = context,
-            onComplete = {
-                slideDone = true
-                maybeUnlock()
-            },
-        ).apply {
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                (260 * density).toInt(),
-            ).also { it.bottomMargin = (8 * density).toInt() }
-        }
-        root.addView(slider)
 
-        // Countdown — dim, below the track; both trace and wait are required
+        // During the wait there is only the text — no gesture to distract from
+        // it. The slide-to-open control (below) is revealed once the countdown
+        // ends; sliding it is the unlock.
+
+        // Countdown — dim; the app opens only after this elapses.
         tvCountdown = TextView(context).apply {
             textSize = 13f
             setTextColor(Color.rgb(96, 96, 96))
@@ -131,6 +121,36 @@ class IntentGateOverlay(
             root.addView(tvPrompt)
         }
 
+        // Slide-to-open — hidden until the countdown ends. Sliding the thumb to
+        // the far end is the unlock (lock-screen style). Guarded on timerDone so
+        // it can never open early even if revealed by a race.
+        tvSlideHint = TextView(context).apply {
+            text = context.getString(com.defang.launcher.R.string.gate_slide_hint)
+            textSize = 13f
+            setTextColor(Color.rgb(150, 150, 150))
+            gravity = Gravity.CENTER
+            visibility = View.GONE
+            setPadding(0, 0, 0, (8 * density).toInt())
+        }
+        root.addView(tvSlideHint)
+
+        slideToOpen = SlideToOpenView(
+            context = context,
+            onComplete = {
+                if (timerDone && !unlocked) {
+                    unlocked = true
+                    onIntentDeclared(null)
+                }
+            },
+        ).apply {
+            visibility = View.GONE
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                (72 * density).toInt(),
+            ).also { it.bottomMargin = (16 * density).toInt() }
+        }
+        root.addView(slideToOpen)
+
         val btnBack = Button(context).apply {
             text = context.getString(com.defang.launcher.R.string.gate_go_back)
             textSize = 14f
@@ -150,7 +170,7 @@ class IntentGateOverlay(
 
     private fun startCountdown(seconds: Int) {
         if (seconds <= 0) {
-            timerDone = true
+            onTimerElapsed()
             return
         }
         countdownTimer = object : CountDownTimer(seconds * 1000L, 1000L) {
@@ -161,212 +181,121 @@ class IntentGateOverlay(
                 )
             }
 
-            override fun onFinish() {
-                tvCountdown.text = ""
-                timerDone = true
-                maybeUnlock()
-            }
+            override fun onFinish() = onTimerElapsed()
         }.start()
     }
 
-    private fun maybeUnlock() {
-        if (timerDone && slideDone && !unlocked) {
-            unlocked = true
-            onIntentDeclared(null)
-        }
+    /**
+     * The wait is over: clear the countdown, reveal the Open button, and signal
+     * the service (which switches the screen to grayscale before the app shows,
+     * so the feed never flashes in colour).
+     */
+    private fun onTimerElapsed() {
+        tvCountdown.text = ""
+        timerDone = true
+        tvSlideHint.visibility = View.VISIBLE
+        slideToOpen.visibility = View.VISIBLE
+        onTimerFinished()
     }
 
     fun cancel() {
         countdownTimer?.cancel()
     }
+
+    companion object {
+        /**
+         * Minimum watched-app opens (since midnight) to reach each addiction
+         * level. Grows roughly exponentially so higher levels take
+         * disproportionately more opens — the harshest lines are reserved for
+         * genuinely heavy use and stay rare. Level = thresholds passed (0..N).
+         * Keep this length aligned with the ladder arrays (`tidbits_*_ladder`).
+         */
+        private val LEVEL_THRESHOLDS = intArrayOf(2, 3, 4, 6, 8, 11, 15, 20, 27, 36, 48)
+
+        /** Addiction level 0..LEVEL_THRESHOLDS.size from today's open count. */
+        fun addictionLevel(opensToday: Int): Int = LEVEL_THRESHOLDS.count { opensToday >= it }
+    }
 }
 
 /**
- * Path-tracing unlock track.
+ * Slide-to-open unlock control (shown only after the countdown ends).
  *
- * Each gate draws one randomly chosen shape — line, circle, square, triangle
- * or parabola, in a random orientation — and the thumb must be traced along
- * the whole path in one continuous drag. Straying from the path just stalls
- * the thumb; lifting the finger snaps it back to the start. No speed
- * requirement — the deliberate act is tracing the full path.
- *
- * The path is a dense polyline; the thumb advances by snapping to the sample
- * nearest the finger inside a small look-ahead window, so the path cannot be
- * short-circuited by jumping straight to the end point.
+ * A horizontal track with a thumb at the left, in the style of an old Android
+ * lock screen: drag the thumb to the far right to open; lifting before the end
+ * snaps it back. This is the final commit gesture — the deliberateness friction
+ * is the wait that precedes it, not this slide.
  */
 @SuppressLint("ViewConstructor")
-private class PathSlideView(
+private class SlideToOpenView(
     context: Context,
     private val onComplete: () -> Unit,
 ) : View(context) {
 
     private val density = context.resources.displayMetrics.density
-    private val thumbRadius = 16 * density
-    private val followRadius = 48 * density
+    private val thumbRadius = 20 * density
+    private val followRadius = 56 * density
     private val trackPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.rgb(55, 55, 55)
-        strokeWidth = 4 * density
+        color = Color.rgb(70, 70, 70)
+        strokeWidth = 6 * density
+        strokeCap = Paint.Cap.ROUND
+        style = Paint.Style.STROKE
+    }
+    private val fillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.rgb(120, 120, 120)
+        strokeWidth = 6 * density
         strokeCap = Paint.Cap.ROUND
         style = Paint.Style.STROKE
     }
     private val thumbPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.rgb(180, 180, 180)
+        color = Color.rgb(215, 215, 215)
     }
 
-    // Path samples (x,y interleaved) and the Path object drawn as the track
-    private var samples = FloatArray(0)
-    private val trackPath = android.graphics.Path()
-    private var cur = 0 // index of the sample the thumb sits on
+    private var startX = 0f
+    private var endX = 0f
+    private var cy = 0f
+    private var thumbX = 0f
     private var dragging = false
     private var completed = false
 
-    private val sampleCount get() = samples.size / 2
-    private fun sx(i: Int) = samples[i * 2]
-    private fun sy(i: Int) = samples[i * 2 + 1]
-
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
-        samples = buildShape(w.toFloat(), h.toFloat())
-        trackPath.reset()
-        trackPath.moveTo(sx(0), sy(0))
-        for (i in 1 until sampleCount) trackPath.lineTo(sx(i), sy(i))
-        cur = 0
+        startX = thumbRadius + 4 * density
+        endX = w - thumbRadius - 4 * density
+        cy = h / 2f
+        thumbX = startX
         completed = false
     }
 
-    /** ~200 evenly spread points for a random shape inside the view bounds. */
-    private fun buildShape(w: Float, h: Float): FloatArray {
-        val pad = thumbRadius * 2
-        val cx = w / 2f
-        val cy = h / 2f
-        val r = (minOf(w, h) / 2f - pad)
-        val n = 200
-        val out = FloatArray(n * 2)
-
-        fun fromParam(f: (Float) -> Pair<Float, Float>): FloatArray {
-            for (i in 0 until n) {
-                val (x, y) = f(i / (n - 1).toFloat())
-                out[i * 2] = x
-                out[i * 2 + 1] = y
-            }
-            return out
-        }
-
-        fun perimeter(corners: List<Pair<Float, Float>>): FloatArray {
-            // Closed polygon, points distributed by edge length
-            val closed = corners + corners.first()
-            val lengths = closed.zipWithNext { a, b -> hypot(b.first - a.first, b.second - a.second) }
-            val total = lengths.sum()
-            return fromParam { t ->
-                var dist = t * total
-                for ((edge, len) in lengths.withIndex()) {
-                    if (dist <= len || edge == lengths.lastIndex) {
-                        val (ax, ay) = closed[edge]
-                        val (bx, by) = closed[edge + 1]
-                        val u = (dist / len).coerceIn(0f, 1f)
-                        return@fromParam ax + (bx - ax) * u to ay + (by - ay) * u
-                    }
-                    dist -= len
-                }
-                closed.last()
-            }
-        }
-
-        val reverse = Random.nextBoolean()
-        val shape = when (Random.nextInt(5)) {
-            0 -> { // line — horizontal, vertical or diagonal
-                val ends = listOf(
-                    (pad to cy) to (w - pad to cy),
-                    (cx to pad) to (cx to h - pad),
-                    (pad to pad) to (w - pad to h - pad),
-                    (pad to h - pad) to (w - pad to pad),
-                ).random()
-                fromParam { t ->
-                    val (a, b) = ends
-                    a.first + (b.first - a.first) * t to a.second + (b.second - a.second) * t
-                }
-            }
-            1 -> { // full circle, random start quadrant
-                val start = Random.nextInt(4) * 90f
-                fromParam { t ->
-                    val deg = start + t * 360f
-                    val rad = Math.toRadians(deg.toDouble())
-                    cx + r * cos(rad).toFloat() to cy + r * sin(rad).toFloat()
-                }
-            }
-            2 -> { // square perimeter, random start corner
-                val corners = listOf(
-                    cx - r to cy - r, cx + r to cy - r,
-                    cx + r to cy + r, cx - r to cy + r,
-                )
-                val startAt = Random.nextInt(4)
-                perimeter(List(4) { corners[(startAt + it) % 4] })
-            }
-            3 -> { // triangle perimeter, random rotation
-                val rot = Random.nextInt(4) * 90.0
-                perimeter(List(3) {
-                    val rad = Math.toRadians(rot + it * 120.0 - 90.0)
-                    cx + r * cos(rad).toFloat() to cy + r * sin(rad).toFloat()
-                })
-            }
-            else -> { // parabola across the width, opening up or down
-                val opensDown = Random.nextBoolean()
-                fromParam { t ->
-                    val u = t * 2f - 1f
-                    val x = pad + t * (w - 2 * pad)
-                    val y = if (opensDown) pad + (h - 2 * pad) * u * u
-                    else (h - pad) - (h - 2 * pad) * u * u
-                    x to y
-                }
-            }
-        }
-
-        if (reverse) {
-            // Trace the same shape in the opposite direction
-            for (i in 0 until n / 2) {
-                val j = n - 1 - i
-                val tx = shape[i * 2]; val ty = shape[i * 2 + 1]
-                shape[i * 2] = shape[j * 2]; shape[i * 2 + 1] = shape[j * 2 + 1]
-                shape[j * 2] = tx; shape[j * 2 + 1] = ty
-            }
-        }
-        return shape
-    }
+    private fun fraction(): Float =
+        if (endX <= startX) 0f else ((thumbX - startX) / (endX - startX)).coerceIn(0f, 1f)
 
     override fun onDraw(canvas: Canvas) {
-        if (sampleCount == 0) return
-        canvas.drawPath(trackPath, trackPaint)
-        canvas.drawCircle(sx(cur), sy(cur), thumbRadius, thumbPaint)
+        if (endX <= startX) return
+        canvas.drawLine(startX, cy, endX, cy, trackPaint)
+        if (thumbX > startX) canvas.drawLine(startX, cy, thumbX, cy, fillPaint)
+        canvas.drawCircle(thumbX, cy, thumbRadius, thumbPaint)
     }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (completed || sampleCount == 0) return false
+        if (completed || endX <= startX) return false
         when (event.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
-                if (hypot(event.x - sx(cur), event.y - sy(cur)) > followRadius) return false
+                if (hypot(event.x - thumbX, event.y - cy) > followRadius) return false
                 dragging = true
                 return true
             }
             MotionEvent.ACTION_MOVE -> {
                 if (!dragging) return false
-                // Advance to the nearest sample inside a small window around the
-                // thumb — the finger has to actually trace the path
-                var best = -1
-                var bestDist = followRadius
-                for (i in maxOf(0, cur - 6)..minOf(sampleCount - 1, cur + 12)) {
-                    val d = hypot(event.x - sx(i), event.y - sy(i))
-                    if (d < bestDist) { bestDist = d; best = i }
-                }
-                if (best >= 0 && best != cur) {
-                    cur = best
-                    if (cur >= sampleCount - 1) {
-                        completed = true
-                        dragging = false
-                        onComplete()
-                        return true
-                    }
+                thumbX = event.x.coerceIn(startX, endX)
+                if (fraction() >= 0.98f) {
+                    thumbX = endX
+                    completed = true
+                    dragging = false
                     invalidate()
+                    onComplete()
+                    return true
                 }
+                invalidate()
                 return true
             }
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
@@ -378,8 +307,7 @@ private class PathSlideView(
     }
 
     private fun resetThumb() {
-        // Snap, not animate — a smooth return would be its own little reward
-        cur = 0
+        thumbX = startX
         dragging = false
         invalidate()
     }

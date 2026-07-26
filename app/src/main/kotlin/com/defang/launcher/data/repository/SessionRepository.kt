@@ -39,6 +39,8 @@ class SessionRepository @Inject constructor(
 
     suspend fun getSessionsSince(since: Long): List<SessionEntity> = dao.getSince(since)
 
+    suspend fun countSince(since: Long): Int = dao.countSince(since)
+
     suspend fun getExtensionUsedToday(dayStartEpoch: Long): SessionEntity? =
         dao.getExtensionUsedToday(dayStartEpoch)
 }

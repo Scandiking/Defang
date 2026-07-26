@@ -37,7 +37,8 @@
     <!-- ── Intent gate overlay ── -->
     <string name="gate_question">Hva skal du åpne denne for?</string>
     <string name="gate_offline_suggestion">Gjør heller dette: %1$s</string>
-    <string name="gate_slide_hint">Følg mønsteret for å åpne</string>
+    <string name="gate_slide_hint">Dra for å åpne</string>
+    <string name="gate_open">Åpne</string>
     <string name="gate_wait_countdown">Vent %1$d s</string>
     <string name="gate_go_back">Gå tilbake</string>
     <string name="gate_intent_post">Poste noe</string>
@@ -203,6 +204,7 @@
     <string name="usage_per_day">Per dag</string>
     <string name="usage_per_app">Per app</string>
     <string name="usage_app_line">%1$s · %2$d økter</string>
+    <string name="usage_total_label">Totalt</string>
     <string name="usage_no_sessions">Ingen økter i overvåkede apper de siste 7 dagene.</string>
     <string name="usage_no_prev_week">Ingen data for de 7 dagene før.</string>
     <string name="usage_down_vs_prev">Ned %1$d%% fra de forrige 7 dagene.</string>

@@ -27,6 +27,13 @@ interface SessionDao {
     suspend fun getSince(since: Long): List<SessionEntity>
 
     /**
+     * Total watched-app gate passes since [since], across all packages. Drives
+     * the intent gate's escalation floor (more opens today → harsher warning).
+     */
+    @Query("SELECT COUNT(*) FROM sessions WHERE startTime >= :since")
+    suspend fun countSince(since: Long): Int
+
+    /**
      * Returns sessions where extensionUsed = 1 and the session started on the same calendar day
      * as [dayStartEpoch]. Used to enforce the one-extension-per-day rule.
      */

@@ -97,6 +97,202 @@
         <item>Pornografi former de seksuelle forventningene mannlige partnere tar med seg inn i forhold, uavhengig av om kvinner selv ser på. Kvinner påvirkes av partnerens pornografibruk enten de er brukere selv eller ikke.</item>
     </string-array>
 
+    <!-- ════════ GATE ESCALATION LADDERS ════════
+         Korte, sigarett-advarsel-aktige linjer på selve porten. Ordnet mildest →
+         hardest; skyveknappen kartlegger posisjonen til et trinn, og den hardeste
+         linjen lander idet du går inn. Hold hver linje til én kort setning. -->
+
+    <!-- 12 avhengighetsnivåer (0–11), på linje med LEVEL_THRESHOLDS i
+         IntentGateOverlay. Nivået stiger med totalt antall app-åpninger i dag.
+         Hvert nivå har ≥3 varianter; én velges tilfeldig per port. Hold alle tre
+         nivåsettene like lange (12), hardeste linjer på nivå 11. -->
+
+    <!-- ── GENERAL-nivåer ── -->
+    <string-array name="tidbits_general_lvl0">
+        <item>Denne appen er laget for å være vanskelig å legge fra seg.</item>
+        <item>Den er designet for å holde deg lenger enn du planla.</item>
+        <item>Å bli er standard her; å gå krever innsats.</item>
+    </string-array>
+    <string-array name="tidbits_general_lvl1">
+        <item>Dra-for-å-oppdatere er spaken på en spilleautomat.</item>
+        <item>Den lille forsinkelsen før den laster er konstruert spenning.</item>
+        <item>Oppdatering utbetaler på variabel plan, som en spilleautomat.</item>
+    </string-array>
+    <string-array name="tidbits_general_lvl2">
+        <item>Hver tomgangsåpning graver vanen dypere.</item>
+        <item>Hvert kjede-tapp styrker refleksen om å ta telefonen.</item>
+        <item>Å åpne uten grunn trener deg til å åpne uten grunn.</item>
+    </string-array>
+    <string-array name="tidbits_general_lvl3">
+        <item>Du åpnet den igjen uten å bestemme deg for det.</item>
+        <item>Hånden din var her før viljen din.</item>
+        <item>Den åpningen var ikke et valg; den var en refleks.</item>
+    </string-array>
+    <string-array name="tidbits_general_lvl4">
+        <item>Dette er autopilot nå, ikke vilje.</item>
+        <item>Du kjører et manus du ikke skrev.</item>
+        <item>Beslutningen om å åpne sluttet å være en beslutning.</item>
+    </string-array>
+    <string-array name="tidbits_general_lvl5">
+        <item>Gleden avtar; suget vokser.</item>
+        <item>Du føler det mindre hver gang, og vil ha det mer.</item>
+        <item>Avtagende utbytte, økende sug — det er fella.</item>
+    </string-array>
+    <string-array name="tidbits_general_lvl6">
+        <item>Du bruker oppmerksomhet du mente å beholde.</item>
+        <item>Fokuset du trengte i dag lekker ut her.</item>
+        <item>Dette tapper oppmerksomhet du ikke kan fylle på.</item>
+    </string-array>
+    <string-array name="tidbits_general_lvl7">
+        <item>Dette er en løkke nå, og løkker strammer seg.</item>
+        <item>Hver runde gjør neste runde lettere og raskere.</item>
+        <item>Kretsen blir kortere hver gang.</item>
+    </string-array>
+    <string-array name="tidbits_general_lvl8">
+        <item>Du strekker deg etter den i hvert tomme sekund.</item>
+        <item>Enhver pause, og hånden finner denne.</item>
+        <item>Stillhet føles nå som et signal om å åpne.</item>
+    </string-array>
+    <string-array name="tidbits_general_lvl9">
+        <item>Den spiser dagen din i små, umerkelige biter.</item>
+        <item>Minutter forsvinner her uten å etterlate et minne.</item>
+        <item>Legg sammen disse åpningene, og det er timer.</item>
+    </string-array>
+    <string-array name="tidbits_general_lvl10">
+        <item>Du har sluttet å velge. Refleksen valgte.</item>
+        <item>Det er ingen beslutning igjen i dette, bare vane.</item>
+        <item>Du bestemte ikke å være her; mønsteret gjorde det.</item>
+    </string-array>
+    <string-array name="tidbits_general_lvl11">
+        <item>Dette er oppførselen til en avhengighet, rett og slett.</item>
+        <item>Etter alle mål som betyr noe, er dette avhengighet.</item>
+        <item>Kall det det det er: du har ikke kontroll her.</item>
+    </string-array>
+
+    <!-- ── SOCIAL-nivåer ── -->
+    <string-array name="tidbits_social_lvl0">
+        <item>Laget for å være vanskelig å legge fra seg.</item>
+        <item>Designet for å holde deg skrollende forbi der du mente å stoppe.</item>
+        <item>Å gå tidlig er det ene den er bygd for å hindre.</item>
+    </string-array>
+    <string-array name="tidbits_social_lvl1">
+        <item>Uendelig skrolling har ingen bunn, med vilje.</item>
+        <item>Det finnes ingen sluttskjerm, for en slutt ville frigjort deg.</item>
+        <item>Feeden fylles for alltid så økten aldri må avsluttes.</item>
+    </string-array>
+    <string-array name="tidbits_social_lvl2">
+        <item>Hver åpning er et nytt trekk i samme spak.</item>
+        <item>Hver oppstart er nok et spinn for samme gevinst.</item>
+        <item>Du mater mynter i den samme maskinen.</item>
+    </string-array>
+    <string-array name="tidbits_social_lvl3">
+        <item>Du er tilbake igjen. Appen regnet med det.</item>
+        <item>Den forutså denne åpningen, og den hadde rett.</item>
+        <item>Returen din er et tall på noens dashbord.</item>
+    </string-array>
+    <string-array name="tidbits_social_lvl4">
+        <item>Dette er en vane nå, ikke et valg.</item>
+        <item>Du planla ikke denne åpningen; vanen gjorde det.</item>
+        <item>Valget forlot dette for en stund siden.</item>
+    </string-array>
+    <string-array name="tidbits_social_lvl5">
+        <item>Du sjekker mer enn du lever.</item>
+        <item>Mer av dagen din går til å se på enn å gjøre.</item>
+        <item>Skrollingen har begynt å veie tyngre enn livet.</item>
+    </string-array>
+    <string-array name="tidbits_social_lvl6">
+        <item>Dette er tvangsmessig, og appen har designet det.</item>
+        <item>Suget du kjenner ble designet med vilje.</item>
+        <item>Den trangen er ikke din; den ble produsert.</item>
+    </string-array>
+    <string-array name="tidbits_social_lvl7">
+        <item>Du strekker deg etter den før du merker at du kjeder deg.</item>
+        <item>Kjedsomhet hopper nå rett til dette.</item>
+        <item>Gapet mellom følelse og åpning er borte.</item>
+    </string-array>
+    <string-array name="tidbits_social_lvl8">
+        <item>Du er produktet, og du er på salg hele dagen.</item>
+        <item>Oppmerksomheten din er varelageret som selges akkurat nå.</item>
+        <item>Hvert minutt her auksjoneres til en annonsør.</item>
+    </string-array>
+    <string-array name="tidbits_social_lvl9">
+        <item>Du bruker dette som en parasosial erstatning. Ring en venn.</item>
+        <item>Fremmede på en skjerm er ikke selskapet du trenger. Ring noen.</item>
+        <item>Dette erstatter ekte kontakt. Ta kontakt med et ekte menneske.</item>
+    </string-array>
+    <string-array name="tidbits_social_lvl10">
+        <item>Du har sluttet å bestemme. Løkka bestemmer.</item>
+        <item>Løkka styrer deg nå, ikke omvendt.</item>
+        <item>Det finnes ingen sjåfør her lenger, bare løkka.</item>
+    </string-array>
+    <string-array name="tidbits_social_lvl11">
+        <item>Var dette en sigarett, ville du vært kjederøyker.</item>
+        <item>Bytt feeden med sigaretter, og du tenner den neste på den forrige.</item>
+        <item>I sigarett-termer legger du den aldri fra deg i dette tempoet.</item>
+    </string-array>
+
+    <!-- ── ADULT-nivåer ── -->
+    <string-array name="tidbits_adult_lvl0">
+        <item>Dette er en superstimulus hjernen din ikke kan forsvare seg mot.</item>
+        <item>Belønningssystemet ditt utviklet seg aldri for noe så sterkt.</item>
+        <item>Dette overgår alle naturlige signaler hjernen din ble bygd for.</item>
+    </string-array>
+    <string-array name="tidbits_adult_lvl1">
+        <item>Nyhet er uendelig her; belønningssystemet ditt er det ikke.</item>
+        <item>Endeløst nytt er nettopp det hjernen ikke kan venne seg til trygt.</item>
+        <item>Ubegrenset nyhet er det ene opphisselse ikke kan slå av.</item>
+    </string-array>
+    <string-array name="tidbits_adult_lvl2">
+        <item>Hvert besøk hever listen for det neste.</item>
+        <item>Det som funker i dag vil føles flatt i morgen.</item>
+        <item>Hver økt setter grunnlinjen høyere.</item>
+    </string-array>
+    <string-array name="tidbits_adult_lvl3">
+        <item>Du er tilbake raskere enn sist. Det er mønsteret.</item>
+        <item>Gapet mellom besøk krymper. Det er tegnet.</item>
+        <item>Å komme tilbake raskere hver gang er slik dette utvikler seg.</item>
+    </string-array>
+    <string-array name="tidbits_adult_lvl4">
+        <item>Dette er eskalering — samme mekanisme som toleranse.</item>
+        <item>Du trenger mer eller nyere for å føle det samme. Det er toleranse.</item>
+        <item>Driften mot sterkere materiale er ikke tilfeldig; det er toleranse.</item>
+    </string-array>
+    <string-array name="tidbits_adult_lvl5">
+        <item>Det omkobler opphisselse mot en skjerm.</item>
+        <item>Opphisselsen din trenes til et pikselmønster.</item>
+        <item>En skjerm blir triggeren kroppen din svarer på.</item>
+    </string-array>
+    <string-array name="tidbits_adult_lvl6">
+        <item>Den desensitiviserer deg for en virkelig partner.</item>
+        <item>Et ekte menneske kan ikke konkurrere med uendelig nyhet — det er skaden.</item>
+        <item>Dette sløver responsen din på en faktisk partner.</item>
+    </string-array>
+    <string-array name="tidbits_adult_lvl7">
+        <item>Suget blir høyere; belønningen blir lavere.</item>
+        <item>Du vil ha det mer og nyter det mindre hver gang.</item>
+        <item>Økende sug, fallende belønning — avhengighetens signatur.</item>
+    </string-array>
+    <string-array name="tidbits_adult_lvl8">
+        <item>Dette er tvangsmessig bruk, per sin egen definisjon.</item>
+        <item>Å fortsette mot din egen vilje er definisjonen på tvangsmessig.</item>
+        <item>Du har sagt til deg selv at du skal slutte, og du er her — det er tvang.</item>
+    </string-array>
+    <string-array name="tidbits_adult_lvl9">
+        <item>PIED er dokumentert hos friske, unge menn — slik skjer det.</item>
+        <item>Pornoindusert ED dukker opp hos unge menn uten annen årsak. Dette er veien.</item>
+        <item>Mekanismen bak PIED er nettopp dette, gjentatt.</item>
+    </string-array>
+    <string-array name="tidbits_adult_lvl10">
+        <item>Du har sluttet å bestemme. Suget bestemmer.</item>
+        <item>Suget sitter i førersetet nå.</item>
+        <item>Det er ingen valg igjen i dette, bare draget.</item>
+    </string-array>
+    <string-array name="tidbits_adult_lvl11">
+        <item>Dette er en avhengighet som styrer deg, ikke en vane.</item>
+        <item>Forbi et visst punkt er det ikke en vane; det er avhengighet, og dette er forbi det.</item>
+        <item>Dette er ikke en preferanse lenger. Det er en avhengighet som styrer deg.</item>
+    </string-array>
+
     <!-- ════════ OFFLINE ACTIVITY PROMPTS ════════ -->
     <string-array name="offline_prompts_movement">
         <item>Ta en tur rundt kvartalet.</item>
