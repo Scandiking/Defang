@@ -5,3 +5,6 @@ local.properties
 build/
 *.keystore
 *.blend1
+
+# Release APKs are attached to GitHub Releases, never committed
+*.apk
