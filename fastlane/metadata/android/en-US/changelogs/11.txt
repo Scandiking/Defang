@@ -1,0 +1,1 @@
+Fixes the app drawer's long-press "Uninstall", which did nothing on 0.1.9. It now opens the system uninstall dialog as expected.

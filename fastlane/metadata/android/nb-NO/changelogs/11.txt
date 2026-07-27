@@ -1,0 +1,1 @@
+Retter «Avinstaller» ved å holde inne en app i appskuffen, som ikke gjorde noe i 0.1.9. Den åpner nå systemets avinstalleringsdialog som forventet.
