@@ -18,6 +18,10 @@
     <!-- Lets "Go back" on the gate actually stop the watched app, not just
          send it to the background. -->
     <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
+    <!-- Optional NFC-tag unlock: scan a registered tag to open a watched app.
+         not-required so devices without NFC still install. -->
+    <uses-permission android:name="android.permission.NFC" />
+    <uses-feature android:name="android.hardware.nfc" android:required="false" />
     <!-- Signature-level: only active if granted once via
          `adb shell pm grant <pkg> android.permission.WRITE_SECURE_SETTINGS`.
          Lets the app re-enable its own accessibility service after reinstalls. -->
@@ -57,6 +61,17 @@
             android:name=".ui.settings.SettingsActivity"
             android:exported="false"
             android:label="@string/settings_title" />
+
+        <!-- ── NFC Unlock Activity ── -->
+        <!-- Reads a tag (reader mode needs a resumed Activity, which the gate's
+             service overlay is not). noHistory + excludeFromRecents so it never
+             lingers in the back stack or task switcher. -->
+        <activity
+            android:name=".service.nfc.NfcUnlockActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:launchMode="singleTop" />
 
         <!-- ── Accessibility Service ── -->
         <!-- Detects foreground app changes; triggers intent gate and grayscale overlay -->

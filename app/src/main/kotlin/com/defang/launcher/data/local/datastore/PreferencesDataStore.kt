@@ -123,6 +123,20 @@ class PreferencesDataStore @Inject constructor(
 
     suspend fun setHomeUsageEnabled(on: Boolean) = store.edit { it[KEY_HOME_USAGE] = on }
 
+    // ── NFC unlock ────────────────────────────────────────────────────────────
+    // A physical tag scan replaces the slide-to-open at the end of the gate:
+    // the tag lives somewhere inconvenient, so opening a watched app costs a
+    // walk. nfcTagUid is the hex UID of the registered tag; null = none yet.
+    private val KEY_NFC_ENABLED = booleanPreferencesKey("nfc_unlock_enabled")
+    private val KEY_NFC_TAG_UID = stringPreferencesKey("nfc_tag_uid")
+
+    val nfcUnlockEnabled: Flow<Boolean> = store.data.map { it[KEY_NFC_ENABLED] ?: false }
+    val nfcTagUid: Flow<String?> = store.data.map { it[KEY_NFC_TAG_UID] }
+
+    suspend fun setNfcUnlockEnabled(on: Boolean) = store.edit { it[KEY_NFC_ENABLED] = on }
+    suspend fun setNfcTagUid(uid: String) = store.edit { it[KEY_NFC_TAG_UID] = uid }
+    suspend fun clearNfcTagUid() = store.edit { it.remove(KEY_NFC_TAG_UID) }
+
     // ── Home screen mode ──────────────────────────────────────────────────────
     private val KEY_HOME_MODE = intPreferencesKey("home_screen_mode")
 

@@ -51,6 +51,11 @@ class IntentGateOverlay(
     private val offlinePrompt: String?,
     private val delaySeconds: Int,
     private val opensToday: Int,
+    // When true, the unlock is a physical NFC-tag scan handled by the service:
+    // this overlay shows only the tidbit + countdown, and the service dismisses
+    // it and hands off to NfcUnlockActivity once the countdown ends. No slide is
+    // revealed. When false, the slide-to-open below is the unlock, as before.
+    private val nfcMode: Boolean = false,
     private val onTimerFinished: () -> Unit,
     private val onIntentDeclared: (intent: String?) -> Unit,
     private val onGoBack: () -> Unit,
@@ -193,8 +198,12 @@ class IntentGateOverlay(
     private fun onTimerElapsed() {
         tvCountdown.text = ""
         timerDone = true
-        tvSlideHint.visibility = View.VISIBLE
-        slideToOpen.visibility = View.VISIBLE
+        // In NFC mode the service takes over here — dismisses this overlay and
+        // launches the tag-scan activity — so we never reveal the slide.
+        if (!nfcMode) {
+            tvSlideHint.visibility = View.VISIBLE
+            slideToOpen.visibility = View.VISIBLE
+        }
         onTimerFinished()
     }
 
