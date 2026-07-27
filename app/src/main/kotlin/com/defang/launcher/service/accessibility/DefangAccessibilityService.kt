@@ -101,6 +101,12 @@ class DefangAccessibilityService : AccessibilityService() {
     // Packages currently showing the intent gate (prevents re-trigger on internal windows)
     private val pendingGate = mutableSetOf<String>()
 
+    // The gate key whose gate is genuinely live right now — overlay up, or handed
+    // off to the NFC scan. Cleared the instant the gate resolves or is abandoned.
+    // A pendingGate entry that isn't this key is stale (a gate left unresolved,
+    // e.g. the user backgrounded the NFC scan) and must not suppress a re-gate.
+    private var activeGateKey: String? = null
+
     // Package → suppress-gate deadline set when the user taps "Go back" on the gate.
     // Needed for browsers: the adult URL is still sitting in the URL bar after
     // dismissal, so without this the very next content-changed event would
@@ -364,7 +370,13 @@ class DefangAccessibilityService : AccessibilityService() {
             if (config == null) Log.d(TAG, "no config for $pkg")
             return
         }
-        if (pkg in pendingGate) { Log.d(TAG, "gate already pending for $pkg"); return }
+        if (pkg in pendingGate) {
+            if (pkg == activeGateKey) { Log.d(TAG, "gate already pending for $pkg"); return }
+            // Stale entry: a prior gate for this app was never resolved (typically
+            // the NFC scan was backgrounded). Drop it so the gate can re-arm.
+            Log.d(TAG, "clearing stale pending gate for $pkg")
+            pendingGate.remove(pkg)
+        }
         if (pkg == currentWatchedPackage) {
             // Session active — in-app navigation or return from home screen.
             // The app is back in front, so cancel any pending debounced teardown
@@ -419,7 +431,10 @@ class DefangAccessibilityService : AccessibilityService() {
         val isAdult = match?.isAdult ?: true          // built-in fallback is always adult
         val watchKey = match?.pattern ?: "adult:$host"
 
-        if (watchKey in pendingGate) return           // gate already showing
+        if (watchKey in pendingGate) {
+            if (watchKey == activeGateKey) return      // gate genuinely still up
+            pendingGate.remove(watchKey)               // stale — let it re-arm
+        }
         if (currentWatchedPackage == pkg && currentWatchedPattern == watchKey) {
             // Same watched target still in front — keep the session and cancel any
             // debounced teardown from browser task churn.
@@ -498,11 +513,23 @@ class DefangAccessibilityService : AccessibilityService() {
                         // Hand off to the tag-scan activity: arm the result
                         // callbacks, drop the overlay, launch the reader.
                         pendingNfcUnlock = {
-                            completeGateUnlock(pkg, pattern, "nfc", config, contentTrack, gateKey)
+                            completeGateUnlock(pkg, pattern, "nfc", config, contentTrack,
+                                gateKey, relaunchApp = true)
                         }
                         pendingNfcGoBack = { completeGateGoBack(gateKey, pkg) }
                         overlayManager.dismissFullscreen()
-                        launchNfcUnlock(config.appLabel)
+                        // Send the watched app to the background first. Some apps
+                        // (Snapchat) otherwise keep "top resumed activity" status,
+                        // and the platform then refuses our NFC reader mode even
+                        // though our scan screen is on top ("Reader mode Binder was
+                        // never registered"). Home always wins; launching the
+                        // scanner from the home state gives it a clean foreground.
+                        // The unlock relaunches the app afterwards regardless.
+                        goHome()
+                        serviceScope.launch {
+                            delay(NFC_HANDOFF_HOME_SETTLE_MS)
+                            launchNfcUnlock(config.appLabel)
+                        }
                     }
                 },
                 onIntentDeclared = { intent ->
@@ -511,11 +538,22 @@ class DefangAccessibilityService : AccessibilityService() {
                 onGoBack = { completeGateGoBack(gateKey, pkg) },
             )
             overlayManager.showFullscreen(currentGateOverlay!!.view)
+            activeGateKey = gateKey
             Log.d(TAG, "gate overlay shown for $gateKey (nfc=$nfcMode)")
         }
     }
 
-    /** Shared unlock path for both the slide gate and the NFC tag scan. */
+    /**
+     * Shared unlock path for both the slide gate and the NFC tag scan.
+     *
+     * [relaunchApp] is set for the NFC path: the tag-scan activity was on top, so
+     * the watched app is no longer foreground and finishing the scan lands on the
+     * home screen (seen on Samsung). Relaunch it explicitly. The slide path leaves
+     * the app foreground under the overlay, so it must NOT relaunch (that would
+     * reset the app to its launch screen). startSession sets currentWatchedPackage
+     * first, so the relaunch's foreground event is treated as an active session,
+     * not a fresh gate.
+     */
     private fun completeGateUnlock(
         pkg: String,
         pattern: String?,
@@ -523,19 +561,28 @@ class DefangAccessibilityService : AccessibilityService() {
         config: AppConfig,
         contentTrack: ContentTrack,
         gateKey: String,
+        relaunchApp: Boolean = false,
     ) {
         pendingGate.remove(gateKey)
+        if (activeGateKey == gateKey) activeGateKey = null
         currentGateOverlay?.cancel()
         overlayManager.dismissFullscreen()
         serviceScope.launch {
             startSession(pkg, pattern, intent, config.sessionLimitMinutes,
                 config.cooldownMinutes, contentTrack)
+            if (relaunchApp) {
+                packageManager.getLaunchIntentForPackage(pkg)?.let {
+                    it.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(it)
+                }
+            }
         }
     }
 
     /** Shared "Go back" path for both the slide gate and the NFC tag scan. */
     private fun completeGateGoBack(gateKey: String, pkg: String) {
         pendingGate.remove(gateKey)
+        if (activeGateKey == gateKey) activeGateKey = null
         gateSuppressedUntilMs[gateKey] = System.currentTimeMillis() + GO_BACK_SUPPRESS_MS
         currentGateOverlay?.cancel()
         overlayManager.dismissAll()
@@ -873,7 +920,14 @@ class DefangAccessibilityService : AccessibilityService() {
         }
     }
 
-    override fun onInterrupt() = overlayManager.dismissAll()
+    override fun onInterrupt() {
+        overlayManager.dismissAll()
+        // Overlays are gone — drop the gate bookkeeping too so a re-open re-arms.
+        pendingGate.clear()
+        activeGateKey = null
+        pendingNfcUnlock = null
+        pendingNfcGoBack = null
+    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -921,6 +975,13 @@ class DefangAccessibilityService : AccessibilityService() {
          * a still-foreground process.
          */
         const val GO_HOME_SETTLE_MS = 350L
+
+        /**
+         * Delay between backgrounding the watched app (Home) and launching the
+         * NFC scan screen, so Home settles and the scan activity comes up as the
+         * unambiguous foreground — the state the platform will grant reader mode.
+         */
+        const val NFC_HANDOFF_HOME_SETTLE_MS = 250L
 
         val DEFAULT_WATCHED_PACKAGES = setOf(
             "com.instagram.android",

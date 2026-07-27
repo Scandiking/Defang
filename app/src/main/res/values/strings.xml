@@ -195,6 +195,10 @@
     <string name="nfc_unlock_title">Scan to open %1$s</string>
     <string name="nfc_unlock_body">Hold your tag against the back of your phone.</string>
     <string name="nfc_wrong_tag">That\'s not the registered tag. Try the right one, or go back.</string>
+    <string name="nfc_random_title">That card won\'t work</string>
+    <string name="nfc_random_body">This card uses a randomized ID — a new one every tap, so it can never be matched. National ID cards, passports, and most bank cards and phone/watch wallets do this. Use a dedicated NFC tag (an NTAG sticker) or an older card with a fixed ID.</string>
+    <string name="nfc_slide_fallback">Tag not reading? Some apps block the scanner. Slide to open instead.</string>
+    <string name="nfc_slide_label">Slide to open</string>
     <string name="nfc_off_title">NFC is off</string>
     <string name="nfc_off_body">Turn on NFC to scan your tag, or go back.</string>
     <string name="nfc_open_settings">Open NFC settings</string>

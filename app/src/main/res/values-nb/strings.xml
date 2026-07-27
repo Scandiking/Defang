@@ -196,6 +196,10 @@
     <string name="nfc_unlock_title">Skann for å åpne %1$s</string>
     <string name="nfc_unlock_body">Hold brikken mot baksiden av telefonen.</string>
     <string name="nfc_wrong_tag">Det er ikke den registrerte brikken. Prøv riktig brikke, eller gå tilbake.</string>
+    <string name="nfc_random_title">Det kortet fungerer ikke</string>
+    <string name="nfc_random_body">Dette kortet bruker en tilfeldig ID — en ny for hver skanning, så den kan aldri gjenkjennes. ID-kort, pass og de fleste bankkort og telefon-/klokkelommebøker gjør dette. Bruk en egen NFC-brikke (et NTAG-klistremerke) eller et eldre kort med fast ID.</string>
+    <string name="nfc_slide_fallback">Leser ikke brikken? Noen apper blokkerer skanneren. Dra for å åpne i stedet.</string>
+    <string name="nfc_slide_label">Dra for å åpne</string>
     <string name="nfc_off_title">NFC er av</string>
     <string name="nfc_off_body">Slå på NFC for å skanne brikken, eller gå tilbake.</string>
     <string name="nfc_open_settings">Åpne NFC-innstillinger</string>

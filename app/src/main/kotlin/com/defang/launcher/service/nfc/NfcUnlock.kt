@@ -44,4 +44,15 @@ object NfcUnlock {
 
     /** Tag UID as uppercase hex, the form stored in prefs and compared against. */
     fun uidHex(id: ByteArray): String = id.joinToString("") { "%02X".format(it) }
+
+    /**
+     * True if the UID is a *randomized* one, regenerated on every tap — the form
+     * secure cards (national eID, passports, most current contactless bank cards,
+     * and phone/watch HCE wallets like Garmin Pay) present for anti-tracking. Per
+     * ISO/IEC 14443-3, a single-size 4-byte UID beginning with 0x08 is a random
+     * number, not a fixed identity, so it can never be matched against later and
+     * is useless as a key. 7- and 10-byte UIDs are always manufacturer-fixed.
+     */
+    fun isRandomUid(id: ByteArray): Boolean =
+        id.size == 4 && id[0] == 0x08.toByte()
 }
