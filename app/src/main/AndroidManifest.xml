@@ -15,6 +15,9 @@
         tools:ignore="QueryAllPackagesPermission" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Lets "Go back" on the gate actually stop the watched app, not just
+         send it to the background. -->
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
     <!-- Signature-level: only active if granted once via
          `adb shell pm grant <pkg> android.permission.WRITE_SECURE_SETTINGS`.
          Lets the app re-enable its own accessibility service after reinstalls. -->

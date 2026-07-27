@@ -1,6 +1,7 @@
 package com.defang.launcher.service.accessibility
 
 import android.accessibilityservice.AccessibilityService
+import android.app.ActivityManager
 import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.BroadcastReceiver
@@ -464,7 +465,7 @@ class DefangAccessibilityService : AccessibilityService() {
                     gateSuppressedUntilMs[gateKey] = System.currentTimeMillis() + GO_BACK_SUPPRESS_MS
                     currentGateOverlay?.cancel()
                     overlayManager.dismissAll()
-                    goHome()
+                    exitWatchedApp(pkg)
                 },
             )
             overlayManager.showFullscreen(currentGateOverlay!!.view)
@@ -773,6 +774,25 @@ class DefangAccessibilityService : AccessibilityService() {
         })
     }
 
+    /**
+     * "Go back" from the gate: the watched app is already in the foreground, so
+     * leaving the gate has to actively exit it — otherwise it just sits behind
+     * the launcher, still open and mid-feed for the next glance. Home moves it
+     * to the back; killBackgroundProcesses (which only bites once a process is
+     * backgrounded) then stops it, so returning to it starts fresh and re-arms
+     * the gate rather than dropping the user back where they were.
+     */
+    private fun exitWatchedApp(pkg: String) {
+        goHome()
+        serviceScope.launch {
+            delay(GO_HOME_SETTLE_MS)
+            runCatching {
+                (getSystemService(ACTIVITY_SERVICE) as ActivityManager)
+                    .killBackgroundProcesses(pkg)
+            }
+        }
+    }
+
     override fun onInterrupt() = overlayManager.dismissAll()
 
     override fun onDestroy() {
@@ -813,6 +833,13 @@ class DefangAccessibilityService : AccessibilityService() {
 
         /** After "Go back" on the gate, don't re-fire for this long. */
         const val GO_BACK_SUPPRESS_MS = 45_000L
+
+        /**
+         * Delay after Home before killing the watched app's process, so the app
+         * is actually backgrounded first — killBackgroundProcesses is a no-op on
+         * a still-foreground process.
+         */
+        const val GO_HOME_SETTLE_MS = 350L
 
         val DEFAULT_WATCHED_PACKAGES = setOf(
             "com.instagram.android",
