@@ -20,6 +20,9 @@ class AppConfigRepository @Inject constructor(
 
     suspend fun seedInstalledApps(configs: List<AppConfigEntity>) = dao.insertAll(configs)
 
+    suspend fun pruneUninstalled(installedPackages: List<String>) =
+        dao.deleteNotIn(installedPackages)
+
     suspend fun setTier(packageName: String, tier: Int) = dao.setTier(packageName, tier)
 
     suspend fun setHidden(packageName: String, hidden: Boolean) =

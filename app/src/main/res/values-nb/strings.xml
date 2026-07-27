@@ -128,6 +128,8 @@
     <string name="launcher_all_apps">Alle apper</string>
     <string name="launcher_search_hint">Søk etter apper…</string>
     <string name="launcher_settings">Innstillinger</string>
+    <string name="app_menu_info">Appinfo</string>
+    <string name="app_menu_uninstall">Avinstaller</string>
 
     <!-- Settings menu (Phase 2) -->
     <string name="settings_timing_title">Standardtider</string>

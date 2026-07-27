@@ -22,7 +22,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 data class AppInfo(
@@ -64,14 +66,8 @@ class LauncherViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val onboardingDone = prefs.isOnboardingDone.first()
-            val installedApps = loadInstalledApps()
-            seedAppConfigs(installedApps)
-            // Defang itself is listed so settings stay reachable from the drawer.
-            // LauncherActivity routes a tap on our own package to SettingsActivity.
-            val allApps = (installedApps + AppInfo(context.packageName, "Defang"))
-                .sortedBy { it.label.lowercase() }
             _uiState.value = LauncherUiState(
-                apps = allApps,
+                apps = reloadApps(),
                 needsOnboarding = !onboardingDone,
                 homeTidbit = tidbitSelector.daily(ContentTrack.GENERAL),
                 // One-time heads-up about Google's install lockdown — after
@@ -79,6 +75,30 @@ class LauncherViewModel @Inject constructor(
                 showLockdownWarning = onboardingDone && !prefs.isLockdownWarned.first(),
             )
         }
+    }
+
+    /**
+     * Re-scans installed apps, seeds newly installed ones, and prunes rows for
+     * apps that are gone. The ViewModel outlives many activity resumes (a
+     * launcher process sticks around), so without this the list is frozen at the
+     * snapshot taken on first launch. Called when the drawer opens and whenever a
+     * package add/remove broadcast fires — cheap enough for both.
+     */
+    fun refresh() {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(apps = reloadApps())
+        }
+    }
+
+    /** Scans packages (off the main thread), syncs the DB, returns the drawer list. */
+    private suspend fun reloadApps(): List<AppInfo> {
+        val installedApps = withContext(Dispatchers.IO) { loadInstalledApps() }
+        seedAppConfigs(installedApps)
+        appConfigRepo.pruneUninstalled(installedApps.map { it.packageName })
+        // Defang itself is listed so settings stay reachable from the drawer.
+        // LauncherActivity routes a tap on our own package to SettingsActivity.
+        return (installedApps + AppInfo(context.packageName, "Defang"))
+            .sortedBy { it.label.lowercase() }
     }
 
     /** Re-derives the tidbit of the day — called on resume so it rolls over at midnight. */

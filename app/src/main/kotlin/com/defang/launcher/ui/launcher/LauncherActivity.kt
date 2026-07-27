@@ -1,12 +1,16 @@
 package com.defang.launcher.ui.launcher
 
 import android.Manifest
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import androidx.core.content.ContextCompat
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -31,6 +35,15 @@ class LauncherActivity : ComponentActivity() {
 
     // true = app drawer is visible, false = home screen is visible
     private var showDrawer by mutableStateOf(false)
+
+    // Keeps the drawer live: package add/remove fires an instant re-scan even
+    // while the drawer is open. Manifest-declared receivers don't get these
+    // implicit broadcasts on Oreo+, so we register at runtime.
+    private val packageChangeReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            viewModel.refresh()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,8 +92,11 @@ class LauncherActivity : ComponentActivity() {
                     LauncherScreen(
                         apps = viewModel.filteredApps(hiddenPackages),
                         query = state.query,
+                        ownPackageName = packageName,
                         onQueryChange = { viewModel.onQueryChange(it) },
                         onAppTap = { pkg -> launchApp(pkg) },
+                        onAppInfo = { pkg -> openAppInfo(pkg) },
+                        onUninstall = { pkg -> uninstallApp(pkg) },
                         onClose = { showDrawer = false },
                     )
                 } else {
@@ -96,11 +112,29 @@ class LauncherActivity : ComponentActivity() {
                                     .putExtra(SettingsActivity.EXTRA_OPEN_USAGE, true)
                             )
                         },
-                        onAppsTap = { showDrawer = true },
+                        onAppsTap = {
+                            // Re-scan on open so freshly installed/removed apps show
+                            // up without waiting for a process restart.
+                            viewModel.refresh()
+                            showDrawer = true
+                        },
                     )
                 }
             }
         }
+
+        val packageFilter = IntentFilter().apply {
+            addAction(Intent.ACTION_PACKAGE_ADDED)
+            addAction(Intent.ACTION_PACKAGE_REMOVED)
+            addAction(Intent.ACTION_PACKAGE_REPLACED)
+            addDataScheme("package")
+        }
+        ContextCompat.registerReceiver(
+            this,
+            packageChangeReceiver,
+            packageFilter,
+            ContextCompat.RECEIVER_NOT_EXPORTED,
+        )
 
         if (!Settings.canDrawOverlays(this)) {
             startActivity(
@@ -142,6 +176,11 @@ class LauncherActivity : ComponentActivity() {
         viewModel.refreshHomeUsage()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(packageChangeReceiver)
+    }
+
     private fun launchApp(packageName: String) {
         // Our own drawer entry opens settings — the launcher itself is already open
         if (packageName == this.packageName) {
@@ -151,5 +190,24 @@ class LauncherActivity : ComponentActivity() {
         val intent = packageManager.getLaunchIntentForPackage(packageName) ?: return
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
+    }
+
+    /** Long-press → App info: the system's per-app details screen. */
+    private fun openAppInfo(packageName: String) {
+        startActivity(
+            Intent(
+                Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                Uri.parse("package:$packageName"),
+            ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        )
+    }
+
+    /** Long-press → Uninstall: fires the standard uninstaller, which shows its
+     *  own confirmation dialog. The package-change receiver refreshes the drawer
+     *  once the removal completes. */
+    private fun uninstallApp(packageName: String) {
+        startActivity(
+            Intent(Intent.ACTION_DELETE, Uri.parse("package:$packageName"))
+        )
     }
 }

@@ -1,7 +1,8 @@
 package com.defang.launcher.ui.launcher
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
@@ -13,6 +14,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -41,8 +44,11 @@ import kotlinx.coroutines.launch
 fun LauncherScreen(
     apps: List<AppInfo>,
     query: String,
+    ownPackageName: String,
     onQueryChange: (String) -> Unit,
     onAppTap: (String) -> Unit,
+    onAppInfo: (String) -> Unit,
+    onUninstall: (String) -> Unit,
     onClose: () -> Unit,
 ) {
     var searchActive by remember { mutableStateOf(false) }
@@ -121,7 +127,13 @@ fun LauncherScreen(
                 ) {
                     LazyColumn {
                         items(apps) { app ->
-                            AppRow(app = app, onTap = { onAppTap(app.packageName) })
+                            AppRow(
+                                app = app,
+                                canUninstall = app.packageName != ownPackageName,
+                                onTap = { onAppTap(app.packageName) },
+                                onAppInfo = onAppInfo,
+                                onUninstall = onUninstall,
+                            )
                         }
                     }
                 }
@@ -129,7 +141,13 @@ fun LauncherScreen(
                 Box(modifier = Modifier.weight(1f)) {
                     LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
                         items(apps) { app ->
-                            AppRow(app = app, onTap = { onAppTap(app.packageName) })
+                            AppRow(
+                                app = app,
+                                canUninstall = app.packageName != ownPackageName,
+                                onTap = { onAppTap(app.packageName) },
+                                onAppInfo = onAppInfo,
+                                onUninstall = onUninstall,
+                            )
                         }
                     }
                     LetterRail(
@@ -207,15 +225,50 @@ private fun LetterRail(
     }
 }
 
+/**
+ * A drawer row. Tap launches; long-press opens a Pixel/One UI-style popup with
+ * App info and Uninstall. `canUninstall` is false for Defang's own entry.
+ */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun AppRow(app: AppInfo, onTap: () -> Unit) {
-    Text(
-        text = app.label,
-        style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.onBackground,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onTap() }
-            .padding(horizontal = 24.dp, vertical = 14.dp),
-    )
+fun AppRow(
+    app: AppInfo,
+    canUninstall: Boolean,
+    onTap: () -> Unit,
+    onAppInfo: (String) -> Unit,
+    onUninstall: (String) -> Unit,
+) {
+    var menuOpen by remember { mutableStateOf(false) }
+    Box {
+        Text(
+            text = app.label,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground,
+            modifier = Modifier
+                .fillMaxWidth()
+                .combinedClickable(
+                    onClick = onTap,
+                    onLongClick = { menuOpen = true },
+                )
+                .padding(horizontal = 24.dp, vertical = 14.dp),
+        )
+        DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.app_menu_info)) },
+                onClick = {
+                    menuOpen = false
+                    onAppInfo(app.packageName)
+                },
+            )
+            if (canUninstall) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.app_menu_uninstall)) },
+                    onClick = {
+                        menuOpen = false
+                        onUninstall(app.packageName)
+                    },
+                )
+            }
+        }
+    }
 }

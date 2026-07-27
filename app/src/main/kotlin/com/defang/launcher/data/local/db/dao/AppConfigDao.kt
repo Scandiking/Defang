@@ -26,6 +26,10 @@ interface AppConfigDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(configs: List<AppConfigEntity>)
 
+    /** Drop rows for apps no longer installed, so uninstalled apps stop appearing. */
+    @Query("DELETE FROM app_config WHERE packageName NOT IN (:installedPackages)")
+    suspend fun deleteNotIn(installedPackages: List<String>)
+
     @Update
     suspend fun update(config: AppConfigEntity)
 
