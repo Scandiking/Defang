@@ -22,6 +22,9 @@
          not-required so devices without NFC still install. -->
     <uses-permission android:name="android.permission.NFC" />
     <uses-feature android:name="android.hardware.nfc" android:required="false" />
+    <!-- Lets the drawer's long-press "Uninstall" invoke the system uninstaller
+         (API 26+ rejects ACTION_DELETE without it). -->
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
     <!-- Signature-level: only active if granted once via
          `adb shell pm grant <pkg> android.permission.WRITE_SECURE_SETTINGS`.
          Lets the app re-enable its own accessibility service after reinstalls. -->
