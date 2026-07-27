@@ -102,6 +102,27 @@ class GlobalSettingsViewModel @Inject constructor(
         viewModelScope.launch { prefs.removeCustomTask(task) }
     }
 
+    // ── NFC tag unlock ────────────────────────────────────────────────────────
+    val nfcUnlockEnabled: StateFlow<Boolean> = prefs.nfcUnlockEnabled.stateIn(
+        viewModelScope, SharingStarted.Eagerly, false
+    )
+    /** The registered tag UID, or null if none registered yet. */
+    val nfcTagUid: StateFlow<String?> = prefs.nfcTagUid.stateIn(
+        viewModelScope, SharingStarted.Eagerly, null
+    )
+
+    fun setNfcUnlockEnabled(on: Boolean) {
+        viewModelScope.launch { prefs.setNfcUnlockEnabled(on) }
+    }
+
+    fun forgetNfcTag() {
+        viewModelScope.launch {
+            prefs.clearNfcTagUid()
+            // No tag means nothing to require — turn the gate back to slide.
+            prefs.setNfcUnlockEnabled(false)
+        }
+    }
+
     fun setGateDelay(seconds: Int) {
         viewModelScope.launch {
             prefs.setGateDelay(seconds)

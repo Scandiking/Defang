@@ -11,6 +11,7 @@ import android.content.IntentFilter
 import android.os.Build
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
+import com.defang.launcher.data.local.datastore.PreferencesDataStore
 import com.defang.launcher.data.repository.AppConfigRepository
 import com.defang.launcher.data.repository.WatchedUrlRepository
 import com.defang.launcher.domain.model.AppConfig
@@ -25,6 +26,8 @@ import com.defang.launcher.domain.usecase.SelectContentTrackUseCase
 import com.defang.launcher.service.overlay.CooldownOverlay
 import com.defang.launcher.service.overlay.EndCardOverlay
 import com.defang.launcher.service.overlay.IntentGateOverlay
+import com.defang.launcher.service.nfc.NfcUnlock
+import com.defang.launcher.service.nfc.NfcUnlockActivity
 import com.defang.launcher.service.overlay.OverlayManager
 import com.defang.launcher.service.overlay.SessionTimerOverlay
 import com.defang.launcher.ui.widget.UsageWidgetProvider
@@ -38,6 +41,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -73,6 +77,7 @@ class DefangAccessibilityService : AccessibilityService() {
     @Inject lateinit var browserUrlExtractor: BrowserUrlExtractor
     @Inject lateinit var watchedUrlRepo: WatchedUrlRepository
     @Inject lateinit var grayscale: GrayscaleController
+    @Inject lateinit var prefs: PreferencesDataStore
 
     private val serviceScope = CoroutineScope(Dispatchers.Main + Job())
 
@@ -133,6 +138,25 @@ class DefangAccessibilityService : AccessibilityService() {
     // swiped away, switched to home) sees no re-foreground and ends for real.
     private var pendingEndJob: Job? = null
 
+    // Set when an NFC-mode gate hands off to NfcUnlockActivity at countdown end;
+    // the NFC result broadcast invokes one of these, then both are cleared. Only
+    // one gate is ever active, so a single pair suffices.
+    private var pendingNfcUnlock: (() -> Unit)? = null
+    private var pendingNfcGoBack: (() -> Unit)? = null
+
+    private val nfcReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val unlock = pendingNfcUnlock
+            val goBack = pendingNfcGoBack
+            pendingNfcUnlock = null
+            pendingNfcGoBack = null
+            when (intent?.action) {
+                NfcUnlock.ACTION_NFC_UNLOCKED -> unlock?.invoke()
+                NfcUnlock.ACTION_NFC_GOBACK -> goBack?.invoke()
+            }
+        }
+    }
+
     // Lock screen desaturation: gray goes on at screen-off so the lock screen
     // (and everything glanced at before unlocking) renders colorless; color
     // returns at unlock unless a session or gate is active.
@@ -171,6 +195,17 @@ class DefangAccessibilityService : AccessibilityService() {
         } else {
             @Suppress("UnspecifiedRegisterReceiverFlag")
             registerReceiver(screenReceiver, filter)
+        }
+
+        val nfcFilter = IntentFilter().apply {
+            addAction(NfcUnlock.ACTION_NFC_UNLOCKED)
+            addAction(NfcUnlock.ACTION_NFC_GOBACK)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(nfcReceiver, nfcFilter, RECEIVER_NOT_EXPORTED)
+        } else {
+            @Suppress("UnspecifiedRegisterReceiverFlag")
+            registerReceiver(nfcReceiver, nfcFilter)
         }
 
         lastUsageEventQueryMs = System.currentTimeMillis()
@@ -438,6 +473,14 @@ class DefangAccessibilityService : AccessibilityService() {
     ) {
         serviceScope.launch {
             val opensToday = getTodayOpenCount.count()
+            // NFC-tag unlock replaces the slide for app gates (not browser-URL
+            // gates — relaunching a browser can't restore the page) when the user
+            // has enabled it, registered a tag, and NFC is currently on.
+            val nfcMode = pattern == null &&
+                prefs.nfcUnlockEnabled.first() &&
+                prefs.nfcTagUid.first() != null &&
+                NfcUnlock.isUsable(this@DefangAccessibilityService)
+
             currentGateOverlay = IntentGateOverlay(
                 context = this@DefangAccessibilityService,
                 contentTrack = contentTrack,
@@ -445,32 +488,69 @@ class DefangAccessibilityService : AccessibilityService() {
                 offlinePrompt = offlinePromptSelector.next(),
                 delaySeconds = config.gateDelaySeconds,
                 opensToday = opensToday,
+                nfcMode = nfcMode,
                 onTimerFinished = {
                     // Re-assert grayscale the moment the wait ends, while the gate
                     // still fully covers the screen, so the feed is already gray
-                    // when "Open" reveals it — no color flash on the way in.
+                    // when the app reveals it — no color flash on the way in.
                     serviceScope.launch { grayscale.enable() }
-                },
-                onIntentDeclared = { intent ->
-                    pendingGate.remove(gateKey)
-                    currentGateOverlay?.cancel()
-                    overlayManager.dismissFullscreen()
-                    serviceScope.launch {
-                        startSession(pkg, pattern, intent, config.sessionLimitMinutes,
-                            config.cooldownMinutes, contentTrack)
+                    if (nfcMode) {
+                        // Hand off to the tag-scan activity: arm the result
+                        // callbacks, drop the overlay, launch the reader.
+                        pendingNfcUnlock = {
+                            completeGateUnlock(pkg, pattern, "nfc", config, contentTrack, gateKey)
+                        }
+                        pendingNfcGoBack = { completeGateGoBack(gateKey, pkg) }
+                        overlayManager.dismissFullscreen()
+                        launchNfcUnlock(config.appLabel)
                     }
                 },
-                onGoBack = {
-                    pendingGate.remove(gateKey)
-                    gateSuppressedUntilMs[gateKey] = System.currentTimeMillis() + GO_BACK_SUPPRESS_MS
-                    currentGateOverlay?.cancel()
-                    overlayManager.dismissAll()
-                    exitWatchedApp(pkg)
+                onIntentDeclared = { intent ->
+                    completeGateUnlock(pkg, pattern, intent, config, contentTrack, gateKey)
                 },
+                onGoBack = { completeGateGoBack(gateKey, pkg) },
             )
             overlayManager.showFullscreen(currentGateOverlay!!.view)
-            Log.d(TAG, "gate overlay shown for $gateKey")
+            Log.d(TAG, "gate overlay shown for $gateKey (nfc=$nfcMode)")
         }
+    }
+
+    /** Shared unlock path for both the slide gate and the NFC tag scan. */
+    private fun completeGateUnlock(
+        pkg: String,
+        pattern: String?,
+        intent: String?,
+        config: AppConfig,
+        contentTrack: ContentTrack,
+        gateKey: String,
+    ) {
+        pendingGate.remove(gateKey)
+        currentGateOverlay?.cancel()
+        overlayManager.dismissFullscreen()
+        serviceScope.launch {
+            startSession(pkg, pattern, intent, config.sessionLimitMinutes,
+                config.cooldownMinutes, contentTrack)
+        }
+    }
+
+    /** Shared "Go back" path for both the slide gate and the NFC tag scan. */
+    private fun completeGateGoBack(gateKey: String, pkg: String) {
+        pendingGate.remove(gateKey)
+        gateSuppressedUntilMs[gateKey] = System.currentTimeMillis() + GO_BACK_SUPPRESS_MS
+        currentGateOverlay?.cancel()
+        overlayManager.dismissAll()
+        exitWatchedApp(pkg)
+    }
+
+    /** Launches the tag-scan screen; its result comes back via [nfcReceiver]. */
+    private fun launchNfcUnlock(appLabel: String) {
+        startActivity(
+            Intent(this, NfcUnlockActivity::class.java).apply {
+                putExtra(NfcUnlock.EXTRA_MODE, NfcUnlock.MODE_UNLOCK)
+                putExtra(NfcUnlock.EXTRA_APP_LABEL, appLabel)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+        )
     }
 
     // ── Session ───────────────────────────────────────────────────────────────
@@ -801,6 +881,7 @@ class DefangAccessibilityService : AccessibilityService() {
         foregroundPollJob?.cancel()
         foregroundPollJob = null
         runCatching { unregisterReceiver(screenReceiver) }
+        runCatching { unregisterReceiver(nfcReceiver) }
         runBlocking { endCurrentSession() }
     }
 

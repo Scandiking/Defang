@@ -52,6 +52,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.defang.launcher.R
 import com.defang.launcher.domain.model.HomeScreenMode
+import com.defang.launcher.service.nfc.NfcUnlock
+import com.defang.launcher.service.nfc.NfcUnlockActivity
 import com.defang.launcher.ui.onboarding.OnboardingActivity
 import com.defang.launcher.ui.settings.apptier.AppTierScreen
 import com.defang.launcher.ui.theme.DefangTheme
@@ -97,11 +99,25 @@ class SettingsActivity : ComponentActivity() {
                         val batchWindow1 by globalVm.batchWindow1.collectAsStateWithLifecycle()
                         val batchWindow2 by globalVm.batchWindow2.collectAsStateWithLifecycle()
                         val homeUsageOn by globalVm.homeUsageEnabled.collectAsStateWithLifecycle()
+                        val nfcEnabled by globalVm.nfcUnlockEnabled.collectAsStateWithLifecycle()
+                        val nfcTagUid by globalVm.nfcTagUid.collectAsStateWithLifecycle()
+                        val hasNfc = remember { NfcUnlock.hasHardware(this) }
                         SettingsMenuScreen(
                             homeMode = homeMode,
                             onHomeModeChange = globalVm::setHomeScreenMode,
                             homeUsageOn = homeUsageOn,
                             onHomeUsageChange = globalVm::setHomeUsageEnabled,
+                            hasNfc = hasNfc,
+                            nfcEnabled = nfcEnabled,
+                            onNfcEnabledChange = globalVm::setNfcUnlockEnabled,
+                            nfcTagUid = nfcTagUid,
+                            onRegisterNfcTag = {
+                                startActivity(
+                                    Intent(this, NfcUnlockActivity::class.java)
+                                        .putExtra(NfcUnlock.EXTRA_MODE, NfcUnlock.MODE_REGISTER)
+                                )
+                            },
+                            onForgetNfcTag = globalVm::forgetNfcTag,
                             grayscaleOn = grayscaleOn,
                             onGrayscaleChange = globalVm::setGrayscaleEnabled,
                             grayscaleSetupNeeded = grayscaleSetupNeeded,
@@ -212,6 +228,12 @@ private fun SettingsMenuScreen(
     onHomeModeChange: (HomeScreenMode) -> Unit,
     homeUsageOn: Boolean,
     onHomeUsageChange: (Boolean) -> Unit,
+    hasNfc: Boolean,
+    nfcEnabled: Boolean,
+    onNfcEnabledChange: (Boolean) -> Unit,
+    nfcTagUid: String?,
+    onRegisterNfcTag: () -> Unit,
+    onForgetNfcTag: () -> Unit,
     grayscaleOn: Boolean,
     onGrayscaleChange: (Boolean) -> Unit,
     grayscaleSetupNeeded: Boolean,
@@ -299,6 +321,8 @@ private fun SettingsMenuScreen(
         stringResource(R.string.settings_grayscale_why_body)
     val sanitizeWhy = stringResource(R.string.settings_sanitize_why_title) to
         stringResource(R.string.settings_sanitize_why_body)
+    val nfcWhy = stringResource(R.string.settings_nfc_why_title) to
+        stringResource(R.string.settings_nfc_why_body)
     val packageName = androidx.compose.ui.platform.LocalContext.current.packageName
     val grayscaleSetup = stringResource(R.string.settings_grayscale_setup_title) to
         stringResource(R.string.settings_grayscale_setup_body, packageName)
@@ -341,6 +365,62 @@ private fun SettingsMenuScreen(
                     .clickable { onSites() },
             )
             HorizontalDivider()
+
+            // NFC tag unlock — only shown on devices that have NFC hardware.
+            if (hasNfc) {
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.settings_nfc_title)) },
+                    supportingContent = { Text(stringResource(R.string.settings_nfc_desc)) },
+                    trailingContent = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            WhyButton { whyDialog = nfcWhy }
+                            Switch(
+                                checked = nfcEnabled,
+                                // Can't require a tag that hasn't been registered.
+                                enabled = nfcTagUid != null,
+                                onCheckedChange = onNfcEnabledChange,
+                            )
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                ListItem(
+                    headlineContent = {
+                        Text(
+                            if (nfcTagUid != null)
+                                stringResource(R.string.settings_nfc_change)
+                            else
+                                stringResource(R.string.settings_nfc_register)
+                        )
+                    },
+                    supportingContent = {
+                        Text(
+                            if (nfcTagUid != null)
+                                stringResource(
+                                    R.string.settings_nfc_registered,
+                                    nfcTagUid.takeLast(4),
+                                )
+                            else
+                                stringResource(R.string.settings_nfc_none)
+                        )
+                    },
+                    trailingContent = if (nfcTagUid != null) {
+                        {
+                            IconButton(onClick = onForgetNfcTag) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Delete,
+                                    contentDescription = stringResource(R.string.settings_nfc_forget),
+                                    tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                                )
+                            }
+                        }
+                    } else null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onRegisterNfcTag() },
+                )
+                HorizontalDivider()
+            }
             ListItem(
                 headlineContent = { Text(stringResource(R.string.settings_home_mode)) },
                 supportingContent = { Text(homeModeStrings(homeMode).first) },

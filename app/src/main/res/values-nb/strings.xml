@@ -178,6 +178,27 @@
     <string name="tasks_empty">Ingen oppgaver ennå. Legg til noe lite og fullførbart. Noe som tar 20 sekunder er nok.</string>
     <string name="action_back">Tilbake</string>
     <string name="action_ok">OK</string>
+    <string name="action_cancel">Avbryt</string>
+
+    <!-- NFC-brikkelås -->
+    <string name="settings_nfc_title">NFC-brikkelås</string>
+    <string name="settings_nfc_desc">Krev skanning av en fysisk brikke for å åpne overvåkede apper, i stedet for å dra. Legg brikken et sted du ikke rekker.</string>
+    <string name="settings_nfc_enable">Krev NFC-brikke</string>
+    <string name="settings_nfc_register">Registrer brikke</string>
+    <string name="settings_nfc_change">Bytt brikke</string>
+    <string name="settings_nfc_forget">Glem brikke</string>
+    <string name="settings_nfc_registered">Brikke registrert (…%1$s)</string>
+    <string name="settings_nfc_none">Ingen brikke registrert ennå</string>
+    <string name="settings_nfc_why_title">Hvorfor en fysisk brikke?</string>
+    <string name="settings_nfc_why_body">Dra-for-å-åpne er en pause, men tommelen din klarer det halvsovende. En brikke du må gå til — festet på kjøleskapet, ved inngangsdøren, i et annet rom — gjør det å åpne en overvåket app til en bevisst fysisk handling. Orker du ikke reise deg, var det svaret.</string>
+    <string name="nfc_register_title">Skann brikken for å registrere</string>
+    <string name="nfc_register_body">Hold brikken du vil bruke mot baksiden av telefonen.</string>
+    <string name="nfc_unlock_title">Skann for å åpne %1$s</string>
+    <string name="nfc_unlock_body">Hold brikken mot baksiden av telefonen.</string>
+    <string name="nfc_wrong_tag">Det er ikke den registrerte brikken. Prøv riktig brikke, eller gå tilbake.</string>
+    <string name="nfc_off_title">NFC er av</string>
+    <string name="nfc_off_body">Slå på NFC for å skanne brikken, eller gå tilbake.</string>
+    <string name="nfc_open_settings">Åpne NFC-innstillinger</string>
 
     <!-- App tier search -->
     <string name="tier_search_hint">Søk etter app eller pakkenavn</string>

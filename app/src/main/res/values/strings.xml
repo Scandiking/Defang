@@ -177,6 +177,27 @@
     <string name="tasks_empty">No tasks yet. Add something small and completable — 20 seconds is enough.</string>
     <string name="action_back">Back</string>
     <string name="action_ok">OK</string>
+    <string name="action_cancel">Cancel</string>
+
+    <!-- NFC tag unlock -->
+    <string name="settings_nfc_title">NFC tag unlock</string>
+    <string name="settings_nfc_desc">Require a physical tag scan to open watched apps, in place of the slide. Put the tag somewhere out of reach.</string>
+    <string name="settings_nfc_enable">Require NFC tag</string>
+    <string name="settings_nfc_register">Register tag</string>
+    <string name="settings_nfc_change">Change tag</string>
+    <string name="settings_nfc_forget">Forget tag</string>
+    <string name="settings_nfc_registered">Tag registered (…%1$s)</string>
+    <string name="settings_nfc_none">No tag registered yet</string>
+    <string name="settings_nfc_why_title">Why a physical tag?</string>
+    <string name="settings_nfc_why_body">The slide-to-open is a pause, but your thumb can do it half-asleep. A tag you have to walk to — stuck to the fridge, by the front door, in another room — turns opening a watched app into a deliberate physical act. If you can\'t be bothered to get up, that was the answer.</string>
+    <string name="nfc_register_title">Scan the tag to register</string>
+    <string name="nfc_register_body">Hold the tag you want to use against the back of your phone.</string>
+    <string name="nfc_unlock_title">Scan to open %1$s</string>
+    <string name="nfc_unlock_body">Hold your tag against the back of your phone.</string>
+    <string name="nfc_wrong_tag">That\'s not the registered tag. Try the right one, or go back.</string>
+    <string name="nfc_off_title">NFC is off</string>
+    <string name="nfc_off_body">Turn on NFC to scan your tag, or go back.</string>
+    <string name="nfc_open_settings">Open NFC settings</string>
 
     <!-- App tier search -->
     <string name="tier_search_hint">Search by app or package name</string>
