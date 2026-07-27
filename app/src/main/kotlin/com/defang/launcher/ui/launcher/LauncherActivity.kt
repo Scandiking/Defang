@@ -208,6 +208,9 @@ class LauncherActivity : ComponentActivity() {
     private fun uninstallApp(packageName: String) {
         startActivity(
             Intent(Intent.ACTION_DELETE, Uri.parse("package:$packageName"))
+                // Without this the uninstaller never launches from our singleTask
+                // home activity — the menu just closes and nothing happens.
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         )
     }
 }
