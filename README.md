@@ -41,13 +41,15 @@ After your session (or extension) ends, the app is locked for a cool-down period
 
 ## Screenshots
 
-| Intent gate | Onboarding | Setup | Watched apps |
-|:---:|:---:|:---:|:---:|
-| ![Intent gate overlay with countdown](assets/Screenshots/Intent_gate.png) | ![Onboarding — first screen](assets/Screenshots/Setup_screen-1.png) | ![Onboarding — setup intro](assets/Screenshots/Setup_screen-2.png) | ![Watched apps picker](assets/Screenshots/Watched_apps.png) |
+<sub>Screens follow your system theme — shown here in light and dark.</sub>
 
-| Timings | Tidbit library | Your own tasks | Grayscale setup |
-|:---:|:---:|:---:|:---:|
-| ![Gate delay, session limit, and cool-down sliders](assets/Screenshots/Timer_adjustment.png) | ![Library of tidbits on attention engineering](assets/Screenshots/Tidbit_library.png) | ![Custom tasks suggested on the end card](assets/Screenshots/Add_own_tasks.png) | ![Grayscale permission dialog](assets/Screenshots/Grayscale_grant.png) |
+| Intent gate | Onboarding | Watched apps |
+|:---:|:---:|:---:|
+| <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/intent_gate_dark.png"><img src="assets/Screenshots/intent_gate.png" width="240" alt="Intent gate overlay with countdown and slide-to-open"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/onboarding_dark.png"><img src="assets/Screenshots/onboarding.png" width="240" alt="Onboarding — first-run flow"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/watched_apps_dark.png"><img src="assets/Screenshots/watched_apps.png" width="240" alt="Watched apps picker"></picture> |
+
+| Timings | Tidbit library | Cue loop |
+|:---:|:---:|:---:|
+| <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/timer_adjustment_dark.png"><img src="assets/Screenshots/timer_adjustment.png" width="240" alt="Gate delay, session limit, and cool-down sliders"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/tidbit_library_dark.png"><img src="assets/Screenshots/tidbit_library.png" width="240" alt="Library of tidbits on attention engineering"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/cue_loop_dark.png"><img src="assets/Screenshots/cue_loop.png" width="240" alt="Cue loop — the open-gate-cooldown cycle"></picture> |
 
 ---
 
@@ -56,38 +58,6 @@ After your session (or extension) ends, the app is locked for a cool-down period
 Instagram, Snapchat, TikTok, Reddit, X/Twitter, Facebook, YouTube, Tinder, Bumble, Hinge, OkCupid, Grindr, Badoo, Match, Happn, Meetic.
 
 All defaults can be changed in Settings → Watched apps.
-
----
-
-## Setup
-
-1. Install the APK or build from source (see below).
-2. Set Defang as your default launcher when prompted.
-3. Grant **Display over other apps** permission (required for overlays).
-4. Enable **Defang** under Settings → Accessibility → Installed services (required for foreground app detection).
-
-Steps 3 and 4 are prompted automatically on first launch.
-
----
-
-## Build from source
-
-Requirements: Android Studio Ladybug or later, JDK 17, Android SDK 35.
-
-```bash
-git clone https://github.com/Scandiking/Defang.git
-cd Defang
-./gradlew assembleDebug
-```
-
-Install on a connected device:
-
-```bash
-./gradlew installDebug
-```
-
-- `minSdk` 26 (Android 8.0)
-- `targetSdk` 35
 
 ---
 
@@ -122,23 +92,29 @@ app/src/main/kotlin/com/defang/launcher/
 
 ## Roadmap
 
-**Phase 1 (current)**
-- Intent gate with countdown and declared-purpose cards
-- Session timer HUD
-- End card with extension friction
-- Cool-down lockout
+**Shipped**
+- Intent gate — countdown plus slide-to-open, with a single clear warning that reflects how heavily you've used watched apps today
+- Session timer HUD, auto-backgrounding the app at the limit
+- End card with once-per-day extension friction (written justification required)
+- Cool-down lockout after each session
+- Grayscale applied *before* the app is revealed, so the feed never flashes in colour
+- Weekly usage report — running totals per day and per app
+- NFC tag unlock — scan a registered tag instead of the slide; secure ID-rotating cards are rejected, with a slide-to-open fallback if the scanner is blocked
+- Live app drawer — reflects installs and uninstalls instantly; long-press for App info or to uninstall
 
-**Phase 2 (planned)**
+**Planned / exploring**
 - Notification batching — hold notifications from watched apps and deliver them on a schedule
-- Grayscale overlay during sessions
-- Usage stats and weekly report
-- Widget for daily session summary
+- Home-screen widget for the daily session summary
 
 ---
 
 ## Philosophy
 
-Defang is not a blocker. It does not stop you from using your phone the way you want. It adds one deliberate pause — enough to make the choice conscious rather than automatic. The friction is the feature.
+These platforms were sold to us as a way to connect with people. That is not what they are anymore. Facebook, Instagram, TikTok, X — they are advertising machines that happen to show you other humans when it keeps you scrolling. The feed isn't ordered by what matters to you; it's ordered by whatever keeps your thumb moving long enough to serve the next ad. The product is your attention, and it is sold by the hour. Every year the connective part gets thinner and the extractive part gets thicker — the platform enshittifies, and you get less while giving more.
+
+The endpoint of that design is the *Wall-E* future: people reclined in a chair, screen an inch from their face, everything optimised and frictionless, nothing actually chosen. Comfortable, shapeless, no longer steering. Frictionless is the point — for them. Every pause they remove is another moment you spend inside the app instead of deciding whether you meant to be there at all.
+
+Defang is not a blocker. It does not stop you from using your phone the way you want. It puts back the one thing these apps spent billions removing: a single deliberate pause — enough to make the choice conscious rather than automatic. The friction is the feature.
 
 ---
 
