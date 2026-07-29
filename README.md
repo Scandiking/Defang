@@ -103,6 +103,7 @@ app/src/main/kotlin/com/defang/launcher/
 - Live app drawer — reflects installs and uninstalls instantly; long-press for App info or to uninstall
 
 **Planned / exploring**
+- More unlock methods alongside NFC and slide: scan a user-configured QR code or barcode ([#6](https://github.com/Scandiking/Defang/issues/6)), or solve a math problem ([#7](https://github.com/Scandiking/Defang/issues/7))
 - Notification batching — hold notifications from watched apps and deliver them on a schedule
 - Home-screen widget for the daily session summary
 
