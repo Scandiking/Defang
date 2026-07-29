@@ -75,6 +75,13 @@ Builds:
     gradle:
       - yes
 
+  - versionName: 0.1.11
+    versionCode: 12
+    commit: 4aa4d5364089c5a5924d3d5bf42598bb60c8c974
+    subdir: app
+    gradle:
+      - yes
+
 AllowedAPKSigningKeys: 7f3cffb2d584ffdb19d6667b335129c4466d8d0884aa966cacf016bb2b5123b0
 
 AutoUpdateMode: Version
