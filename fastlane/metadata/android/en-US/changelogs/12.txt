@@ -1,0 +1,1 @@
+Two optional new ways to open a watched app, set up in Settings alongside the slide and NFC tag. Scan a QR code or barcode you've placed out of reach (uses the camera; any product barcode works). Or solve a math problem on a keypad, with an adjustable difficulty — this one also covers watched websites. Only one unlock method is active at a time.
