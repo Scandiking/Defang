@@ -10,6 +10,7 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.defang.launcher.domain.model.HomeScreenMode
+import com.defang.launcher.domain.model.QrScanMode
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -136,6 +137,30 @@ class PreferencesDataStore @Inject constructor(
     suspend fun setNfcUnlockEnabled(on: Boolean) = store.edit { it[KEY_NFC_ENABLED] = on }
     suspend fun setNfcTagUid(uid: String) = store.edit { it[KEY_NFC_TAG_UID] = uid }
     suspend fun clearNfcTagUid() = store.edit { it.remove(KEY_NFC_TAG_UID) }
+
+    // ── QR / barcode unlock ───────────────────────────────────────────────────
+    // A camera scan of a registered QR/barcode replaces the slide-to-open, same
+    // idea as NFC — the code lives somewhere inconvenient, so opening a watched
+    // app costs a walk. Mutually exclusive with NFC (one unlock method at a
+    // time; enforced in the ViewModel). qrValue is the raw decoded string;
+    // null = none registered yet. qrScanMode picks whether the scan waits out
+    // the countdown (default) or bypasses it. We keep the registered value when
+    // the method is switched off so toggling back needs no re-scan.
+    private val KEY_QR_ENABLED   = booleanPreferencesKey("qr_unlock_enabled")
+    private val KEY_QR_VALUE     = stringPreferencesKey("qr_value")
+    private val KEY_QR_SCAN_MODE = intPreferencesKey("qr_scan_mode")
+
+    val qrUnlockEnabled: Flow<Boolean> = store.data.map { it[KEY_QR_ENABLED] ?: false }
+    val qrValue: Flow<String?> = store.data.map { it[KEY_QR_VALUE] }
+    val qrScanMode: Flow<QrScanMode> = store.data.map {
+        QrScanMode.fromOrdinal(it[KEY_QR_SCAN_MODE] ?: QrScanMode.AFTER_COUNTDOWN.ordinal)
+    }
+
+    suspend fun setQrUnlockEnabled(on: Boolean) = store.edit { it[KEY_QR_ENABLED] = on }
+    suspend fun setQrValue(value: String) = store.edit { it[KEY_QR_VALUE] = value }
+    suspend fun clearQrValue() = store.edit { it.remove(KEY_QR_VALUE) }
+    suspend fun setQrScanMode(mode: QrScanMode) =
+        store.edit { it[KEY_QR_SCAN_MODE] = mode.ordinal }
 
     // ── Home screen mode ──────────────────────────────────────────────────────
     private val KEY_HOME_MODE = intPreferencesKey("home_screen_mode")

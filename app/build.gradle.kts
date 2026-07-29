@@ -91,6 +91,9 @@ dependencies {
     // Core
     implementation(libs.core.ktx)
 
+    // QR / barcode unlock
+    implementation(libs.zxing.embedded)
+
     // Compose
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)

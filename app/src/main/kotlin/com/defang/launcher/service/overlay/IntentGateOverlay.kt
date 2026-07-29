@@ -56,6 +56,12 @@ class IntentGateOverlay(
     // it and hands off to NfcUnlockActivity once the countdown ends. No slide is
     // revealed. When false, the slide-to-open below is the unlock, as before.
     private val nfcMode: Boolean = false,
+    // When true, a QR/barcode scan (handled by the service) is the unlock:
+    // behaves exactly like [nfcMode] — this overlay shows only tidbit + countdown
+    // and the service dismisses it and hands off to QrUnlockActivity once the
+    // countdown ends. Only the "scan after the countdown" mode uses this; the
+    // "scan immediately" mode skips the overlay entirely.
+    private val qrMode: Boolean = false,
     private val onTimerFinished: () -> Unit,
     private val onIntentDeclared: (intent: String?) -> Unit,
     private val onGoBack: () -> Unit,
@@ -198,9 +204,9 @@ class IntentGateOverlay(
     private fun onTimerElapsed() {
         tvCountdown.text = ""
         timerDone = true
-        // In NFC mode the service takes over here — dismisses this overlay and
-        // launches the tag-scan activity — so we never reveal the slide.
-        if (!nfcMode) {
+        // In NFC or QR mode the service takes over here — dismisses this overlay
+        // and launches the scan activity — so we never reveal the slide.
+        if (!nfcMode && !qrMode) {
             tvSlideHint.visibility = View.VISIBLE
             slideToOpen.visibility = View.VISIBLE
         }

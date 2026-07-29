@@ -52,8 +52,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.defang.launcher.R
 import com.defang.launcher.domain.model.HomeScreenMode
+import com.defang.launcher.domain.model.QrScanMode
 import com.defang.launcher.service.nfc.NfcUnlock
 import com.defang.launcher.service.nfc.NfcUnlockActivity
+import com.defang.launcher.service.qr.QrUnlock
+import com.defang.launcher.service.qr.QrUnlockActivity
 import com.defang.launcher.ui.onboarding.OnboardingActivity
 import com.defang.launcher.ui.settings.apptier.AppTierScreen
 import com.defang.launcher.ui.theme.DefangTheme
@@ -102,6 +105,10 @@ class SettingsActivity : ComponentActivity() {
                         val nfcEnabled by globalVm.nfcUnlockEnabled.collectAsStateWithLifecycle()
                         val nfcTagUid by globalVm.nfcTagUid.collectAsStateWithLifecycle()
                         val hasNfc = remember { NfcUnlock.hasHardware(this) }
+                        val qrEnabled by globalVm.qrUnlockEnabled.collectAsStateWithLifecycle()
+                        val qrValue by globalVm.qrValue.collectAsStateWithLifecycle()
+                        val qrScanMode by globalVm.qrScanMode.collectAsStateWithLifecycle()
+                        val hasCamera = remember { QrUnlock.hasCamera(this) }
                         SettingsMenuScreen(
                             homeMode = homeMode,
                             onHomeModeChange = globalVm::setHomeScreenMode,
@@ -118,6 +125,19 @@ class SettingsActivity : ComponentActivity() {
                                 )
                             },
                             onForgetNfcTag = globalVm::forgetNfcTag,
+                            hasCamera = hasCamera,
+                            qrEnabled = qrEnabled,
+                            onQrEnabledChange = globalVm::setQrUnlockEnabled,
+                            qrRegistered = qrValue != null,
+                            onRegisterQrCode = {
+                                startActivity(
+                                    Intent(this, QrUnlockActivity::class.java)
+                                        .putExtra(QrUnlock.EXTRA_MODE, QrUnlock.MODE_REGISTER)
+                                )
+                            },
+                            onForgetQrCode = globalVm::forgetQrCode,
+                            qrScanMode = qrScanMode,
+                            onQrScanModeChange = globalVm::setQrScanMode,
                             grayscaleOn = grayscaleOn,
                             onGrayscaleChange = globalVm::setGrayscaleEnabled,
                             grayscaleSetupNeeded = grayscaleSetupNeeded,
@@ -234,6 +254,14 @@ private fun SettingsMenuScreen(
     nfcTagUid: String?,
     onRegisterNfcTag: () -> Unit,
     onForgetNfcTag: () -> Unit,
+    hasCamera: Boolean,
+    qrEnabled: Boolean,
+    onQrEnabledChange: (Boolean) -> Unit,
+    qrRegistered: Boolean,
+    onRegisterQrCode: () -> Unit,
+    onForgetQrCode: () -> Unit,
+    qrScanMode: QrScanMode,
+    onQrScanModeChange: (QrScanMode) -> Unit,
     grayscaleOn: Boolean,
     onGrayscaleChange: (Boolean) -> Unit,
     grayscaleSetupNeeded: Boolean,
@@ -323,6 +351,8 @@ private fun SettingsMenuScreen(
         stringResource(R.string.settings_sanitize_why_body)
     val nfcWhy = stringResource(R.string.settings_nfc_why_title) to
         stringResource(R.string.settings_nfc_why_body)
+    val qrWhy = stringResource(R.string.settings_qr_why_title) to
+        stringResource(R.string.settings_qr_why_body)
     val packageName = androidx.compose.ui.platform.LocalContext.current.packageName
     val grayscaleSetup = stringResource(R.string.settings_grayscale_setup_title) to
         stringResource(R.string.settings_grayscale_setup_body, packageName)
@@ -419,6 +449,83 @@ private fun SettingsMenuScreen(
                         .fillMaxWidth()
                         .clickable { onRegisterNfcTag() },
                 )
+                HorizontalDivider()
+            }
+
+            // QR / barcode unlock — only shown on devices that have a camera.
+            if (hasCamera) {
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.settings_qr_title)) },
+                    supportingContent = { Text(stringResource(R.string.settings_qr_desc)) },
+                    trailingContent = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            WhyButton { whyDialog = qrWhy }
+                            Switch(
+                                checked = qrEnabled,
+                                // Can't require a code that hasn't been registered.
+                                enabled = qrRegistered,
+                                onCheckedChange = onQrEnabledChange,
+                            )
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                ListItem(
+                    headlineContent = {
+                        Text(
+                            if (qrRegistered)
+                                stringResource(R.string.settings_qr_change)
+                            else
+                                stringResource(R.string.settings_qr_register)
+                        )
+                    },
+                    supportingContent = {
+                        Text(
+                            if (qrRegistered)
+                                stringResource(R.string.settings_qr_registered)
+                            else
+                                stringResource(R.string.settings_qr_none)
+                        )
+                    },
+                    trailingContent = if (qrRegistered) {
+                        {
+                            IconButton(onClick = onForgetQrCode) {
+                                Icon(
+                                    imageVector = Icons.Outlined.Delete,
+                                    contentDescription = stringResource(R.string.settings_qr_forget),
+                                    tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                                )
+                            }
+                        }
+                    } else null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onRegisterQrCode() },
+                )
+                // Scan mode: off = scan after the countdown (default, keeps the
+                // wait as friction); on = scan immediately, bypassing the wait.
+                if (qrRegistered) {
+                    ListItem(
+                        headlineContent = {
+                            Text(stringResource(R.string.settings_qr_skip_wait_title))
+                        },
+                        supportingContent = {
+                            Text(stringResource(R.string.settings_qr_skip_wait_desc))
+                        },
+                        trailingContent = {
+                            Switch(
+                                checked = qrScanMode == QrScanMode.IMMEDIATE,
+                                onCheckedChange = { on ->
+                                    onQrScanModeChange(
+                                        if (on) QrScanMode.IMMEDIATE
+                                        else QrScanMode.AFTER_COUNTDOWN
+                                    )
+                                },
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
                 HorizontalDivider()
             }
             ListItem(

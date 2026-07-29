@@ -28,6 +28,9 @@ import com.defang.launcher.service.overlay.EndCardOverlay
 import com.defang.launcher.service.overlay.IntentGateOverlay
 import com.defang.launcher.service.nfc.NfcUnlock
 import com.defang.launcher.service.nfc.NfcUnlockActivity
+import com.defang.launcher.service.qr.QrUnlock
+import com.defang.launcher.service.qr.QrUnlockActivity
+import com.defang.launcher.domain.model.QrScanMode
 import com.defang.launcher.service.overlay.OverlayManager
 import com.defang.launcher.service.overlay.SessionTimerOverlay
 import com.defang.launcher.ui.widget.UsageWidgetProvider
@@ -163,6 +166,27 @@ class DefangAccessibilityService : AccessibilityService() {
         }
     }
 
+    // Set when a QR-mode gate hands off to QrUnlockActivity (either at countdown
+    // end, or immediately in bypass mode); the QR result broadcast invokes one of
+    // these, then both are cleared. Only one gate is ever active, so a single
+    // pair suffices. QR and NFC are mutually exclusive, so these never race the
+    // NFC pair.
+    private var pendingQrUnlock: (() -> Unit)? = null
+    private var pendingQrGoBack: (() -> Unit)? = null
+
+    private val qrReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val unlock = pendingQrUnlock
+            val goBack = pendingQrGoBack
+            pendingQrUnlock = null
+            pendingQrGoBack = null
+            when (intent?.action) {
+                QrUnlock.ACTION_QR_UNLOCKED -> unlock?.invoke()
+                QrUnlock.ACTION_QR_GOBACK -> goBack?.invoke()
+            }
+        }
+    }
+
     // Lock screen desaturation: gray goes on at screen-off so the lock screen
     // (and everything glanced at before unlocking) renders colorless; color
     // returns at unlock unless a session or gate is active.
@@ -212,6 +236,17 @@ class DefangAccessibilityService : AccessibilityService() {
         } else {
             @Suppress("UnspecifiedRegisterReceiverFlag")
             registerReceiver(nfcReceiver, nfcFilter)
+        }
+
+        val qrFilter = IntentFilter().apply {
+            addAction(QrUnlock.ACTION_QR_UNLOCKED)
+            addAction(QrUnlock.ACTION_QR_GOBACK)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(qrReceiver, qrFilter, RECEIVER_NOT_EXPORTED)
+        } else {
+            @Suppress("UnspecifiedRegisterReceiverFlag")
+            registerReceiver(qrReceiver, qrFilter)
         }
 
         lastUsageEventQueryMs = System.currentTimeMillis()
@@ -487,7 +522,6 @@ class DefangAccessibilityService : AccessibilityService() {
         config: AppConfig,
     ) {
         serviceScope.launch {
-            val opensToday = getTodayOpenCount.count()
             // NFC-tag unlock replaces the slide for app gates (not browser-URL
             // gates — relaunching a browser can't restore the page) when the user
             // has enabled it, registered a tag, and NFC is currently on.
@@ -496,6 +530,28 @@ class DefangAccessibilityService : AccessibilityService() {
                 prefs.nfcTagUid.first() != null &&
                 NfcUnlock.isUsable(this@DefangAccessibilityService)
 
+            // QR/barcode unlock — mutually exclusive with NFC, same app-only
+            // guard. The scan mode decides whether the scan waits out the
+            // countdown (AFTER_COUNTDOWN) or replaces the wait entirely (IMMEDIATE).
+            val qrEnabled = pattern == null &&
+                prefs.qrUnlockEnabled.first() &&
+                prefs.qrValue.first() != null &&
+                QrUnlock.hasCamera(this@DefangAccessibilityService)
+            val qrScanMode = prefs.qrScanMode.first()
+            val qrAfterCountdown = qrEnabled && qrScanMode == QrScanMode.AFTER_COUNTDOWN
+            val qrImmediate = qrEnabled && qrScanMode == QrScanMode.IMMEDIATE
+
+            // Bypass mode: no countdown, no overlay — cover the screen with the
+            // scanner straight away. Grayscale stays on so the feed never flashes.
+            if (qrImmediate) {
+                grayscale.enable()
+                activeGateKey = gateKey
+                handOffToQrUnlock(pkg, pattern, config, contentTrack, gateKey)
+                Log.d(TAG, "qr immediate handoff for $gateKey")
+                return@launch
+            }
+
+            val opensToday = getTodayOpenCount.count()
             currentGateOverlay = IntentGateOverlay(
                 context = this@DefangAccessibilityService,
                 contentTrack = contentTrack,
@@ -504,6 +560,7 @@ class DefangAccessibilityService : AccessibilityService() {
                 delaySeconds = config.gateDelaySeconds,
                 opensToday = opensToday,
                 nfcMode = nfcMode,
+                qrMode = qrAfterCountdown,
                 onTimerFinished = {
                     // Re-assert grayscale the moment the wait ends, while the gate
                     // still fully covers the screen, so the feed is already gray
@@ -530,6 +587,9 @@ class DefangAccessibilityService : AccessibilityService() {
                             delay(NFC_HANDOFF_HOME_SETTLE_MS)
                             launchNfcUnlock(config.appLabel)
                         }
+                    } else if (qrAfterCountdown) {
+                        // Same handoff as NFC, but to the camera scanner.
+                        handOffToQrUnlock(pkg, pattern, config, contentTrack, gateKey)
                     }
                 },
                 onIntentDeclared = { intent ->
@@ -539,7 +599,36 @@ class DefangAccessibilityService : AccessibilityService() {
             )
             overlayManager.showFullscreen(currentGateOverlay!!.view)
             activeGateKey = gateKey
-            Log.d(TAG, "gate overlay shown for $gateKey (nfc=$nfcMode)")
+            Log.d(TAG, "gate overlay shown for $gateKey (nfc=$nfcMode qr=$qrAfterCountdown)")
+        }
+    }
+
+    /**
+     * Hand off a QR gate to [QrUnlockActivity]: arm the result callbacks, drop any
+     * gate overlay, background the watched app, then launch the scanner. Used both
+     * by the bypass path (immediately) and the after-countdown path (from
+     * onTimerFinished). The unlock relaunches the app afterwards
+     * ([completeGateUnlock] relaunchApp = true) — the scan activity is on top, so
+     * the app is no longer foreground. Reuses the NFC home-settle delay: same
+     * purpose, letting Home settle so the scanner comes up as a clean foreground.
+     */
+    private fun handOffToQrUnlock(
+        pkg: String,
+        pattern: String?,
+        config: AppConfig,
+        contentTrack: ContentTrack,
+        gateKey: String,
+    ) {
+        pendingQrUnlock = {
+            completeGateUnlock(pkg, pattern, "qr", config, contentTrack, gateKey,
+                relaunchApp = true)
+        }
+        pendingQrGoBack = { completeGateGoBack(gateKey, pkg) }
+        overlayManager.dismissFullscreen()
+        goHome()
+        serviceScope.launch {
+            delay(NFC_HANDOFF_HOME_SETTLE_MS)
+            launchQrUnlock(config.appLabel)
         }
     }
 
@@ -595,6 +684,17 @@ class DefangAccessibilityService : AccessibilityService() {
             Intent(this, NfcUnlockActivity::class.java).apply {
                 putExtra(NfcUnlock.EXTRA_MODE, NfcUnlock.MODE_UNLOCK)
                 putExtra(NfcUnlock.EXTRA_APP_LABEL, appLabel)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+        )
+    }
+
+    /** Launches the QR scan screen; its result comes back via [qrReceiver]. */
+    private fun launchQrUnlock(appLabel: String) {
+        startActivity(
+            Intent(this, QrUnlockActivity::class.java).apply {
+                putExtra(QrUnlock.EXTRA_MODE, QrUnlock.MODE_UNLOCK)
+                putExtra(QrUnlock.EXTRA_APP_LABEL, appLabel)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
         )
@@ -936,6 +1036,7 @@ class DefangAccessibilityService : AccessibilityService() {
         foregroundPollJob = null
         runCatching { unregisterReceiver(screenReceiver) }
         runCatching { unregisterReceiver(nfcReceiver) }
+        runCatching { unregisterReceiver(qrReceiver) }
         runBlocking { endCurrentSession() }
     }
 

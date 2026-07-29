@@ -204,6 +204,31 @@
     <string name="nfc_off_body">Slå på NFC for å skanne brikken, eller gå tilbake.</string>
     <string name="nfc_open_settings">Åpne NFC-innstillinger</string>
 
+    <!-- QR-/strekkodelås -->
+    <string name="settings_qr_title">QR-/strekkodelås</string>
+    <string name="settings_qr_desc">Krev en kodeskanning for å åpne overvåkede apper, i stedet for å dra. Skriv ut eller plasser koden utenfor rekkevidde. Kan ikke brukes samtidig som NFC.</string>
+    <string name="settings_qr_register">Registrer kode</string>
+    <string name="settings_qr_change">Bytt kode</string>
+    <string name="settings_qr_forget">Glem kode</string>
+    <string name="settings_qr_registered">En kode er registrert</string>
+    <string name="settings_qr_none">Ingen kode registrert ennå</string>
+    <string name="settings_qr_skip_wait_title">Hopp over nedtellingen</string>
+    <string name="settings_qr_skip_wait_desc">Skanning åpner appen med en gang, uten å vente ut nedtellingen. Frisksjonen blir å nå koden, ikke ventetiden.</string>
+    <string name="settings_qr_why_title">Hvorfor en kodeskanning?</string>
+    <string name="settings_qr_why_body">Som en NFC-brikke gjør en QR- eller strekkode du må gå til det å åpne en overvåket app til en bevisst handling — men uten NFC-maskinvare eller brikke, bare en utskrevet kode. Merk at en kode kan fotograferes og gjenbrukes fra en skjerm, så den er svakere enn en fysisk brikke: plasser den et sted du faktisk må gå, ikke lagret på samme telefon.</string>
+    <string name="qr_register_title">Skann koden for å registrere</string>
+    <string name="qr_register_body">Rett kameraet mot QR-koden eller strekkoden du vil bruke.</string>
+    <string name="qr_unlock_title">Skann for å åpne %1$s</string>
+    <string name="qr_scan_hint">Midtstill koden i rammen. Hold stødig; gi mer lys hvis den ikke leses.</string>
+    <string name="qr_wrong_code">Det er ikke den registrerte koden. Prøv den riktige, eller gå tilbake.</string>
+    <string name="qr_bad_code">Den koden kan ikke brukes. Prøv en annen.</string>
+    <string name="qr_no_camera_title">Kamera utilgjengelig</string>
+    <string name="qr_no_camera_body">Kameratillatelse trengs for å skanne. Dra for å åpne i stedet, eller gå tilbake.</string>
+    <string name="qr_torch_on">Lommelykt på</string>
+    <string name="qr_torch_off">Lommelykt av</string>
+    <string name="qr_slide_fallback">Leses ikke koden? Dra for å åpne i stedet.</string>
+    <string name="qr_slide_label">Dra for å åpne</string>
+
     <!-- App tier search -->
     <string name="tier_search_hint">Søk etter app eller pakkenavn</string>
     <string name="tier_search_clear">Tøm søk</string>

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.defang.launcher.data.local.datastore.PreferencesDataStore
 import com.defang.launcher.data.repository.AppConfigRepository
 import com.defang.launcher.domain.model.HomeScreenMode
+import com.defang.launcher.domain.model.QrScanMode
 import com.defang.launcher.service.notification.BatchWindowScheduler
 import com.defang.launcher.util.GrayscaleController
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -112,7 +113,12 @@ class GlobalSettingsViewModel @Inject constructor(
     )
 
     fun setNfcUnlockEnabled(on: Boolean) {
-        viewModelScope.launch { prefs.setNfcUnlockEnabled(on) }
+        viewModelScope.launch {
+            prefs.setNfcUnlockEnabled(on)
+            // NFC and QR are mutually exclusive — one unlock method at a time.
+            // Enabling NFC switches QR off (its registered code is kept).
+            if (on) prefs.setQrUnlockEnabled(false)
+        }
     }
 
     fun forgetNfcTag() {
@@ -120,6 +126,39 @@ class GlobalSettingsViewModel @Inject constructor(
             prefs.clearNfcTagUid()
             // No tag means nothing to require — turn the gate back to slide.
             prefs.setNfcUnlockEnabled(false)
+        }
+    }
+
+    // ── QR / barcode unlock ─────────────────────────────────────────────────────
+    val qrUnlockEnabled: StateFlow<Boolean> = prefs.qrUnlockEnabled.stateIn(
+        viewModelScope, SharingStarted.Eagerly, false
+    )
+    /** The registered code's raw value, or null if none registered yet. */
+    val qrValue: StateFlow<String?> = prefs.qrValue.stateIn(
+        viewModelScope, SharingStarted.Eagerly, null
+    )
+    val qrScanMode: StateFlow<QrScanMode> = prefs.qrScanMode.stateIn(
+        viewModelScope, SharingStarted.Eagerly, QrScanMode.AFTER_COUNTDOWN
+    )
+
+    fun setQrUnlockEnabled(on: Boolean) {
+        viewModelScope.launch {
+            prefs.setQrUnlockEnabled(on)
+            // Mutually exclusive with NFC — enabling QR switches NFC off
+            // (its registered tag is kept so the user can flip back).
+            if (on) prefs.setNfcUnlockEnabled(false)
+        }
+    }
+
+    fun setQrScanMode(mode: QrScanMode) {
+        viewModelScope.launch { prefs.setQrScanMode(mode) }
+    }
+
+    fun forgetQrCode() {
+        viewModelScope.launch {
+            prefs.clearQrValue()
+            // No code means nothing to require — turn the gate back to slide.
+            prefs.setQrUnlockEnabled(false)
         }
     }
 

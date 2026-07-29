@@ -22,6 +22,11 @@
          not-required so devices without NFC still install. -->
     <uses-permission android:name="android.permission.NFC" />
     <uses-feature android:name="android.hardware.nfc" android:required="false" />
+    <!-- Optional QR/barcode unlock: scan a registered code to open a watched app.
+         not-required so devices without a camera still install. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
     <!-- Lets the drawer's long-press "Uninstall" invoke the system uninstaller
          (API 26+ rejects ACTION_DELETE without it). -->
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
@@ -75,6 +80,18 @@
             android:excludeFromRecents="true"
             android:noHistory="true"
             android:launchMode="singleTop" />
+
+        <!-- ── QR / Barcode Unlock Activity ── -->
+        <!-- Scans a code via the camera (a live camera preview needs a resumed
+             Activity, which the gate's service overlay is not). Same no-linger
+             flags as the NFC activity. -->
+        <activity
+            android:name=".service.qr.QrUnlockActivity"
+            android:exported="false"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
 
         <!-- ── Accessibility Service ── -->
         <!-- Detects foreground app changes; triggers intent gate and grayscale overlay -->
