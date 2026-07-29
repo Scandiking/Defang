@@ -11,6 +11,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.defang.launcher.domain.model.HomeScreenMode
 import com.defang.launcher.domain.model.QrScanMode
+import com.defang.launcher.util.MathProblemGenerator
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -161,6 +162,26 @@ class PreferencesDataStore @Inject constructor(
     suspend fun clearQrValue() = store.edit { it.remove(KEY_QR_VALUE) }
     suspend fun setQrScanMode(mode: QrScanMode) =
         store.edit { it[KEY_QR_SCAN_MODE] = mode.ordinal }
+
+    // ── Math-problem unlock ───────────────────────────────────────────────────
+    // Solve an arithmetic problem (on a keypad drawn in the gate) to open a
+    // watched app, in place of the slide. Cognitive rather than physical
+    // friction — and, unlike NFC/QR, it needs no hardware and no handoff, so it
+    // also covers watched websites. Mutually exclusive with NFC and QR. The
+    // difficulty is a 1..5 level (a settings slider).
+    private val KEY_MATH_ENABLED    = booleanPreferencesKey("math_unlock_enabled")
+    private val KEY_MATH_DIFFICULTY = intPreferencesKey("math_difficulty")
+
+    val mathUnlockEnabled: Flow<Boolean> = store.data.map { it[KEY_MATH_ENABLED] ?: false }
+    val mathDifficulty: Flow<Int> = store.data.map {
+        it[KEY_MATH_DIFFICULTY] ?: MathProblemGenerator.DEFAULT_LEVEL
+    }
+
+    suspend fun setMathUnlockEnabled(on: Boolean) = store.edit { it[KEY_MATH_ENABLED] = on }
+    suspend fun setMathDifficulty(level: Int) = store.edit {
+        it[KEY_MATH_DIFFICULTY] =
+            level.coerceIn(MathProblemGenerator.MIN_LEVEL, MathProblemGenerator.MAX_LEVEL)
+    }
 
     // ── Home screen mode ──────────────────────────────────────────────────────
     private val KEY_HOME_MODE = intPreferencesKey("home_screen_mode")

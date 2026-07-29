@@ -551,6 +551,13 @@ class DefangAccessibilityService : AccessibilityService() {
                 return@launch
             }
 
+            // Math-problem unlock — mutually exclusive with NFC/QR. No hardware
+            // and no handoff (the keypad lives in the overlay and the app is
+            // never backgrounded), so it needs no app-only guard and covers
+            // browser-URL gates too.
+            val mathMode = prefs.mathUnlockEnabled.first()
+            val mathDifficulty = prefs.mathDifficulty.first()
+
             val opensToday = getTodayOpenCount.count()
             currentGateOverlay = IntentGateOverlay(
                 context = this@DefangAccessibilityService,
@@ -561,6 +568,8 @@ class DefangAccessibilityService : AccessibilityService() {
                 opensToday = opensToday,
                 nfcMode = nfcMode,
                 qrMode = qrAfterCountdown,
+                mathMode = mathMode,
+                mathDifficulty = mathDifficulty,
                 onTimerFinished = {
                     // Re-assert grayscale the moment the wait ends, while the gate
                     // still fully covers the screen, so the feed is already gray
@@ -599,7 +608,7 @@ class DefangAccessibilityService : AccessibilityService() {
             )
             overlayManager.showFullscreen(currentGateOverlay!!.view)
             activeGateKey = gateKey
-            Log.d(TAG, "gate overlay shown for $gateKey (nfc=$nfcMode qr=$qrAfterCountdown)")
+            Log.d(TAG, "gate overlay shown for $gateKey (nfc=$nfcMode qr=$qrAfterCountdown math=$mathMode)")
         }
     }
 

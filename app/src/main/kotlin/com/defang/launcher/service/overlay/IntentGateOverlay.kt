@@ -13,6 +13,8 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.defang.launcher.domain.model.ContentTrack
+import com.defang.launcher.util.MathProblem
+import com.defang.launcher.util.MathProblemGenerator
 import com.defang.launcher.util.TidbitSelector
 import kotlin.math.hypot
 
@@ -62,6 +64,11 @@ class IntentGateOverlay(
     // countdown ends. Only the "scan after the countdown" mode uses this; the
     // "scan immediately" mode skips the overlay entirely.
     private val qrMode: Boolean = false,
+    // When true, the unlock is an arithmetic problem solved on a keypad drawn in
+    // this overlay (revealed at countdown end in place of the slide). Needs no
+    // hardware and no handoff, so unlike NFC/QR it also works for browser gates.
+    private val mathMode: Boolean = false,
+    private val mathDifficulty: Int = MathProblemGenerator.DEFAULT_LEVEL,
     private val onTimerFinished: () -> Unit,
     private val onIntentDeclared: (intent: String?) -> Unit,
     private val onGoBack: () -> Unit,
@@ -75,6 +82,14 @@ class IntentGateOverlay(
     private lateinit var tvTidbit: TextView
     private lateinit var tvSlideHint: TextView
     private lateinit var slideToOpen: SlideToOpenView
+
+    // Math-unlock widgets, built only when [mathMode]. The problem is generated
+    // once at build time and does not change while the gate is up.
+    private lateinit var tvMathQuestion: TextView
+    private lateinit var tvMathEntry: TextView
+    private lateinit var mathKeypad: LinearLayout
+    private val mathProblem: MathProblem by lazy { MathProblemGenerator.generate(mathDifficulty) }
+    private val typedAnswer = StringBuilder()
 
     // The warning is picked once at build time: addictionLevel(opensToday) selects
     // the level, then a random variant at that level (TidbitSelector.lineForLevel).
@@ -162,6 +177,34 @@ class IntentGateOverlay(
         }
         root.addView(slideToOpen)
 
+        // Math-problem unlock — hidden until the countdown ends, then revealed in
+        // place of the slide. Solving it on the keypad opens the app.
+        if (mathMode) {
+            tvMathQuestion = TextView(context).apply {
+                text = context.getString(
+                    com.defang.launcher.R.string.gate_math_question, mathProblem.question
+                )
+                textSize = 30f
+                setTextColor(Color.rgb(230, 230, 230))
+                gravity = Gravity.CENTER
+                visibility = View.GONE
+                setPadding(0, 0, 0, (12 * density).toInt())
+            }
+            root.addView(tvMathQuestion)
+
+            tvMathEntry = TextView(context).apply {
+                textSize = 26f
+                setTextColor(Color.rgb(150, 150, 150))
+                gravity = Gravity.CENTER
+                visibility = View.GONE
+                setPadding(0, 0, 0, (16 * density).toInt())
+            }
+            root.addView(tvMathEntry)
+
+            mathKeypad = buildMathKeypad().apply { visibility = View.GONE }
+            root.addView(mathKeypad)
+        }
+
         val btnBack = Button(context).apply {
             text = context.getString(com.defang.launcher.R.string.gate_go_back)
             textSize = 14f
@@ -205,8 +248,15 @@ class IntentGateOverlay(
         tvCountdown.text = ""
         timerDone = true
         // In NFC or QR mode the service takes over here — dismisses this overlay
-        // and launches the scan activity — so we never reveal the slide.
-        if (!nfcMode && !qrMode) {
+        // and launches the scan activity — so we reveal neither the slide nor the
+        // math keypad. In math mode we reveal the keypad; otherwise the slide.
+        if (nfcMode || qrMode) {
+            // service handles the unlock
+        } else if (mathMode) {
+            tvMathQuestion.visibility = View.VISIBLE
+            tvMathEntry.visibility = View.VISIBLE
+            mathKeypad.visibility = View.VISIBLE
+        } else {
             tvSlideHint.visibility = View.VISIBLE
             slideToOpen.visibility = View.VISIBLE
         }
@@ -217,7 +267,93 @@ class IntentGateOverlay(
         countdownTimer?.cancel()
     }
 
+    // ── Math keypad ─────────────────────────────────────────────────────────────
+    // A self-drawn numeric keypad rather than a system EditText: the gate is a
+    // WindowManager overlay, and relying on the soft keyboard over it is
+    // unreliable across devices. Digits append to [typedAnswer]; the answer is
+    // auto-checked on each press.
+
+    private fun buildMathKeypad(): LinearLayout {
+        val pad = LinearLayout(context).apply { orientation = LinearLayout.VERTICAL }
+        fun row(vararg cells: View): LinearLayout = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+            )
+            cells.forEach { addView(it) }
+        }
+        pad.addView(row(digitKey("1"), digitKey("2"), digitKey("3")))
+        pad.addView(row(digitKey("4"), digitKey("5"), digitKey("6")))
+        pad.addView(row(digitKey("7"), digitKey("8"), digitKey("9")))
+        pad.addView(
+            row(
+                actionKey("⌫") { onBackspace() },
+                digitKey("0"),
+                actionKey("C") { onClear() },
+            )
+        )
+        return pad
+    }
+
+    private fun digitKey(d: String): Button = actionKey(d) { onDigit(d) }
+
+    private fun actionKey(label: String, onClick: () -> Unit): Button = Button(context).apply {
+        text = label
+        textSize = 22f
+        setTextColor(Color.rgb(224, 224, 224))
+        setBackgroundColor(Color.argb(40, 224, 224, 224))
+        val m = (4 * context.resources.displayMetrics.density).toInt()
+        layoutParams = LinearLayout.LayoutParams(
+            0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f,
+        ).also { it.setMargins(m, m, m, m) }
+        setOnClickListener { onClick() }
+    }
+
+    private fun onDigit(d: String) {
+        if (!timerDone || unlocked) return
+        if (typedAnswer.length >= MAX_ANSWER_DIGITS) return
+        typedAnswer.append(d)
+        refreshMathEntry()
+        checkMathAnswer()
+    }
+
+    private fun onBackspace() {
+        if (typedAnswer.isNotEmpty()) {
+            typedAnswer.deleteCharAt(typedAnswer.length - 1)
+            refreshMathEntry()
+        }
+    }
+
+    private fun onClear() {
+        typedAnswer.clear()
+        refreshMathEntry()
+    }
+
+    private fun refreshMathEntry() {
+        tvMathEntry.text = typedAnswer.toString()
+    }
+
+    private fun checkMathAnswer() {
+        val value = typedAnswer.toString().toIntOrNull() ?: return
+        if (value == mathProblem.answer) {
+            if (timerDone && !unlocked) {
+                unlocked = true
+                onIntentDeclared(null)
+            }
+        } else if (typedAnswer.length >= mathProblem.answer.toString().length) {
+            // A full-length wrong answer: say so and clear for another try. The
+            // user is never locked out — the problem is always solvable, and
+            // "Go back" remains available.
+            tvMathEntry.text = context.getString(com.defang.launcher.R.string.gate_math_wrong)
+            typedAnswer.clear()
+        }
+    }
+
     companion object {
+        /** Cap on typed answer length, guarding against runaway input. */
+        private const val MAX_ANSWER_DIGITS = 6
+
         /**
          * Minimum watched-app opens (since midnight) to reach each addiction
          * level. Grows roughly exponentially so higher levels take

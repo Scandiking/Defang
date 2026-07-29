@@ -7,6 +7,7 @@ import com.defang.launcher.data.repository.AppConfigRepository
 import com.defang.launcher.domain.model.HomeScreenMode
 import com.defang.launcher.domain.model.QrScanMode
 import com.defang.launcher.service.notification.BatchWindowScheduler
+import com.defang.launcher.util.MathProblemGenerator
 import com.defang.launcher.util.GrayscaleController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -115,9 +116,12 @@ class GlobalSettingsViewModel @Inject constructor(
     fun setNfcUnlockEnabled(on: Boolean) {
         viewModelScope.launch {
             prefs.setNfcUnlockEnabled(on)
-            // NFC and QR are mutually exclusive — one unlock method at a time.
-            // Enabling NFC switches QR off (its registered code is kept).
-            if (on) prefs.setQrUnlockEnabled(false)
+            // NFC, QR and math are mutually exclusive — one unlock method at a
+            // time. Enabling NFC switches the others off (registrations are kept).
+            if (on) {
+                prefs.setQrUnlockEnabled(false)
+                prefs.setMathUnlockEnabled(false)
+            }
         }
     }
 
@@ -144,9 +148,12 @@ class GlobalSettingsViewModel @Inject constructor(
     fun setQrUnlockEnabled(on: Boolean) {
         viewModelScope.launch {
             prefs.setQrUnlockEnabled(on)
-            // Mutually exclusive with NFC — enabling QR switches NFC off
-            // (its registered tag is kept so the user can flip back).
-            if (on) prefs.setNfcUnlockEnabled(false)
+            // Mutually exclusive — enabling QR switches NFC and math off
+            // (registrations are kept so the user can flip back).
+            if (on) {
+                prefs.setNfcUnlockEnabled(false)
+                prefs.setMathUnlockEnabled(false)
+            }
         }
     }
 
@@ -160,6 +167,29 @@ class GlobalSettingsViewModel @Inject constructor(
             // No code means nothing to require — turn the gate back to slide.
             prefs.setQrUnlockEnabled(false)
         }
+    }
+
+    // ── Math-problem unlock ─────────────────────────────────────────────────────
+    val mathUnlockEnabled: StateFlow<Boolean> = prefs.mathUnlockEnabled.stateIn(
+        viewModelScope, SharingStarted.Eagerly, false
+    )
+    val mathDifficulty: StateFlow<Int> = prefs.mathDifficulty.stateIn(
+        viewModelScope, SharingStarted.Eagerly, MathProblemGenerator.DEFAULT_LEVEL
+    )
+
+    fun setMathUnlockEnabled(on: Boolean) {
+        viewModelScope.launch {
+            prefs.setMathUnlockEnabled(on)
+            // Mutually exclusive — enabling math switches NFC and QR off.
+            if (on) {
+                prefs.setNfcUnlockEnabled(false)
+                prefs.setQrUnlockEnabled(false)
+            }
+        }
+    }
+
+    fun setMathDifficulty(level: Int) {
+        viewModelScope.launch { prefs.setMathDifficulty(level) }
     }
 
     fun setGateDelay(seconds: Int) {

@@ -229,6 +229,20 @@
     <string name="qr_slide_fallback">Leses ikke koden? Dra for å åpne i stedet.</string>
     <string name="qr_slide_label">Dra for å åpne</string>
 
+    <!-- Regnestykke-lås -->
+    <string name="settings_math_title">Regnestykke-lås</string>
+    <string name="settings_math_desc">Løs et regnestykke for å åpne overvåkede apper, i stedet for å dra. Fungerer også for overvåkede nettsteder. Kan ikke brukes samtidig som NFC eller QR.</string>
+    <string name="settings_math_difficulty">Vanskelighetsgrad — %1$s</string>
+    <string name="settings_math_level_1">Nivå 1 · veldig lett</string>
+    <string name="settings_math_level_2">Nivå 2 · lett</string>
+    <string name="settings_math_level_3">Nivå 3 · middels</string>
+    <string name="settings_math_level_4">Nivå 4 · vanskelig</string>
+    <string name="settings_math_level_5">Nivå 5 · veldig vanskelig</string>
+    <string name="settings_math_why_title">Hvorfor et regnestykke?</string>
+    <string name="settings_math_why_body">Litt hoderegning tvinger deg til å stoppe og tenke — vanskeligere å gjøre halvsovende enn å dra, og det vekker hjernen i stedet for bare å fordrive tid. Sett vanskelighetsgraden til det som faktisk får deg til å nøle: mildt hvis tall ikke er din greie, brutalt hvis de er lette for deg.</string>
+    <string name="gate_math_question">%1$s = ?</string>
+    <string name="gate_math_wrong">Ikke helt — prøv igjen</string>
+
     <!-- App tier search -->
     <string name="tier_search_hint">Søk etter app eller pakkenavn</string>
     <string name="tier_search_clear">Tøm søk</string>

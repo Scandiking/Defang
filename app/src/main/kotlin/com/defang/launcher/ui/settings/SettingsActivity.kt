@@ -57,6 +57,8 @@ import com.defang.launcher.service.nfc.NfcUnlock
 import com.defang.launcher.service.nfc.NfcUnlockActivity
 import com.defang.launcher.service.qr.QrUnlock
 import com.defang.launcher.service.qr.QrUnlockActivity
+import com.defang.launcher.util.MathProblemGenerator
+import kotlin.math.roundToInt
 import com.defang.launcher.ui.onboarding.OnboardingActivity
 import com.defang.launcher.ui.settings.apptier.AppTierScreen
 import com.defang.launcher.ui.theme.DefangTheme
@@ -109,6 +111,8 @@ class SettingsActivity : ComponentActivity() {
                         val qrValue by globalVm.qrValue.collectAsStateWithLifecycle()
                         val qrScanMode by globalVm.qrScanMode.collectAsStateWithLifecycle()
                         val hasCamera = remember { QrUnlock.hasCamera(this) }
+                        val mathEnabled by globalVm.mathUnlockEnabled.collectAsStateWithLifecycle()
+                        val mathDifficulty by globalVm.mathDifficulty.collectAsStateWithLifecycle()
                         SettingsMenuScreen(
                             homeMode = homeMode,
                             onHomeModeChange = globalVm::setHomeScreenMode,
@@ -138,6 +142,10 @@ class SettingsActivity : ComponentActivity() {
                             onForgetQrCode = globalVm::forgetQrCode,
                             qrScanMode = qrScanMode,
                             onQrScanModeChange = globalVm::setQrScanMode,
+                            mathEnabled = mathEnabled,
+                            onMathEnabledChange = globalVm::setMathUnlockEnabled,
+                            mathDifficulty = mathDifficulty,
+                            onMathDifficultyChange = globalVm::setMathDifficulty,
                             grayscaleOn = grayscaleOn,
                             onGrayscaleChange = globalVm::setGrayscaleEnabled,
                             grayscaleSetupNeeded = grayscaleSetupNeeded,
@@ -262,6 +270,10 @@ private fun SettingsMenuScreen(
     onForgetQrCode: () -> Unit,
     qrScanMode: QrScanMode,
     onQrScanModeChange: (QrScanMode) -> Unit,
+    mathEnabled: Boolean,
+    onMathEnabledChange: (Boolean) -> Unit,
+    mathDifficulty: Int,
+    onMathDifficultyChange: (Int) -> Unit,
     grayscaleOn: Boolean,
     onGrayscaleChange: (Boolean) -> Unit,
     grayscaleSetupNeeded: Boolean,
@@ -353,6 +365,8 @@ private fun SettingsMenuScreen(
         stringResource(R.string.settings_nfc_why_body)
     val qrWhy = stringResource(R.string.settings_qr_why_title) to
         stringResource(R.string.settings_qr_why_body)
+    val mathWhy = stringResource(R.string.settings_math_why_title) to
+        stringResource(R.string.settings_math_why_body)
     val packageName = androidx.compose.ui.platform.LocalContext.current.packageName
     val grayscaleSetup = stringResource(R.string.settings_grayscale_setup_title) to
         stringResource(R.string.settings_grayscale_setup_body, packageName)
@@ -528,6 +542,43 @@ private fun SettingsMenuScreen(
                 }
                 HorizontalDivider()
             }
+
+            // Math-problem unlock — available on every device (no hardware).
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_math_title)) },
+                supportingContent = { Text(stringResource(R.string.settings_math_desc)) },
+                trailingContent = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        WhyButton { whyDialog = mathWhy }
+                        Switch(checked = mathEnabled, onCheckedChange = onMathEnabledChange)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            if (mathEnabled) {
+                ListItem(
+                    headlineContent = {
+                        Text(
+                            stringResource(
+                                R.string.settings_math_difficulty,
+                                mathDifficultyLabel(mathDifficulty),
+                            )
+                        )
+                    },
+                    supportingContent = {
+                        Slider(
+                            value = mathDifficulty.toFloat(),
+                            onValueChange = { onMathDifficultyChange(it.roundToInt()) },
+                            valueRange = MathProblemGenerator.MIN_LEVEL.toFloat()..
+                                MathProblemGenerator.MAX_LEVEL.toFloat(),
+                            steps = MathProblemGenerator.MAX_LEVEL -
+                                MathProblemGenerator.MIN_LEVEL - 1,
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+            HorizontalDivider()
             ListItem(
                 headlineContent = { Text(stringResource(R.string.settings_home_mode)) },
                 supportingContent = { Text(homeModeStrings(homeMode).first) },
@@ -946,6 +997,18 @@ private fun homeModeStrings(mode: HomeScreenMode): Pair<String, String> = when (
         stringResource(R.string.home_mode_clock) to
             stringResource(R.string.home_mode_clock_desc)
 }
+
+/** Human-readable name for a 1..5 math difficulty level. */
+@Composable
+private fun mathDifficultyLabel(level: Int): String = stringResource(
+    when (level.coerceIn(MathProblemGenerator.MIN_LEVEL, MathProblemGenerator.MAX_LEVEL)) {
+        1 -> R.string.settings_math_level_1
+        2 -> R.string.settings_math_level_2
+        3 -> R.string.settings_math_level_3
+        4 -> R.string.settings_math_level_4
+        else -> R.string.settings_math_level_5
+    }
+)
 
 /**
  * One notification delivery window. Tap to pick a time; the clear icon
