@@ -1,5 +1,6 @@
 package com.defang.launcher.ui.launcher
 
+import android.os.Process
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
@@ -46,7 +47,7 @@ fun LauncherScreen(
     query: String,
     ownPackageName: String,
     onQueryChange: (String) -> Unit,
-    onAppTap: (String) -> Unit,
+    onAppTap: (AppInfo) -> Unit,
     onAppInfo: (String) -> Unit,
     onUninstall: (String) -> Unit,
     onClose: () -> Unit,
@@ -130,7 +131,7 @@ fun LauncherScreen(
                             AppRow(
                                 app = app,
                                 canUninstall = app.packageName != ownPackageName,
-                                onTap = { onAppTap(app.packageName) },
+                                onTap = { onAppTap(app) },
                                 onAppInfo = onAppInfo,
                                 onUninstall = onUninstall,
                             )
@@ -144,7 +145,7 @@ fun LauncherScreen(
                             AppRow(
                                 app = app,
                                 canUninstall = app.packageName != ownPackageName,
-                                onTap = { onAppTap(app.packageName) },
+                                onTap = { onAppTap(app) },
                                 onAppInfo = onAppInfo,
                                 onUninstall = onUninstall,
                             )
@@ -239,6 +240,9 @@ fun AppRow(
     onUninstall: (String) -> Unit,
 ) {
     var menuOpen by remember { mutableStateOf(false) }
+    // App info / Uninstall are system intents scoped to the calling profile —
+    // they'd target the wrong profile for a work app, so skip the menu there.
+    val isPersonalProfile = app.userHandle == Process.myUserHandle()
     Box {
         Text(
             text = app.label,
@@ -248,7 +252,7 @@ fun AppRow(
                 .fillMaxWidth()
                 .combinedClickable(
                     onClick = onTap,
-                    onLongClick = { menuOpen = true },
+                    onLongClick = if (isPersonalProfile) { { menuOpen = true } } else null,
                 )
                 .padding(horizontal = 24.dp, vertical = 14.dp),
         )

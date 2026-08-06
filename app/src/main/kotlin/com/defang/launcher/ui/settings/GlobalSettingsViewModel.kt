@@ -212,4 +212,13 @@ class GlobalSettingsViewModel @Inject constructor(
             appConfigRepo.applyDefaultsToAllWatched(gateDelay.value, sessionLimit.value, minutes)
         }
     }
+
+    // ── Work profile apps ─────────────────────────────────────────────────────
+    val workProfileAppsEnabled: StateFlow<Boolean> = prefs.workProfileAppsEnabled.stateIn(
+        viewModelScope, SharingStarted.Eagerly, false
+    )
+
+    fun setWorkProfileAppsEnabled(on: Boolean) {
+        viewModelScope.launch { prefs.setWorkProfileAppsEnabled(on) }
+    }
 }

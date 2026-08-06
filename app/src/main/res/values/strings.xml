@@ -87,6 +87,13 @@
     <string name="settings_sites_title">Watched websites</string>
     <string name="settings_sites_desc">Gate specific sites in your browser</string>
     <string name="sites_desc">Sites you add are gated when opened in a browser. Adult sites get a 1-minute leash; others get the standard session and cool-down.</string>
+
+    <!-- Work profile apps -->
+    <string name="settings_workprofile_title">Work profile apps</string>
+    <string name="settings_workprofile_desc">Show and open apps from your Android work profile</string>
+    <string name="settings_workprofile_screen_desc">Off by default. When on, apps installed in your work profile (e.g. a separate WhatsApp) appear in the drawer alongside your personal apps and can be opened directly. They are not covered by watched-app gating.</string>
+    <string name="settings_workprofile_toggle">Show work profile apps</string>
+    <string name="work_profile_app_label">%1$s (Work)</string>
     <string name="sites_url_hint">example.com or example.com/path</string>
     <string name="sites_adult">Adult (1-min leash)</string>
     <string name="sites_enabled">On</string>

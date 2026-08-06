@@ -2,10 +2,14 @@ package com.defang.launcher.ui.launcher
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.LauncherApps
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
+import android.os.Process
+import android.os.UserManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.defang.launcher.R
 import com.defang.launcher.data.local.datastore.PreferencesDataStore
 import com.defang.launcher.data.repository.AppConfigRepository
 import com.defang.launcher.data.repository.SessionRepository
@@ -30,6 +34,8 @@ import javax.inject.Inject
 data class AppInfo(
     val packageName: String,
     val label: String,
+    /** Personal profile unless this app came from loadWorkProfileApps(). */
+    val userHandle: android.os.UserHandle = Process.myUserHandle(),
 )
 
 /** One row of the optional home screen usage panel. */
@@ -95,9 +101,20 @@ class LauncherViewModel @Inject constructor(
         val installedApps = withContext(Dispatchers.IO) { loadInstalledApps() }
         seedAppConfigs(installedApps)
         appConfigRepo.pruneUninstalled(installedApps.map { it.packageName })
+
+        // Opt-in — apps from a work profile (or other secondary user profile)
+        // are display+launch only, not run through the watched-app tier system:
+        // AppConfigRepository keys configs by package name alone, and a work
+        // profile app commonly shares its package name with a personal one.
+        val workApps = if (prefs.workProfileAppsEnabled.first()) {
+            withContext(Dispatchers.IO) { loadWorkProfileApps() }
+        } else {
+            emptyList()
+        }
+
         // Defang itself is listed so settings stay reachable from the drawer.
         // LauncherActivity routes a tap on our own package to SettingsActivity.
-        return (installedApps + AppInfo(context.packageName, "Defang"))
+        return (installedApps + workApps + AppInfo(context.packageName, "Defang"))
             .sortedBy { it.label.lowercase() }
     }
 
@@ -200,11 +217,31 @@ class LauncherViewModel @Inject constructor(
             .sortedBy { it.label.lowercase() }
     }
 
+    /** Apps installed under other user profiles associated with this user (e.g. a work profile). */
+    private fun loadWorkProfileApps(): List<AppInfo> {
+        val launcherApps = context.getSystemService(LauncherApps::class.java) ?: return emptyList()
+        val userManager = context.getSystemService(UserManager::class.java) ?: return emptyList()
+        val myProfile = Process.myUserHandle()
+        return userManager.userProfiles
+            .filter { it != myProfile }
+            .flatMap { profile ->
+                launcherApps.getActivityList(null, profile)
+                    .filter { it.componentName.packageName != context.packageName }
+                    .map { info ->
+                        AppInfo(
+                            packageName = info.componentName.packageName,
+                            label = context.getString(R.string.work_profile_app_label, info.label),
+                            userHandle = profile,
+                        )
+                    }
+            }
+    }
+
     private suspend fun seedAppConfigs(apps: List<AppInfo>) {
         // Default watched list — user can adjust in settings
         val defaultWatched = setOf(
             // Social media
-            "com.instagram.android",
+            "com.instagram.android","com.google.android.documentsui",
             "com.snapchat.android",
             "com.zhiliaoapp.musically",       // TikTok
             "com.ss.android.ugc.trill",       // TikTok (some regions)

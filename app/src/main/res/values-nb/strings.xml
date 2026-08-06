@@ -92,6 +92,13 @@
     <string name="sites_adult">Voksen (1-min bånd)</string>
     <string name="sites_enabled">På</string>
     <string name="sites_add">Legg til</string>
+
+    <!-- Jobbprofil-apper -->
+    <string name="settings_workprofile_title">Jobbprofil-apper</string>
+    <string name="settings_workprofile_desc">Vis og åpne apper fra jobbprofilen din</string>
+    <string name="settings_workprofile_screen_desc">Av som standard. Når på, vises apper installert i jobbprofilen din (f.eks. en egen WhatsApp) i skuffen sammen med de personlige appene, og kan åpnes direkte. De omfattes ikke av overvåking.</string>
+    <string name="settings_workprofile_toggle">Vis jobbprofil-apper</string>
+    <string name="work_profile_app_label">%1$s (jobb)</string>
     <string name="sites_empty">Ingen nettsteder lagt til ennå.</string>
     <string name="sites_delete">Fjern nettsted</string>
     <string name="sites_invalid">Skriv inn et gyldig domene, f.eks. eksempel.no</string>

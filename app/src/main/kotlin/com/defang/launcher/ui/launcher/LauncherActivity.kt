@@ -5,10 +5,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.LauncherApps
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Process
 import android.provider.Settings
 import androidx.core.content.ContextCompat
 import androidx.activity.ComponentActivity
@@ -94,7 +96,7 @@ class LauncherActivity : ComponentActivity() {
                         query = state.query,
                         ownPackageName = packageName,
                         onQueryChange = { viewModel.onQueryChange(it) },
-                        onAppTap = { pkg -> launchApp(pkg) },
+                        onAppTap = { app -> launchApp(app) },
                         onAppInfo = { pkg -> openAppInfo(pkg) },
                         onUninstall = { pkg -> uninstallApp(pkg) },
                         onClose = { showDrawer = false },
@@ -181,13 +183,25 @@ class LauncherActivity : ComponentActivity() {
         unregisterReceiver(packageChangeReceiver)
     }
 
-    private fun launchApp(packageName: String) {
-        // Our own drawer entry opens settings — the launcher itself is already open
-        if (packageName == this.packageName) {
+    private fun launchApp(app: AppInfo) {
+        // Our own drawer entry opens settings — the launcher itself is already open.
+        // Scoped to our own profile: a work-profile app can share our package name
+        // (e.g. if Defang itself were installed there) without being us.
+        if (app.packageName == this.packageName && app.userHandle == Process.myUserHandle()) {
             startActivity(Intent(this, SettingsActivity::class.java))
             return
         }
-        val intent = packageManager.getLaunchIntentForPackage(packageName) ?: return
+        // Work profile (or any other secondary user profile) app: same-package
+        // lookups via PackageManager only ever resolve the calling profile, so
+        // launching here needs LauncherApps with the target profile's handle.
+        if (app.userHandle != Process.myUserHandle()) {
+            val launcherApps = getSystemService(LauncherApps::class.java) ?: return
+            val component = launcherApps.getActivityList(app.packageName, app.userHandle)
+                .firstOrNull()?.componentName ?: return
+            launcherApps.startMainActivity(component, app.userHandle, null, null)
+            return
+        }
+        val intent = packageManager.getLaunchIntentForPackage(app.packageName) ?: return
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
     }
