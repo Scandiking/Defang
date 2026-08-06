@@ -97,8 +97,8 @@ class LauncherActivity : ComponentActivity() {
                         ownPackageName = packageName,
                         onQueryChange = { viewModel.onQueryChange(it) },
                         onAppTap = { app -> launchApp(app) },
-                        onAppInfo = { pkg -> openAppInfo(pkg) },
-                        onUninstall = { pkg -> uninstallApp(pkg) },
+                        onAppInfo = { app -> openAppInfo(app) },
+                        onUninstall = { app -> uninstallApp(app) },
                         onClose = { showDrawer = false },
                     )
                 } else {
@@ -206,22 +206,40 @@ class LauncherActivity : ComponentActivity() {
         startActivity(intent)
     }
 
-    /** Long-press → App info: the system's per-app details screen. */
-    private fun openAppInfo(packageName: String) {
+    /**
+     * Long-press → App info: the system's per-app details screen.
+     * For a work app, the generic Settings intent + EXTRA_USER silently falls
+     * back to showing the *personal* copy on some Android builds (verified by
+     * comparing on-disk data sizes — the "EXTRA_USER" contract isn't honored
+     * by every Settings implementation). LauncherApps.startAppDetailsActivity
+     * is the API actually built for this — cross-profile app details from a
+     * launcher, no extra permission needed beyond holding the launcher role —
+     * and it reliably lands on the right profile, confirmed on-device via the
+     * work-profile briefcase badge and matching storage figures.
+     */
+    private fun openAppInfo(app: AppInfo) {
+        if (app.userHandle != Process.myUserHandle()) {
+            val launcherApps = getSystemService(LauncherApps::class.java) ?: return
+            val component = launcherApps.getActivityList(app.packageName, app.userHandle)
+                .firstOrNull()?.componentName ?: return
+            launcherApps.startAppDetailsActivity(component, app.userHandle, null, null)
+            return
+        }
         startActivity(
             Intent(
                 Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                Uri.parse("package:$packageName"),
+                Uri.parse("package:${app.packageName}"),
             ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         )
     }
 
-    /** Long-press → Uninstall: fires the standard uninstaller, which shows its
-     *  own confirmation dialog. The package-change receiver refreshes the drawer
-     *  once the removal completes. */
-    private fun uninstallApp(packageName: String) {
+    /** Long-press → Uninstall: fires the standard uninstaller (scoped via
+     *  EXTRA_USER for a work app), which shows its own confirmation dialog.
+     *  The package-change receiver refreshes the drawer once it completes. */
+    private fun uninstallApp(app: AppInfo) {
         startActivity(
-            Intent(Intent.ACTION_DELETE, Uri.parse("package:$packageName"))
+            Intent(Intent.ACTION_DELETE, Uri.parse("package:${app.packageName}"))
+                .putExtra(Intent.EXTRA_USER, app.userHandle)
                 // Without this the uninstaller never launches from our singleTask
                 // home activity — the menu just closes and nothing happens.
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

@@ -50,8 +50,8 @@ fun LauncherScreen(
     ownPackageName: String,
     onQueryChange: (String) -> Unit,
     onAppTap: (AppInfo) -> Unit,
-    onAppInfo: (String) -> Unit,
-    onUninstall: (String) -> Unit,
+    onAppInfo: (AppInfo) -> Unit,
+    onUninstall: (AppInfo) -> Unit,
     onClose: () -> Unit,
 ) {
     var searchActive by remember { mutableStateOf(false) }
@@ -262,13 +262,10 @@ fun AppRow(
     app: AppInfo,
     canUninstall: Boolean,
     onTap: () -> Unit,
-    onAppInfo: (String) -> Unit,
-    onUninstall: (String) -> Unit,
+    onAppInfo: (AppInfo) -> Unit,
+    onUninstall: (AppInfo) -> Unit,
 ) {
     var menuOpen by remember { mutableStateOf(false) }
-    // App info / Uninstall are system intents scoped to the calling profile —
-    // they'd target the wrong profile for a work app, so skip the menu there.
-    val isPersonalProfile = app.userHandle == Process.myUserHandle()
     Box {
         Text(
             text = app.label,
@@ -278,7 +275,7 @@ fun AppRow(
                 .fillMaxWidth()
                 .combinedClickable(
                     onClick = onTap,
-                    onLongClick = if (isPersonalProfile) { { menuOpen = true } } else null,
+                    onLongClick = { menuOpen = true },
                 )
                 .padding(horizontal = 24.dp, vertical = 14.dp),
         )
@@ -287,7 +284,7 @@ fun AppRow(
                 text = { Text(stringResource(R.string.app_menu_info)) },
                 onClick = {
                     menuOpen = false
-                    onAppInfo(app.packageName)
+                    onAppInfo(app)
                 },
             )
             if (canUninstall) {
@@ -295,7 +292,7 @@ fun AppRow(
                     text = { Text(stringResource(R.string.app_menu_uninstall)) },
                     onClick = {
                         menuOpen = false
-                        onUninstall(app.packageName)
+                        onUninstall(app)
                     },
                 )
             }
