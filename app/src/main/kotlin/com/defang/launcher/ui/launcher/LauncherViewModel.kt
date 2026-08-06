@@ -9,7 +9,6 @@ import android.os.Process
 import android.os.UserManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.defang.launcher.R
 import com.defang.launcher.data.local.datastore.PreferencesDataStore
 import com.defang.launcher.data.repository.AppConfigRepository
 import com.defang.launcher.data.repository.SessionRepository
@@ -230,7 +229,7 @@ class LauncherViewModel @Inject constructor(
                     .map { info ->
                         AppInfo(
                             packageName = info.componentName.packageName,
-                            label = context.getString(R.string.work_profile_app_label, info.label),
+                            label = info.label.toString(),
                             userHandle = profile,
                         )
                     }
