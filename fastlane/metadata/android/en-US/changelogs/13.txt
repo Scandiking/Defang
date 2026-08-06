@@ -1,0 +1,1 @@
+Opt-in support for Android work profiles: apps installed in your work profile get their own Work tab in the drawer (off by default, in Settings). Long-press still works there too — App info and Uninstall correctly target the work-profile copy of the app.

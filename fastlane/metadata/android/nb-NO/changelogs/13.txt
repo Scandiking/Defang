@@ -1,0 +1,1 @@
+Valgfri støtte for Android-jobbprofiler: apper installert i jobbprofilen din får sin egen Jobb-fane i skuffen (av som standard, i Innstillinger). Langtrykk fungerer også der — App-info og Avinstaller treffer riktig jobbprofil-kopi av appen.
