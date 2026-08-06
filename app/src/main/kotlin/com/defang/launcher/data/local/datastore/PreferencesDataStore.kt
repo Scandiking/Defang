@@ -240,4 +240,16 @@ class PreferencesDataStore @Inject constructor(
         prefs[KEY_SUPPRESSED_COUNTS] = counts.entries
             .joinToString("\n") { "${it.key}=${it.value}" }
     }
+
+    // ── Work profile apps ─────────────────────────────────────────────────────
+    // Opt-in: shows apps installed in an Android work profile alongside
+    // personal apps and allows launching them. Off by default — most users
+    // have no work profile.
+    private val KEY_WORK_PROFILE_APPS = booleanPreferencesKey("work_profile_apps_enabled")
+
+    val workProfileAppsEnabled: Flow<Boolean> =
+        store.data.map { it[KEY_WORK_PROFILE_APPS] ?: false }
+
+    suspend fun setWorkProfileAppsEnabled(on: Boolean) =
+        store.edit { it[KEY_WORK_PROFILE_APPS] = on }
 }

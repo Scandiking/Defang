@@ -67,7 +67,7 @@ import com.defang.launcher.util.NotificationListenerHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.roundToInt
 
-private enum class SettingsPage { Menu, Timing, Apps, Sites, Library, Tasks, Usage }
+private enum class SettingsPage { Menu, Timing, Apps, Sites, WorkProfile, Library, Tasks, Usage }
 
 @AndroidEntryPoint
 class SettingsActivity : ComponentActivity() {
@@ -158,6 +158,7 @@ class SettingsActivity : ComponentActivity() {
                             onTiming = { page = SettingsPage.Timing },
                             onApps = { page = SettingsPage.Apps },
                             onSites = { page = SettingsPage.Sites },
+                            onWorkProfile = { page = SettingsPage.WorkProfile },
                             onLibrary = { page = SettingsPage.Library },
                             onTasks = { page = SettingsPage.Tasks },
                             onUsage = { page = SettingsPage.Usage },
@@ -218,6 +219,16 @@ class SettingsActivity : ComponentActivity() {
                         com.defang.launcher.ui.settings.sites.WatchedSitesScreen(
                             onBack = { page = SettingsPage.Menu },
                         )
+
+                    SettingsPage.WorkProfile -> {
+                        val workProfileOn by globalVm.workProfileAppsEnabled
+                            .collectAsStateWithLifecycle()
+                        com.defang.launcher.ui.settings.workprofile.WorkProfileSettingsScreen(
+                            enabled = workProfileOn,
+                            onEnabledChange = globalVm::setWorkProfileAppsEnabled,
+                            onBack = { page = SettingsPage.Menu },
+                        )
+                    }
 
                     SettingsPage.Library -> AwarenessLibraryScreen(
                         onBack = { page = SettingsPage.Menu },
@@ -286,6 +297,7 @@ private fun SettingsMenuScreen(
     onTiming: () -> Unit,
     onApps: () -> Unit,
     onSites: () -> Unit,
+    onWorkProfile: () -> Unit,
     onLibrary: () -> Unit,
     onTasks: () -> Unit,
     onUsage: () -> Unit,
@@ -407,6 +419,14 @@ private fun SettingsMenuScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onSites() },
+            )
+            HorizontalDivider()
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_workprofile_title)) },
+                supportingContent = { Text(stringResource(R.string.settings_workprofile_desc)) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onWorkProfile() },
             )
             HorizontalDivider()
 

@@ -1,5 +1,6 @@
 package com.defang.launcher.ui.launcher
 
+import android.os.Process
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
@@ -20,6 +21,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,9 +49,9 @@ fun LauncherScreen(
     query: String,
     ownPackageName: String,
     onQueryChange: (String) -> Unit,
-    onAppTap: (String) -> Unit,
-    onAppInfo: (String) -> Unit,
-    onUninstall: (String) -> Unit,
+    onAppTap: (AppInfo) -> Unit,
+    onAppInfo: (AppInfo) -> Unit,
+    onUninstall: (AppInfo) -> Unit,
     onClose: () -> Unit,
 ) {
     var searchActive by remember { mutableStateOf(false) }
@@ -66,10 +69,19 @@ fun LauncherScreen(
     // rail, not to the swipe-down-to-close handler.
     val railGuardPx = with(LocalDensity.current) { 40.dp.toPx() }
 
+    // Personal/Work split — a tab per profile instead of a "(Work)" label on
+    // every row. The Work tab only exists once there's something to put in it
+    // (the setting is off by default, so most users never see it at all).
+    val personalApps = remember(apps) { apps.filter { it.userHandle == Process.myUserHandle() } }
+    val workApps = remember(apps) { apps.filter { it.userHandle != Process.myUserHandle() } }
+    var workTabSelected by remember { mutableStateOf(false) }
+    val showingWorkTab = workTabSelected && workApps.isNotEmpty()
+    val tabApps = if (showingWorkTab) workApps else personalApps
+
     // First list index for each initial letter, in list order ('#' for digits etc.)
-    val letterIndex = remember(apps) {
+    val letterIndex = remember(tabApps) {
         val map = LinkedHashMap<Char, Int>()
-        apps.forEachIndexed { i, app ->
+        tabApps.forEachIndexed { i, app ->
             val first = app.label.firstOrNull()?.uppercaseChar() ?: '#'
             val key = if (first.isLetter()) first else '#'
             if (key !in map) map[key] = i
@@ -126,11 +138,11 @@ fun LauncherScreen(
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                 ) {
                     LazyColumn {
-                        items(apps) { app ->
+                        items(tabApps) { app ->
                             AppRow(
                                 app = app,
                                 canUninstall = app.packageName != ownPackageName,
-                                onTap = { onAppTap(app.packageName) },
+                                onTap = { onAppTap(app) },
                                 onAppInfo = onAppInfo,
                                 onUninstall = onUninstall,
                             )
@@ -138,13 +150,28 @@ fun LauncherScreen(
                     }
                 }
 
+                if (workApps.isNotEmpty()) {
+                    TabRow(selectedTabIndex = if (showingWorkTab) 1 else 0) {
+                        Tab(
+                            selected = !showingWorkTab,
+                            onClick = { workTabSelected = false },
+                            text = { Text(stringResource(R.string.launcher_tab_personal)) },
+                        )
+                        Tab(
+                            selected = showingWorkTab,
+                            onClick = { workTabSelected = true },
+                            text = { Text(stringResource(R.string.launcher_tab_work)) },
+                        )
+                    }
+                }
+
                 Box(modifier = Modifier.weight(1f)) {
                     LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
-                        items(apps) { app ->
+                        items(tabApps) { app ->
                             AppRow(
                                 app = app,
                                 canUninstall = app.packageName != ownPackageName,
-                                onTap = { onAppTap(app.packageName) },
+                                onTap = { onAppTap(app) },
                                 onAppInfo = onAppInfo,
                                 onUninstall = onUninstall,
                             )
@@ -235,8 +262,8 @@ fun AppRow(
     app: AppInfo,
     canUninstall: Boolean,
     onTap: () -> Unit,
-    onAppInfo: (String) -> Unit,
-    onUninstall: (String) -> Unit,
+    onAppInfo: (AppInfo) -> Unit,
+    onUninstall: (AppInfo) -> Unit,
 ) {
     var menuOpen by remember { mutableStateOf(false) }
     Box {
@@ -257,7 +284,7 @@ fun AppRow(
                 text = { Text(stringResource(R.string.app_menu_info)) },
                 onClick = {
                     menuOpen = false
-                    onAppInfo(app.packageName)
+                    onAppInfo(app)
                 },
             )
             if (canUninstall) {
@@ -265,7 +292,7 @@ fun AppRow(
                     text = { Text(stringResource(R.string.app_menu_uninstall)) },
                     onClick = {
                         menuOpen = false
-                        onUninstall(app.packageName)
+                        onUninstall(app)
                     },
                 )
             }
