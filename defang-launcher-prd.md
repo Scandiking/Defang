@@ -339,6 +339,11 @@ Sample tidbits (non-exhaustive — the full library is in the appendix):
 - Detect specific on-screen UI patterns (e.g. vertical full-screen video) and apply additional friction (e.g. "You've been watching Reels for 5 minutes. Continue?").
 - High complexity, fragile against app updates.
 
+**Long-range usage KPIs (3/6/12-month trend)**
+- Answer "did I actually use watched apps less over the last quarter/year?" — not just the existing daily/weekly report.
+- Storage is a non-issue: `SessionEntity` rows run ~150–250 bytes each; even 30 gate-passes/day for a year is under 3 MB. No retention limit needed on size grounds.
+- The real cost is query time on raw session history as it grows. Before building the KPI screen: add an index on `SessionEntity(packageName, startTime)`, and prefer a daily-rollup table (or scheduled aggregation) over re-summing raw sessions on every dashboard open.
+
 ---
 
 ## Technical notes
