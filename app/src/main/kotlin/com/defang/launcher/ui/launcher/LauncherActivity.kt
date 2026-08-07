@@ -196,9 +196,13 @@ class LauncherActivity : ComponentActivity() {
         // launching here needs LauncherApps with the target profile's handle.
         if (app.userHandle != Process.myUserHandle()) {
             val launcherApps = getSystemService(LauncherApps::class.java) ?: return
-            val component = launcherApps.getActivityList(app.packageName, app.userHandle)
-                .firstOrNull()?.componentName ?: return
-            launcherApps.startMainActivity(component, app.userHandle, null, null)
+            try {
+                val component = launcherApps.getActivityList(app.packageName, app.userHandle)
+                    .firstOrNull()?.componentName ?: return
+                launcherApps.startMainActivity(component, app.userHandle, null, null)
+            } catch (e: SecurityException) {
+                // Profile paused/removed between drawer refresh and this tap.
+            }
             return
         }
         val intent = packageManager.getLaunchIntentForPackage(app.packageName) ?: return
@@ -220,9 +224,13 @@ class LauncherActivity : ComponentActivity() {
     private fun openAppInfo(app: AppInfo) {
         if (app.userHandle != Process.myUserHandle()) {
             val launcherApps = getSystemService(LauncherApps::class.java) ?: return
-            val component = launcherApps.getActivityList(app.packageName, app.userHandle)
-                .firstOrNull()?.componentName ?: return
-            launcherApps.startAppDetailsActivity(component, app.userHandle, null, null)
+            try {
+                val component = launcherApps.getActivityList(app.packageName, app.userHandle)
+                    .firstOrNull()?.componentName ?: return
+                launcherApps.startAppDetailsActivity(component, app.userHandle, null, null)
+            } catch (e: SecurityException) {
+                // Profile paused/removed between drawer refresh and this tap.
+            }
             return
         }
         startActivity(
