@@ -113,9 +113,11 @@ app/src/main/kotlin/com/defang/launcher/
 
 These platforms were sold to us as a way to connect with people. That is not what they are anymore. Facebook, Instagram, TikTok, X — they are advertising machines that happen to show you other humans when it keeps you scrolling. The feed isn't ordered by what matters to you; it's ordered by whatever keeps your thumb moving long enough to serve the next ad. The product is your attention, and it is sold by the hour. Every year the connective part gets thinner and the extractive part gets thicker — the platform enshittifies, and you get less while giving more.
 
-The endpoint of that design is the *Wall-E* future: people reclined in a chair, screen an inch from their face, everything optimised and frictionless, nothing actually chosen. Comfortable, shapeless, no longer steering. Frictionless is the point — for them. Every pause they remove is another moment you spend inside the app instead of deciding whether you meant to be there at all.
+![Two parents watching TV. They're reclined and drinking soda from a long straw. Their child is developing, but their attention is not given.](Defang_README_philosophy_illustration_2.png "Parents ignoring their child, attention to TV and devices")
 
-Defang is not a blocker. It does not stop you from using your phone the way you want. It puts back the one thing these apps spent billions removing: a single deliberate pause — enough to make the choice conscious rather than automatic. The friction is the feature.
+The endpoint of that design is the *Wall-E* future; "shapeless humans": people reclined in a chair, screen an inch from their face, everything optimised and frictionless, nothing actually chosen. Comfortable, shapeless, no longer steering. Frictionless is the point, for them, the Silicon Valley industry. Every pause they remove is another moment you spend inside the app instead of deciding whether you meant to be there at all.
+
+Defang is not a blocker. It does not stop you from using your phone the way you want. It puts back the one thing these apps spent billions removing: a single deliberate pause, enough to make the choice conscious rather than automatic. The friction is the feature.
 
 ---
 
