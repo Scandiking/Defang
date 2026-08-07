@@ -888,14 +888,20 @@ class DefangAccessibilityService : AccessibilityService() {
         return null
     }
 
-    /** Synthetic config used when the "watched package" is a browser on an adult domain. */
-    private fun defaultBrowserConfig(pkg: String) = AppConfig(
+    /**
+     * Synthetic config used when the "watched package" is a browser (built-in
+     * adult domain or a user-configured watched site). Browsers never get an
+     * AppConfigEntity row of their own, so this reads the same global defaults
+     * the user edits in Settings instead of hardcoding them — otherwise a
+     * changed gate-delay setting would silently never apply to sites.
+     */
+    private suspend fun defaultBrowserConfig(pkg: String) = AppConfig(
         packageName = pkg,
         appLabel = "Browser",
         tier = AppTier.WATCHED,
-        sessionLimitMinutes = 15,
-        cooldownMinutes = 30,
-        gateDelaySeconds = 8,
+        sessionLimitMinutes = prefs.sessionLimitMinutes.first(),
+        cooldownMinutes = prefs.cooldownMinutes.first(),
+        gateDelaySeconds = prefs.gateDelaySeconds.first(),
         cooldownEndsAt = 0L,
     )
 
