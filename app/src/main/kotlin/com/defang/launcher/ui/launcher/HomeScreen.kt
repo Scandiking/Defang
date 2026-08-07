@@ -1,6 +1,7 @@
 package com.defang.launcher.ui.launcher
 
 import android.text.format.DateFormat
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
@@ -48,6 +49,11 @@ fun HomeScreen(
     onUsageTap: () -> Unit,
     onAppsTap: () -> Unit,
 ) {
+    // Home has no back stack to pop — without this, back press falls through
+    // to the default finish(), which drops Defang off the task and exposes
+    // whatever launcher task sits beneath it.
+    BackHandler(enabled = true) {}
+
     var now by remember { mutableStateOf(LocalDateTime.now()) }
     LaunchedEffect(Unit) {
         while (true) {
