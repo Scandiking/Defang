@@ -290,7 +290,19 @@ class DefangAccessibilityService : AccessibilityService() {
         val usageStatsManager =
             getSystemService(Context.USAGE_STATS_SERVICE) as? UsageStatsManager ?: return
         val now = System.currentTimeMillis()
-        val events = usageStatsManager.queryEvents(lastUsageEventQueryMs, now)
+        // Usage access can be revoked mid-loop (Settings toggle, OEM battery
+        // cleanup); an uncaught exception here would kill pollForegroundAppLoop's
+        // while(true) permanently, silently ending the whole fallback poll until
+        // the service restarts. Skip this tick instead.
+        val events = try {
+            usageStatsManager.queryEvents(lastUsageEventQueryMs, now)
+        } catch (e: SecurityException) {
+            Log.w(TAG, "usageStatsPoll queryEvents SecurityException — usage access revoked?", e)
+            return
+        } catch (e: IllegalArgumentException) {
+            Log.w(TAG, "usageStatsPoll queryEvents IllegalArgumentException", e)
+            return
+        }
         lastUsageEventQueryMs = now
         val event = UsageEvents.Event()
         while (events.hasNextEvent()) {
