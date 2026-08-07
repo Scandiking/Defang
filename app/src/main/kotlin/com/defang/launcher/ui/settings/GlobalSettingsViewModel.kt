@@ -1,5 +1,9 @@
 package com.defang.launcher.ui.settings
 
+import android.content.Context
+import android.content.pm.LauncherApps
+import android.os.Process
+import android.os.UserManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.defang.launcher.data.local.datastore.PreferencesDataStore
@@ -10,6 +14,8 @@ import com.defang.launcher.service.notification.BatchWindowScheduler
 import com.defang.launcher.util.MathProblemGenerator
 import com.defang.launcher.util.GrayscaleController
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -22,6 +28,7 @@ class GlobalSettingsViewModel @Inject constructor(
     private val appConfigRepo: AppConfigRepository,
     private val grayscale: GrayscaleController,
     private val batchWindowScheduler: BatchWindowScheduler,
+    @ApplicationContext private val context: Context,
 ) : ViewModel() {
 
     val gateDelay: StateFlow<Int> = prefs.gateDelaySeconds.stateIn(
@@ -218,7 +225,41 @@ class GlobalSettingsViewModel @Inject constructor(
         viewModelScope, SharingStarted.Eagerly, false
     )
 
+    /**
+     * Set when the toggle is turned on but the device has no managed profile
+     * (e.g. Samsung Secure Folder isn't one — it's a separate isolated user,
+     * intentionally invisible to other launchers). Cleared on toggle-off.
+     */
+    private val _workProfileNotDetected = MutableStateFlow(false)
+    val workProfileNotDetected: StateFlow<Boolean> = _workProfileNotDetected
+
     fun setWorkProfileAppsEnabled(on: Boolean) {
-        viewModelScope.launch { prefs.setWorkProfileAppsEnabled(on) }
+        // Turning on with nothing accessible would leave a switch that's lit
+        // up but does nothing — snap it back off instead of persisting a lie.
+        val notDetected = on && !hasAccessibleWorkProfile()
+        val actual = on && !notDetected
+        viewModelScope.launch { prefs.setWorkProfileAppsEnabled(actual) }
+        _workProfileNotDetected.value = notDetected
+    }
+
+    /**
+     * True only if some other profile actually yields a non-empty activity
+     * list. Presence in [UserManager.getUserProfiles] alone isn't enough, and
+     * neither is a non-throwing call — Samsung Secure Folder shows up in
+     * getUserProfiles (flag PROFILE, parentId = owner) and getActivityList
+     * doesn't throw for it either; it just silently returns zero activities,
+     * since Secure Folder deliberately hides its apps from other launchers.
+     */
+    private fun hasAccessibleWorkProfile(): Boolean {
+        val launcherApps = context.getSystemService(LauncherApps::class.java) ?: return false
+        val userManager = context.getSystemService(UserManager::class.java) ?: return false
+        val myProfile = Process.myUserHandle()
+        return userManager.userProfiles.any { profile ->
+            profile != myProfile && try {
+                launcherApps.getActivityList(null, profile).isNotEmpty()
+            } catch (e: SecurityException) {
+                false
+            }
+        }
     }
 }

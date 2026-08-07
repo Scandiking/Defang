@@ -93,6 +93,7 @@
     <string name="settings_workprofile_desc">Show and open apps from your Android work profile</string>
     <string name="settings_workprofile_screen_desc">Off by default. When on, apps installed in your work profile (e.g. a separate WhatsApp) appear under their own Work tab in the drawer and can be opened directly. They are not covered by watched-app gating.</string>
     <string name="settings_workprofile_toggle">Show work profile apps</string>
+    <string name="settings_workprofile_not_detected">No work profile found on this device. Note: Samsung Secure Folder is not a work profile and won\'t appear here — this requires a real Android work profile (set up via Settings ▸ Accounts ▸ Add work account, usually through an MDM/employer enrollment).</string>
     <string name="launcher_tab_personal">Apps</string>
     <string name="launcher_tab_work">Work</string>
     <string name="sites_url_hint">example.com or example.com/path</string>

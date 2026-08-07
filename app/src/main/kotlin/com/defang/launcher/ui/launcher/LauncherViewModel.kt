@@ -224,7 +224,12 @@ class LauncherViewModel @Inject constructor(
         return userManager.userProfiles
             .filter { it != myProfile }
             .flatMap { profile ->
-                launcherApps.getActivityList(null, profile)
+                val list = try {
+                    launcherApps.getActivityList(null, profile)
+                } catch (e: SecurityException) {
+                    emptyList()
+                }
+                list
                     .filter { it.componentName.packageName != context.packageName }
                     .map { info ->
                         AppInfo(

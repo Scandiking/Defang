@@ -29,6 +29,7 @@ import com.defang.launcher.R
 @Composable
 fun WorkProfileSettingsScreen(
     enabled: Boolean,
+    notDetected: Boolean,
     onEnabledChange: (Boolean) -> Unit,
     onBack: () -> Unit,
 ) {
@@ -72,6 +73,15 @@ fun WorkProfileSettingsScreen(
                     text = stringResource(R.string.settings_workprofile_toggle),
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.weight(1f),
+                )
+            }
+
+            if (notDetected) {
+                Text(
+                    text = stringResource(R.string.settings_workprofile_not_detected),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                 )
             }
         }

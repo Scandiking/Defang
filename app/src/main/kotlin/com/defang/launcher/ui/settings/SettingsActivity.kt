@@ -223,8 +223,11 @@ class SettingsActivity : ComponentActivity() {
                     SettingsPage.WorkProfile -> {
                         val workProfileOn by globalVm.workProfileAppsEnabled
                             .collectAsStateWithLifecycle()
+                        val notDetected by globalVm.workProfileNotDetected
+                            .collectAsStateWithLifecycle()
                         com.defang.launcher.ui.settings.workprofile.WorkProfileSettingsScreen(
                             enabled = workProfileOn,
+                            notDetected = notDetected,
                             onEnabledChange = globalVm::setWorkProfileAppsEnabled,
                             onBack = { page = SettingsPage.Menu },
                         )
