@@ -132,7 +132,15 @@ object AccessibilityServiceHelper {
             verifyRebindLanded(context.applicationContext)
             return true
         }
-        if (isEnabled(context)) return true // listed, no way to force a rebind ourselves
+        if (isEnabled(context)) {
+            // Listed doesn't mean bound — force-stop (or the post-reinstall
+            // "Crashed services" wedge) can leave it listed with a dead
+            // binding and no WRITE_SECURE_SETTINGS grant to toggle it
+            // ourselves. Verify for real and send the user to Settings if the
+            // binding never comes back on its own.
+            verifyRebindLanded(context.applicationContext)
+            return true
+        }
         openAccessibilitySettings(context)
         return false
     }
