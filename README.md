@@ -133,16 +133,32 @@ Defang is not a blocker. It does not stop you from using your phone the way you 
 ## FAQ
 
 **Why not block watched apps outright?**  
-Blocking outright doesn't touch the underlying loop. Once the craving peaks, the user switches back to their old launcher, and often binges to make up for the FOMO. The loop fires exactly as before, just delayed. "Neurons that fire together, wire together" (Löwel & Singer, 1992): every uninterrupted cue→app→reward pass reinforces the same wiring. Defang instead inserts a pause *inside* the loop, every time, so the association weakens with repetition. Delayed gratification substituting for instant gratification, until the habit itself changes rather than just its timing.
+Blocking outright doesn't touch the underlying loop.  
+Once the craving peaks, the user switches back to their old launcher, and often binges to make up for the FOMO. The loop fires exactly as before, just delayed. "Neurons that fire together, wire together" (Löwel & Singer, 1992): every uninterrupted cue→app→reward pass reinforces the same wiring. Defang instead inserts a pause *inside* the loop, every time, so the association weakens with repetition. Delayed gratification substituting for instant gratification, until the habit itself changes rather than just its timing.
+
+**Won't this be annoying at first?**  
+Yes, and that's expected.  
+The old cue → app → reward path has fired thousands of times already; a few days of friction won't outcompete that on its own. Habit-replacement research puts the adjustment window at weeks, not days, before a new response overtakes the old one (Lally et al., 2010: median 66 days to automaticity). The friction is meant to be felt. That's the interruption doing its job. It just front-loads discomfort that outright blocking defers into a bigger relapse later.
+
+**Does it get easier?**  
+Yes.  
+Every interrupted pass through the loop is a repetition for the new path and a missed repetition for the old one; "neurons that fire together, wire together" cuts both ways (Löwel & Singer, 1992). As the slower response gets reinforced and the old automatic one goes un-fired, the pull of the cue weakens on its own. No permanent willpower tax, just the initial weeks.
+
+**Why does it look that way?**  
+Polished UI details such as rounded corners, color accents, ripple/motion feedback act as micro-rewards in their own right.  
+The aesthetic-usability effect (Kurosu & Kashimura, 1995) shows attractive interfaces get perceived as more usable, and in practice, get used more. Habit-forming app design leans on exactly this: gloss and motion as a stream of tiny reward signals, independent of what the app actually does (Eyal, 2014). Defang strips it out on purpose. Flat surfaces, square buttons, no ripple animations, no transition animations so that the interface itself never becomes a reason to stay. The aim is a phone that reads as a utility, the way a rotary phone or a rolodex did, not an object worth holding for its own sake.
 
 **Why is the home screen so barren?**  
-Novelty and visual stimulation are dopaminergic triggers in their own right (Bunzeck & Düzel, 2006: novel images alone activate the midbrain's reward circuitry, independent of any deliberate reward). A busy, engaging home screen would be one more novelty cue competing for attention before you've even opened an app. Defang keeps the screen deliberately inert, a tidbit and nothing more, so the phone gives you no reason to linger with it.
+Novelty and visual stimulation are dopaminergic triggers in their own right (Bunzeck & Düzel, 2006: _novel images alone activate the midbrain's reward circuitry, independent of any deliberate reward_).  
+A busy, engaging home screen would be one more novelty cue competing for attention before you've even opened an app. Defang keeps the screen deliberately inert, a tidbit and nothing more, so the phone gives you no reason to linger with it.
 
 **Why are there no hints on the app drawer?**  
-Habits run on environmental cues, not conscious intent (Wood & Neal, 2007). A visible app-drawer affordance is exactly that kind of cue, priming the swipe-up before you've decided you want to. "Swipe up" has been the unlabeled convention since the dedicated drawer icon disappeared from stock Android; Defang doesn't reintroduce a cue that convention already retired.
+Habits run on environmental cues, not conscious intent (Wood & Neal, 2007).  
+A visible app-drawer affordance is exactly that kind of cue, priming the swipe-up before you've decided you want to. "Swipe up" has been the unlabeled convention since the dedicated drawer icon disappeared from stock Android; Defang doesn't reintroduce a cue that convention already retired.
 
 **Why isn't the lock screen blacked out too?**  
-Android doesn't allow it — and not by oversight. The keyguard is a protected system surface owned by SystemUI; no public API lets a third-party app draw content above it or replace it while a secure lock (PIN/pattern/biometric) is active. That boundary was tightened deliberately: overlay windows sitting above sensitive system UI is a known attack surface for spoofing or capturing unlock input (Fratantonio et al., "Cloak & Dagger," 2017), so Android blocks exactly the kind of window Defang would need to cover the keyguard with a custom clock face. What Defang *can* do — and does — is apply grayscale as a display-level color filter rather than a window overlay; that operates beneath the compositor, on every pixel the screen emits, so it reaches the lock screen too without needing permission to draw on it.
+Android doesn't allow it and not by oversight.  
+The keyguard is a protected system surface owned by `SystemUI`; no public API lets a third-party app draw content above it or replace it while a secure lock (PIN/pattern/biometric) is active. That boundary was tightened deliberately: overlay windows sitting above sensitive system UI is a known attack surface for spoofing or capturing unlock input (Fratantonio et al., "Cloak & Dagger," 2017), so Android blocks exactly the kind of window Defang would need to cover the keyguard with a custom clock face. What Defang *can* do, and does, is apply grayscale as a display-level color filter rather than a window overlay; that operates beneath the compositor, on every pixel the screen emits, so it reaches the lock screen too without needing permission to draw on it.
 
 > [!TIP]  
 > You can get most of the way there yourself: in your lock screen settings, remove all widgets/shortcuts and set an all-black wallpaper. Combined with Defang's grayscale, that's as close to a blank lock screen as the OS permits any app, first- or third-party, to get you.
