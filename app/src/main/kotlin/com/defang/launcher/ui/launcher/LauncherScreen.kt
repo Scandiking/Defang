@@ -25,6 +25,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -94,6 +95,15 @@ fun LauncherScreen(
         else -> personalApps
     }
 
+    // In search-only mode: show nothing until the user has typed at least one character.
+    // Auto-open when the query narrows the list to exactly one app.
+    val displayedApps = if (searchOnOpen && query.isEmpty()) emptyList() else tabApps
+    LaunchedEffect(displayedApps) {
+        if (searchOnOpen && query.isNotEmpty() && displayedApps.size == 1) {
+            onAppTap(displayedApps[0])
+        }
+    }
+
     // First list index for each initial letter, in list order ('#' for digits etc.)
     val letterIndex = remember(tabApps) {
         val map = LinkedHashMap<Char, Int>()
@@ -154,7 +164,7 @@ fun LauncherScreen(
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                 ) {
                     LazyColumn {
-                        items(tabApps) { app ->
+                        items(displayedApps) { app ->
                             AppRow(
                                 app = app,
                                 canUninstall = app.packageName != ownPackageName,
