@@ -1,0 +1,1 @@
+Ny valgfri hjemskjerm-modus: «Kun søk». Hjemskjermen forblir blank; sveip opp og tastaturet åpnes umiddelbart. Skriv for å filtrere apper — hvis bare én gjenstår åpnes den automatisk, ellers trykker du for å velge. Jobbprofil-apper vises i samme liste med merkelappen «(work)» så du alltid kan se forskjell.

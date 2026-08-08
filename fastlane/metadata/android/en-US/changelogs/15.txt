@@ -1,0 +1,1 @@
+New opt-in home screen mode: "Search only". The home screen stays blank; swipe up and the keyboard opens immediately. Type to filter your apps — if only one match remains it launches automatically, otherwise tap to choose. Work-profile apps appear in the same list with a "(work)" label so you can always tell them apart.
