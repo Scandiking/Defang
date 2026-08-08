@@ -1019,6 +1019,9 @@ private fun homeModeStrings(mode: HomeScreenMode): Pair<String, String> = when (
     HomeScreenMode.CLOCK_AND_TIDBIT ->
         stringResource(R.string.home_mode_clock) to
             stringResource(R.string.home_mode_clock_desc)
+    HomeScreenMode.SEARCH_ONLY ->
+        stringResource(R.string.home_mode_search_only) to
+            stringResource(R.string.home_mode_search_only_desc)
 }
 
 /** Human-readable name for a 1..5 math difficulty level. */

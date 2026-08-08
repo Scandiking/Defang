@@ -53,12 +53,17 @@ fun LauncherScreen(
     onAppInfo: (AppInfo) -> Unit,
     onUninstall: (AppInfo) -> Unit,
     onClose: () -> Unit,
+    searchOnOpen: Boolean = false,
 ) {
-    var searchActive by remember { mutableStateOf(false) }
+    var searchActive by remember { mutableStateOf(searchOnOpen) }
 
-    // Back press: close search first, then close drawer
-    BackHandler(enabled = searchActive) { searchActive = false }
-    BackHandler(enabled = !searchActive) { onClose() }
+    // In search-only mode back always closes the drawer; otherwise collapse search first.
+    if (searchOnOpen) {
+        BackHandler { onClose() }
+    } else {
+        BackHandler(enabled = searchActive) { searchActive = false }
+        BackHandler(enabled = !searchActive) { onClose() }
+    }
 
     // Swipe down closes the drawer when the app list is at its top. We observe
     // pointer events on the Initial pass, so we see the drag even though the
@@ -76,7 +81,18 @@ fun LauncherScreen(
     val workApps = remember(apps) { apps.filter { it.userHandle != Process.myUserHandle() } }
     var workTabSelected by remember { mutableStateOf(false) }
     val showingWorkTab = workTabSelected && workApps.isNotEmpty()
-    val tabApps = if (showingWorkTab) workApps else personalApps
+
+    // In search-only mode: one merged list, work entries labelled with "(work)"
+    // so they're distinguishable from same-named personal apps without tabs.
+    val mergedApps = remember(personalApps, workApps) {
+        (personalApps + workApps.map { it.copy(label = "${it.label} (work)") })
+            .sortedBy { it.label.lowercase() }
+    }
+    val tabApps = when {
+        searchOnOpen -> mergedApps
+        showingWorkTab -> workApps
+        else -> personalApps
+    }
 
     // First list index for each initial letter, in list order ('#' for digits etc.)
     val letterIndex = remember(tabApps) {
@@ -150,7 +166,7 @@ fun LauncherScreen(
                     }
                 }
 
-                if (workApps.isNotEmpty()) {
+                if (!searchOnOpen && workApps.isNotEmpty()) {
                     TabRow(selectedTabIndex = if (showingWorkTab) 1 else 0) {
                         Tab(
                             selected = !showingWorkTab,

@@ -176,6 +176,8 @@
     <string name="home_mode_tidbit_desc">Just the tidbit of the day</string>
     <string name="home_mode_clock">Clock and tidbit</string>
     <string name="home_mode_clock_desc">Clock, date, and the tidbit of the day</string>
+    <string name="home_mode_search_only">Search only</string>
+    <string name="home_mode_search_only_desc">Blank screen. Swipe up to search and open apps.</string>
 
     <!-- Custom tasks -->
     <string name="settings_tasks_title">Your own tasks</string>

@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import com.defang.launcher.R
+import com.defang.launcher.domain.model.HomeScreenMode
 import com.defang.launcher.ui.onboarding.OnboardingActivity
 import com.defang.launcher.ui.settings.SettingsActivity
 import com.defang.launcher.ui.theme.DefangTheme
@@ -89,6 +90,8 @@ class LauncherActivity : ComponentActivity() {
                     )
                 }
 
+                val homeMode by viewModel.homeMode.collectAsState()
+
                 if (showDrawer) {
                     val hiddenPackages by viewModel.hiddenPackages.collectAsState()
                     LauncherScreen(
@@ -100,9 +103,9 @@ class LauncherActivity : ComponentActivity() {
                         onAppInfo = { app -> openAppInfo(app) },
                         onUninstall = { app -> uninstallApp(app) },
                         onClose = { showDrawer = false },
+                        searchOnOpen = homeMode == HomeScreenMode.SEARCH_ONLY,
                     )
                 } else {
-                    val homeMode by viewModel.homeMode.collectAsState()
                     val homeUsage by viewModel.homeUsage.collectAsState()
                     HomeScreen(
                         tidbit = state.homeTidbit,

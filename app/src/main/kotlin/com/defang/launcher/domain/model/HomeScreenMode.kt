@@ -9,7 +9,10 @@ enum class HomeScreenMode {
     TIDBIT,
 
     /** Clock, date, and the tidbit of the day (default). */
-    CLOCK_AND_TIDBIT;
+    CLOCK_AND_TIDBIT,
+
+    /** Blank screen; swipe up opens a search box with the keyboard immediately active. */
+    SEARCH_ONLY;
 
     companion object {
         fun fromOrdinal(value: Int): HomeScreenMode =
