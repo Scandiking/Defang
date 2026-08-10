@@ -59,7 +59,7 @@ There are set some defaults.
 
 Instagram, Snapchat, TikTok, Reddit, X/Twitter, Facebook, YouTube, Tinder, Bumble, Hinge, OkCupid, Grindr, Badoo, Match, Happn, Meetic.
 
-Some of you will use third-part clients or apps not in defaults. All defaults can be changed in Settings → Watched apps. 
+Some of you will use third-part clients or apps not in defaults. All defaults can therefore be changed in Settings → Watched apps. 
 
 ---
 
@@ -122,31 +122,36 @@ app/src/main/kotlin/com/defang/launcher/
 
 These platforms were sold to us as a way to connect with people. That is not what they are anymore. Facebook, Instagram, TikTok, X — they are advertising machines that happen to show you other humans when it keeps you scrolling. The feed isn't ordered by what matters to you; it's ordered by whatever keeps your thumb moving long enough to serve the next ad. The product is your attention, and it is sold by the hour. Every year the connective part gets thinner and the extractive part gets thicker — the platform enshittifies, and you get less while giving more.
 
-![Two parents watching TV. They're reclined and drinking soda from a long straw. Their child is developing, but their attention is not given.](Defang_README_philosophy_illustration_2.png "Parents ignoring their child, attention to TV and devices")
+It's tempting to make this about "big tech". Delete the app, quit the platform, feel briefly clean. That anger is earned, but it's aimed at the symptom. A social app answers to whoever paid for it, and that money isn't allowed to just sit still — it loses value every year it isn't put to work growing, so it has to keep growing, and for an ad-funded app, growth means squeezing more attention out of you than last year. Quit the app winning that race today and another takes its place tomorrow, same tricks, different logo, because the pressure that built it never went away.
 
-The endpoint of that design is the *Wall-E* future; "shapeless humans": people reclined in a chair, screen an inch from their face, everything optimised and frictionless, nothing actually chosen. Comfortable, shapeless, no longer steering. Frictionless is the point, for them, the Silicon Valley industry. Every pause they remove is another moment you spend inside the app instead of deciding whether you meant to be there at all.
+![Two parents watching TV. They're reclined and drinking soda from a long straw. Their child is developing, but their attention is not given to the child. The child does not seem to be cared for.](Defang_README_philosophy_illustration_2.png "Parents ignoring their child, attention to TV and devices")
 
-Defang is not a blocker. It does not stop you from using your phone the way you want. It puts back the one thing these apps spent billions removing: a single deliberate pause, enough to make the choice conscious rather than automatic. The friction is the feature.
+The endpoint of that big tech design is the *Wall-E* future; "shapeless humans": people reclined in a chair, the screen an inch from their face, everything optimised and frictionless, nothing actually chosen, like a curated "Recommended" feed. Comfortable, shapeless, no longer steering. Frictionless is the point, for them, the Silicon Valley industry. Every pause they remove is another moment you spend inside the app instead of deciding whether you meant to be there at all.
+
+None of that is a problem Defang or any app on your phone can fix, and it's not this project's place to prescribe how it should be fixed. What's in scope is narrower and more useful: the extractive design still has to route through your thumb and a moment of your attention, and that moment is a place friction can actually work - _for_ you!
+
+>[!IMPORTANT] 
+> Defang does not block apps outright. It does not _stop_ you from using apps like Facebook and Snapchat. That just makes you relapse. Instead, it puts back the one thing these apps spent billions removing: a single deliberate pause, enough to make the choice _conscious_ rather than automatic. This rewires your brain to use these apps deliberately, and then over time changes the habit of opening them the moment there's the smallest feeling of boredom. The friction is the feature.
 
 ---
 
 ## FAQ
 
 **Why not block watched apps outright?**  
-Blocking outright doesn't touch the underlying loop.  
-Once the craving peaks, the user switches back to their old launcher, and often binges to make up for the FOMO. The loop fires exactly as before, just delayed. "Neurons that fire together, wire together" (Löwel & Singer, 1992): every uninterrupted cue→app→reward pass reinforces the same wiring. Defang instead inserts a pause *inside* the loop, every time, so the association weakens with repetition. Delayed gratification substituting for instant gratification, until the habit itself changes rather than just its timing.
+Blocking outright doesn't touch the underlying brain-loop.  
+In launchers that blocks the apps outright, once the craving peaks, the user switches back to their old launcher, and often binges to make up for the FOMO. The loop fires exactly as before, just delayed. "Neurons that fire together, wire together" (Löwel & Singer, 1992): every uninterrupted cue → app → reward pass reinforces the same wiring. Defang instead inserts a pause *inside* the loop, every time, so the association weakens with repetition. Delayed gratification substituting for instant gratification, until the habit itself changes rather than just its timing.
 
 **Won't this be annoying at first?**  
 Yes, and that's expected.  
-The old cue → app → reward path has fired thousands of times already; a few days of friction won't outcompete that on its own. Habit-replacement research puts the adjustment window at weeks, not days, before a new response overtakes the old one (Lally et al., 2010: median 66 days to automaticity). The friction is meant to be felt. That's the interruption doing its job. It just front-loads discomfort that outright blocking defers into a bigger relapse later.
+The old cue → app → reward path has fired thousands of times already; a few days of friction won't outcompete that on its own. Habit-replacement research puts the adjustment window at weeks, not days, before a new response overtakes the old one (Lally et al., 2010: median 66 days to automaticity). The friction is meant to be felt. That's the interruption doing its job. It just front-loads discomfort that outright blocking defers into a bigger relapse later. 
 
 **Does it get easier?**  
 Yes.  
 Every interrupted pass through the loop is a repetition for the new path and a missed repetition for the old one; "neurons that fire together, wire together" cuts both ways (Löwel & Singer, 1992). As the slower response gets reinforced and the old automatic one goes un-fired, the pull of the cue weakens on its own. No permanent willpower tax, just the initial weeks.
 
-**Why does it look that way?**  
+**Why does it look that way? So basic, ugly and dated?**  
 Polished UI details such as rounded corners, color accents, ripple/motion feedback act as micro-rewards in their own right.  
-The aesthetic-usability effect (Kurosu & Kashimura, 1995) shows attractive interfaces get perceived as more usable, and in practice, get used more. Habit-forming app design leans on exactly this: gloss and motion as a stream of tiny reward signals, independent of what the app actually does (Eyal, 2014). Defang strips it out on purpose. Flat surfaces, square buttons, no ripple animations, no transition animations so that the interface itself never becomes a reason to stay. The aim is a phone that reads as a utility, the way a rotary phone or a rolodex did, not an object worth holding for its own sake.
+There's a reason why you see it everywhere. The aesthetic-usability effect (Kurosu & Kashimura, 1995) shows attractive interfaces get perceived as more usable, and in practice, get used more. Habit-forming app design leans on exactly this: gloss and motion as a stream of tiny reward signals, independent of what the app actually does (Eyal, 2014). Defang strips it out on purpose. Flat surfaces, square buttons, no ripple animations, no transition animations so that the interface itself never becomes a reason to stay. The aim is a phone that reads as a utility, the way a rotary phone or a rolodex did, not an object worth holding for its own sake.
 
 **Why is the home screen so barren?**  
 Novelty and visual stimulation are dopaminergic triggers in their own right (Bunzeck & Düzel, 2006: _novel images alone activate the midbrain's reward circuitry, independent of any deliberate reward_).  
