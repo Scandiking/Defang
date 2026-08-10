@@ -1,15 +1,44 @@
-# Defang
-
-> Android launcher that adds friction to apps that exploit your attention.
+<div align="center">
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="assets/Defang_logo.png">
-  <img src="assets/Defang_logo_dark.png" width="128" alt="Defang logo — a fang shaped like the letter F">
+  <img src="assets/Defang_logo_dark.png" width="72" alt="Defang logo — a fang shaped like the letter F">
 </picture>
+
+# Defang
+
+**Android launcher that adds friction to apps that exploit your attention.**
+
+[![License: GPL v3](https://img.shields.io/github/license/Scandiking/Defang)](LICENSE)
+[![GitHub release](https://img.shields.io/github/v/release/Scandiking/Defang)](https://github.com/Scandiking/Defang/releases)
+[![F-Droid version](https://img.shields.io/f-droid/v/com.defang.launcher)](https://f-droid.org/packages/com.defang.launcher/)
+
+</div>
 
 Social media apps are engineered to pull you in without asking. Defang puts a speed bump between you and the infinite mindless scroll: before any watched app opens, you wait out a short countdown, and decide if this is actually how you want to spend the next $n$ minutes. De-FAANG your phone use, regain your life.
 
-[![Download from F-Droid](F-Droid_Download.png)](https://f-droid.org/packages/com.defang.launcher/)
+<div align="center">
+
+[<img src="F-Droid_Download.png" height="60" alt="Get it on F-Droid">](https://f-droid.org/packages/com.defang.launcher/)
+
+</div>
+
+---
+
+<details>
+<summary><b>Table of contents</b></summary>
+
+- [How it works](#how-it-works)
+- [Screenshots](#screenshots)
+- [Watched apps (defaults)](#watched-apps-defaults)
+- [Tech stack](#tech-stack)
+- [Project structure](#project-structure)
+- [Roadmap](#roadmap)
+- [Philosophy](#philosophy)
+- [FAQ](#faq)
+- [License](#license)
+
+</details>
 
 ---
 
