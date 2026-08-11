@@ -61,7 +61,7 @@ Screens follow your system theme — shown here in light and dark (switch global
 
 | Intent gate | Onboarding | Watched apps |
 |:---:|:---:|:---:|
-| <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/intent_gate_dark.png"><img src="assets/Screenshots/intent_gate.png" width="240" alt="Intent gate overlay with countdown and slide-to-open"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/onboarding_dark.png"><img src="assets/Screenshots/onboarding.png" width="240" alt="Onboarding — first-run flow"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/watched_apps_dark.png"><img src="assets/Screenshots/watched_apps.png" width="240" alt="Watched apps picker"></picture> |
+| <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/intent_gate_dark.png"><img src="assets/Screenshots/intent_gate.png" width="480" alt="Intent gate overlay with countdown and slide-to-open"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/onboarding_dark.png"><img src="assets/Screenshots/onboarding.png" width="480" alt="Onboarding — first-run flow"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/watched_apps_dark.png"><img src="assets/Screenshots/watched_apps.png" width="480" alt="Watched apps picker"></picture> |
 
 | Timings | Tidbit library | Cue loop |
 |:---:|:---:|:---:|
