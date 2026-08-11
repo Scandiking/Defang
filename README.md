@@ -23,6 +23,10 @@ Social media apps are engineered to pull you in without asking. Defang puts a sp
 
 </div>
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/chart?repos=Scandiking/Defang&type=date&legend=top-left&sealed_token=rVPRj2UnkT58wt-RHTe75GYcQaxXmZWFDUhtong0YWtM3kuORRrbzMz55yUAxaDa6-hpR8ytKmG_bQeMit96rr3hERMZbIA3Pk86XB1HYJQbz0upeJFdmOfaw1r1l9J4zzS717WGjyOfPpyo3TMZWJR-Vi1smIYVtK7yN-Yl53azAvL54JJFq-B_1vRv)](https://www.star-history.com/?repos=Scandiking%2FDefang&type=date&legend=top-left)
+
 ---
 
 <details>
@@ -182,16 +186,6 @@ The keyguard is a protected system surface owned by `SystemUI`; no public API le
 
 > [!TIP]  
 > You can get most of the way there yourself: in your lock screen settings, remove all widgets/shortcuts and set an all-black wallpaper. Combined with Defang's grayscale, that's as close to a blank lock screen as the OS permits any app, first- or third-party, to get you.
-
-## Star History
-
-<a href="https://www.star-history.com/?repos=Scandiking%2FDefang&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=Scandiking/Defang&type=date&theme=dark&legend=top-left&sealed_token=rVPRj2UnkT58wt-RHTe75GYcQaxXmZWFDUhtong0YWtM3kuORRrbzMz55yUAxaDa6-hpR8ytKmG_bQeMit96rr3hERMZbIA3Pk86XB1HYJQbz0upeJFdmOfaw1r1l9J4zzS717WGjyOfPpyo3TMZWJR-Vi1smIYVtK7yN-Yl53azAvL54JJFq-B_1vRv" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=Scandiking/Defang&type=date&legend=top-left&sealed_token=rVPRj2UnkT58wt-RHTe75GYcQaxXmZWFDUhtong0YWtM3kuORRrbzMz55yUAxaDa6-hpR8ytKmG_bQeMit96rr3hERMZbIA3Pk86XB1HYJQbz0upeJFdmOfaw1r1l9J4zzS717WGjyOfPpyo3TMZWJR-Vi1smIYVtK7yN-Yl53azAvL54JJFq-B_1vRv" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=Scandiking/Defang&type=date&legend=top-left&sealed_token=rVPRj2UnkT58wt-RHTe75GYcQaxXmZWFDUhtong0YWtM3kuORRrbzMz55yUAxaDa6-hpR8ytKmG_bQeMit96rr3hERMZbIA3Pk86XB1HYJQbz0upeJFdmOfaw1r1l9J4zzS717WGjyOfPpyo3TMZWJR-Vi1smIYVtK7yN-Yl53azAvL54JJFq-B_1vRv" />
- </picture>
-</a>
 
 ## License
 
