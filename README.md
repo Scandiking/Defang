@@ -42,28 +42,14 @@ Social media apps are engineered to pull you in without asking. Defang puts a sp
 
 ---
 
-## How it works  
+## How it works
 
-**Intent gate**  
-
-<img src="assets/blender/IntentGate.png" width="480" alt="Intent gate — a countdown ring overlays the feed before the app opens">  
-
-When you open a watched app (Instagram, TikTok, YouTube, etc.), a full-screen overlay appears before the app opens. You read the tidbit about how they manipulate you and get on with better stuff to do or you wait out an $n$-second countdown before you can open it anyway.
-
-**Session timer**  
-
-<img src="assets/blender/SessionTimer.png" width="480" alt="Session timer — an hourglass running out next to the countdown HUD">  
-
-Once you're in the app, a small HUD counts down your session limit (default 15 min). When it hits zero, the app is automatically pushed to background.
-
-**End card**  
-At session end you see how long you were in, a friction prompt to reflect. Then you are urged with a mini-task. The task is written this way to make it easy to actually follow through with.
-
-**Cool-down lock**  
-
-<img src="assets/blender/Cooldown_Lock.png" width="480" alt="Cool-down — a padlock on the app icon, ringed by a clock face">  
-    
-After your session (or extension) ends, the app is locked for a cool-down period (default 30 min). The cue-reward-path runs on a loop you know. So this is to weaken the loop. 
+| | |
+|:---|:---|
+| <img src="assets/blender/IntentGate.png" width="160" alt="Intent gate — a countdown ring overlays the feed before the app opens"> | **Intent gate**<br>When you open a watched app (Instagram, TikTok, YouTube, etc.), a full-screen overlay appears before the app opens. You read the tidbit about how they manipulate you and get on with better stuff to do or you wait out an $n$-second countdown before you can open it anyway. |
+| <img src="assets/blender/SessionTimer.png" width="160" alt="Session timer — an hourglass running out next to the countdown HUD"> | **Session timer**<br>Once you're in the app, a small HUD counts down your session limit (default 15 min). When it hits zero, the app is automatically pushed to background. |
+| | **End card**<br>At session end you see how long you were in, a friction prompt to reflect. Then you are urged with a mini-task. The task is written this way to make it easy to actually follow through with. |
+| <img src="assets/blender/Cooldown_Lock.png" width="160" alt="Cool-down — a padlock on the app icon, ringed by a clock face"> | **Cool-down lock**<br>After your session (or extension) ends, the app is locked for a cool-down period (default 30 min). The cue-reward-path runs on a loop you know. So this is to weaken the loop. |
 
 
 
