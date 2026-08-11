@@ -75,7 +75,7 @@ Screens follow your system theme — shown here in light and dark (switch global
 
 | Timings | Tidbit library | Cue loop |
 |:---:|:---:|:---:|
-| <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/timer_adjustment_dark.png"><img src="assets/Screenshots/timer_adjustment.png" width="240" alt="Gate delay, session limit, and cool-down sliders"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/tidbit_library_dark.png"><img src="assets/Screenshots/tidbit_library.png" width="240" alt="Library of tidbits on attention engineering"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/cue_loop_dark.png"><img src="assets/Screenshots/cue_loop.png" width="240" alt="Cue loop — the open-gate-cooldown cycle"></picture> |
+| <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/timer_adjustment_dark.png"><img src="assets/Screenshots/timer_adjustment.png" width="480" alt="Gate delay, session limit, and cool-down sliders"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/tidbit_library_dark.png"><img src="assets/Screenshots/tidbit_library.png" width="480" alt="Library of tidbits on attention engineering"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/cue_loop_dark.png"><img src="assets/Screenshots/cue_loop.png" width="480" alt="Cue loop — the open-gate-cooldown cycle"></picture> |
 
 ---
 
