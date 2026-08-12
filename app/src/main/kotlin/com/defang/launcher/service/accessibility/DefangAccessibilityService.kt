@@ -321,6 +321,12 @@ class DefangAccessibilityService : AccessibilityService() {
                 }
                 UsageEvents.Event.MOVE_TO_FOREGROUND -> {
                     if (pkg == packageName) continue // our own UI, nothing to gate
+                    // Volume panel, notification shade, keyboards: same transient
+                    // overlays the accessibility-event path already ignores (see
+                    // isTransientOverlay's call site above) — UsageStatsManager
+                    // reports these as a real foreground change, which would
+                    // otherwise end the session and re-arm the gate on return.
+                    if (isTransientOverlay(pkg)) continue
                     Log.d(TAG, "usageStatsPoll pkg=$pkg")
                     handleForegroundChange(pkg, null)
                 }
