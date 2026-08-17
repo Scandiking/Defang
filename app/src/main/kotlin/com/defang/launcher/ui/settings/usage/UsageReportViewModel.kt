@@ -125,13 +125,13 @@ class UsageReportViewModel @Inject constructor(
     /** Start of the period [offsetPeriods] ranges back (0 = current period),
      *  inclusive of today — e.g. for a 7-day range, offset 0 starts 6 days
      *  ago, offset 1 starts 13 days ago. */
-    private fun periodStart(range: ReportRange, offsetPeriods: Int, zone: ZoneId = ZoneId.systemDefault()): Long {
+    internal fun periodStart(range: ReportRange, offsetPeriods: Int, zone: ZoneId = ZoneId.systemDefault()): Long {
         val today = LocalDate.now(zone)
         return today.minusDays(range.days - 1 + range.days * offsetPeriods)
             .atStartOfDay(zone).toInstant().toEpochMilli()
     }
 
-    private suspend fun buildReport(range: ReportRange): Report {
+    internal suspend fun buildReport(range: ReportRange): Report {
         val zone = ZoneId.systemDefault()
         val today = LocalDate.now(zone)
         val periodStart = periodStart(range, offsetPeriods = 0, zone)
@@ -177,7 +177,7 @@ class UsageReportViewModel @Inject constructor(
         )
     }
 
-    private fun buildSeries(
+    internal fun buildSeries(
         sessions: List<SessionEntity>,
         today: LocalDate,
         range: ReportRange,

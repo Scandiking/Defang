@@ -111,7 +111,7 @@ fun UsageChart(
 private const val GRID_LINES = 4
 private const val SMOOTHING_WINDOW = 3
 
-private fun movingAverage(values: List<Long>, window: Int = SMOOTHING_WINDOW): List<Long> =
+internal fun movingAverage(values: List<Long>, window: Int = SMOOTHING_WINDOW): List<Long> =
     values.indices.map { i ->
         val lo = (i - window / 2).coerceAtLeast(0)
         val hi = (i + window / 2).coerceAtMost(values.lastIndex)
