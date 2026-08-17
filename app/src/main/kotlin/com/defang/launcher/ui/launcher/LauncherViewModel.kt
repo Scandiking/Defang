@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.LauncherApps
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
+import android.os.Build
 import android.os.Process
 import android.os.UserManager
 import androidx.lifecycle.ViewModel
@@ -32,7 +33,13 @@ import javax.inject.Inject
 
 data class AppInfo(
     val packageName: String,
+    /** Effective display label — the system label unless the user renamed it. */
     val label: String,
+    /** The system-supplied label, kept even after a rename (dialog placeholder). */
+    val rawLabel: String = label,
+    /** Non-null when the user has overridden the label. Cosmetic only — never
+     *  touches packageName, which stays the identity used for gating/launching. */
+    val customLabel: String? = null,
     /** Personal profile unless this app came from loadWorkProfileApps(). */
     val userHandle: android.os.UserHandle = Process.myUserHandle(),
 )
@@ -50,6 +57,9 @@ data class LauncherUiState(
     val needsOnboarding: Boolean = false,
     val homeTidbit: String = "",
     val showLockdownWarning: Boolean = false,
+    /** Set when another installed app shares this app's displayed name and
+     *  the one-time nudge to rename it hasn't been answered yet. */
+    val renamePrompt: AppInfo? = null,
 )
 
 @HiltViewModel
@@ -71,13 +81,16 @@ class LauncherViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val onboardingDone = prefs.isOnboardingDone.first()
+            val (apps, renamePrompt) = reloadApps()
             _uiState.value = LauncherUiState(
-                apps = reloadApps(),
+                apps = apps,
                 needsOnboarding = !onboardingDone,
                 homeTidbit = tidbitSelector.daily(ContentTrack.GENERAL),
                 // One-time heads-up about Google's install lockdown — after
                 // onboarding so it isn't the first thing a new user sees
                 showLockdownWarning = onboardingDone && !prefs.isLockdownWarned.first(),
+                // Same reasoning — don't compete with onboarding for attention
+                renamePrompt = if (onboardingDone) renamePrompt else null,
             )
         }
     }
@@ -91,12 +104,34 @@ class LauncherViewModel @Inject constructor(
      */
     fun refresh() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(apps = reloadApps())
+            val (apps, renamePrompt) = reloadApps()
+            _uiState.value = _uiState.value.copy(apps = apps, renamePrompt = renamePrompt)
         }
     }
 
-    /** Scans packages (off the main thread), syncs the DB, returns the drawer list. */
-    private suspend fun reloadApps(): List<AppInfo> {
+    /** User picked "Rename" (either from the long-press menu or the duplicate-name
+     *  prompt). Blank clears back to the system label. Cosmetic only — packageName,
+     *  the identity used for gating/launching, is never touched. */
+    fun renameApp(packageName: String, newLabel: String) {
+        viewModelScope.launch {
+            appConfigRepo.setCustomLabel(packageName, newLabel.trim().ifBlank { null })
+            appConfigRepo.setRenamePromptDismissed(packageName, true)
+            val (apps, renamePrompt) = reloadApps()
+            _uiState.value = _uiState.value.copy(apps = apps, renamePrompt = renamePrompt)
+        }
+    }
+
+    /** User dismissed the duplicate-name prompt without renaming — don't ask again. */
+    fun dismissRenamePrompt(packageName: String) {
+        viewModelScope.launch {
+            appConfigRepo.setRenamePromptDismissed(packageName, true)
+            _uiState.value = _uiState.value.copy(renamePrompt = null)
+        }
+    }
+
+    /** Scans packages (off the main thread), syncs the DB, applies label overrides,
+     *  and picks the next duplicate-name pair (if any) to nudge the user about. */
+    private suspend fun reloadApps(): Pair<List<AppInfo>, AppInfo?> {
         val installedApps = withContext(Dispatchers.IO) { loadInstalledApps() }
         seedAppConfigs(installedApps)
         appConfigRepo.pruneUninstalled(installedApps.map { it.packageName })
@@ -111,10 +146,44 @@ class LauncherViewModel @Inject constructor(
             emptyList()
         }
 
+        val configs = appConfigRepo.observeAll().first().associateBy { it.packageName }
+
         // Defang itself is listed so settings stay reachable from the drawer.
         // LauncherActivity routes a tap on our own package to SettingsActivity.
-        return (installedApps + workApps + AppInfo(context.packageName, "Defang"))
+        val apps = (installedApps + workApps + AppInfo(context.packageName, "Defang"))
+            .map { app ->
+                val custom = configs[app.packageName]?.customLabel?.trim()?.takeIf { it.isNotEmpty() }
+                if (custom != null) app.copy(label = custom, customLabel = custom) else app
+            }
             .sortedBy { it.label.lowercase() }
+
+        return apps to findRenamePromptCandidate(apps, configs)
+    }
+
+    /**
+     * Two apps sharing a displayed name is common with generic-labelled apps
+     * (several banks all ship a "Mobilbank") and gets worse once icons/branding
+     * are stripped, since the name is the only thing left to tell them apart by.
+     * Surfaces the first still-undecided member of the first colliding pair so
+     * the drawer can offer a one-time rename nudge — never re-asks once a
+     * package has an answer (renamed or "not now") on file.
+     */
+    private fun findRenamePromptCandidate(
+        apps: List<AppInfo>,
+        configs: Map<String, AppConfigEntity>,
+    ): AppInfo? {
+        val collisions = apps
+            .filter { it.packageName != context.packageName }
+            .groupBy { it.label.trim().lowercase() }
+            .filterValues { it.size > 1 }
+        for (group in collisions.values) {
+            val candidate = group.firstOrNull { app ->
+                val cfg = configs[app.packageName]
+                cfg?.customLabel.isNullOrBlank() && cfg?.renamePromptDismissed != true
+            }
+            if (candidate != null) return candidate
+        }
+        return null
     }
 
     /** Re-derives the tidbit of the day — called on resume so it rolls over at midnight. */
@@ -168,13 +237,45 @@ class LauncherViewModel @Inject constructor(
                     val minutes = minutesByPkg[config.packageName] ?: return@mapNotNull null
                     if (minutes <= 0) return@mapNotNull null
                     HomeUsageRow(
-                        label = config.appLabel,
+                        label = config.customLabel?.trim()?.takeIf { it.isNotEmpty() } ?: config.appLabel,
                         minutes = minutes,
                         limitMinutes = config.sessionLimitMinutes.coerceAtLeast(1),
                     )
                 }
                 .sortedByDescending { it.minutes }
                 .take(3)
+        }
+    }
+
+    /**
+     * Where an app came from — the closest thing Android exposes on-device to
+     * a "developer name", and often the only way to tell apart two apps with
+     * the same generic label (e.g. a stock Samsung app vs. an F-Droid one).
+     * Looked up on demand (rename dialog open), not during the drawer scan —
+     * a PackageManager round-trip per app on every refresh isn't worth it for
+     * something only shown when the user asks.
+     */
+    suspend fun installSourceLabel(packageName: String): String = withContext(Dispatchers.IO) {
+        try {
+            val pm = context.packageManager
+            val installer = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                pm.getInstallSourceInfo(packageName).installingPackageName
+            } else {
+                @Suppress("DEPRECATION")
+                pm.getInstallerPackageName(packageName)
+            }
+            when (installer) {
+                null -> "Preinstalled or sideloaded"
+                "com.android.vending" -> "Play Store"
+                "org.fdroid.fdroid" -> "F-Droid"
+                "com.aurora.store" -> "Aurora Store"
+                "com.sec.android.app.samsungapps" -> "Galaxy Store"
+                "com.amazon.venezia" -> "Amazon Appstore"
+                "com.huawei.appmarket" -> "AppGallery"
+                else -> installer
+            }
+        } catch (e: PackageManager.NameNotFoundException) {
+            ""
         }
     }
 

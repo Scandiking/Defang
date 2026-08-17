@@ -28,6 +28,12 @@ class AppConfigRepository @Inject constructor(
     suspend fun setHidden(packageName: String, hidden: Boolean) =
         dao.setHidden(packageName, hidden)
 
+    suspend fun setCustomLabel(packageName: String, label: String?) =
+        dao.setCustomLabel(packageName, label)
+
+    suspend fun setRenamePromptDismissed(packageName: String, dismissed: Boolean) =
+        dao.setRenamePromptDismissed(packageName, dismissed)
+
     suspend fun setCooldown(packageName: String, endsAtEpoch: Long) =
         dao.setCooldown(packageName, endsAtEpoch)
 
