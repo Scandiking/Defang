@@ -284,19 +284,41 @@
 
     <!-- Usage report -->
     <string name="usage_report_title">Usage report</string>
-    <string name="usage_report_desc">Weekly time in watched apps — evidence, not guilt</string>
-    <string name="usage_this_week">Last 7 days</string>
-    <string name="usage_per_day">Per day</string>
+    <string name="usage_report_desc">Time in watched apps, over days or months — evidence, not guilt</string>
+    <string name="usage_this_week">This period</string>
+    <string name="usage_per_day">Trend</string>
     <string name="usage_per_app">Per app</string>
     <string name="usage_app_line">%1$s · %2$d sessions</string>
     <string name="usage_total_label">Total</string>
-    <string name="usage_no_sessions">No watched-app sessions in the last 7 days.</string>
-    <string name="usage_no_prev_week">No data for the 7 days before.</string>
-    <string name="usage_down_vs_prev">Down %1$d%% from the previous 7 days.</string>
-    <string name="usage_up_vs_prev">Up %1$d%% from the previous 7 days.</string>
+    <string name="usage_no_sessions">No watched-app sessions in this period.</string>
+    <string name="usage_no_prev_week">No data for the period before.</string>
+    <string name="usage_down_vs_prev">Down %1$d%% from the previous period.</string>
+    <string name="usage_up_vs_prev">Up %1$d%% from the previous period.</string>
     <string name="usage_hours_minutes">%1$d hours and %2$d minutes</string>
     <string name="usage_minutes">%1$d minutes</string>
     <string name="usage_footnote">Measured from Defang\'s own session log — gated sessions only. All data stays on this device.</string>
+    <string name="usage_period_opens">%1$d opens this period</string>
+
+    <string name="usage_range_7d">7 days</string>
+    <string name="usage_range_3mo">3 months</string>
+    <string name="usage_range_6mo">6 months</string>
+    <string name="usage_range_12mo">12 months</string>
+
+    <string name="usage_chart_line">Line</string>
+    <string name="usage_chart_bar">Bar</string>
+    <string name="usage_chart_smoothing">Smooth trend</string>
+
+    <string name="usage_justifications_title">Extension justifications</string>
+    <string name="usage_justifications_desc">What you said when you asked for more time — review whether it held up.</string>
+    <string name="usage_justifications_empty">No extensions used in this period.</string>
+
+    <string name="usage_retention_title">Keep usage history</string>
+    <string name="usage_retention_desc">How long Defang keeps your session log. Controls both the trend view above and what an export includes.</string>
+    <string name="usage_retention_dont_track">Don\'t track</string>
+    <string name="usage_retention_indefinite">Indefinitely</string>
+
+    <string name="usage_export_csv">Export as CSV</string>
+    <string name="usage_export_success">Usage data exported</string>
 
     <!-- Google install lockdown warning -->
     <string name="lockdown_title">About installing updates</string>

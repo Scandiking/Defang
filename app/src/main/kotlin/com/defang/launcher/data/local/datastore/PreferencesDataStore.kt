@@ -11,6 +11,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.defang.launcher.domain.model.HomeScreenMode
 import com.defang.launcher.domain.model.QrScanMode
+import com.defang.launcher.domain.model.RetentionLevel
 import com.defang.launcher.util.MathProblemGenerator
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -252,4 +253,17 @@ class PreferencesDataStore @Inject constructor(
 
     suspend fun setWorkProfileAppsEnabled(on: Boolean) =
         store.edit { it[KEY_WORK_PROFILE_APPS] = on }
+
+    // ── Usage-history retention ───────────────────────────────────────────────
+    // How long session data (opens, time, extension justifications) is kept.
+    // Defaults to indefinite — matches the app's behavior before this setting
+    // existed, since sessions were never pruned.
+    private val KEY_RETENTION_LEVEL = intPreferencesKey("retention_level")
+
+    val retentionLevel: Flow<RetentionLevel> = store.data.map {
+        RetentionLevel.fromOrdinal(it[KEY_RETENTION_LEVEL] ?: RetentionLevel.INDEFINITE.ordinal)
+    }
+
+    suspend fun setRetentionLevel(level: RetentionLevel) =
+        store.edit { it[KEY_RETENTION_LEVEL] = level.ordinal }
 }

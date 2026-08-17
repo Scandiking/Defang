@@ -815,7 +815,7 @@ class DefangAccessibilityService : AccessibilityService() {
         extensionUsedThisSession = true
         recordSession.end(sessionId, extensionUsed = true)
 
-        val newSessionId = recordSession.start(pkg, "Extension: $reason")
+        val newSessionId = recordSession.startExtension(pkg, sessionId, reason)
         currentSessionId = newSessionId
         sessionStartMs = System.currentTimeMillis()
 
