@@ -11,6 +11,7 @@ import android.content.IntentFilter
 import android.os.Build
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityWindowInfo
 import com.defang.launcher.data.local.datastore.PreferencesDataStore
 import com.defang.launcher.data.repository.AppConfigRepository
 import com.defang.launcher.data.repository.WatchedUrlRepository
@@ -275,8 +276,37 @@ class DefangAccessibilityService : AccessibilityService() {
             // call: the lock screen must never sit in color for more than one
             // poll tick, independent of the usage-stats permission below.
             if (grayscale.isDeviceLocked()) grayscale.enable()
+            checkEvasiveAppWindows()
             if (!UsageStatsHelper.isEnabled(this)) continue
             processUsageEventsSinceLastPoll()
+        }
+    }
+
+    /**
+     * Fallback for [EVASIVE_WINDOW_ONLY_PACKAGES] — apps that not only withhold
+     * typeWindowStateChanged (the original Snapchat finding) but, as of writing,
+     * have ALSO stopped appearing in UsageStatsManager.queryEvents() results for
+     * third-party callers, despite the OS's own privileged usage-stats dump
+     * (`dumpsys usagestats`) still recording their opens normally. Both prior
+     * signals are self-reported/exposed at the app's discretion; getWindows()
+     * is not — it reads the live window list the OS itself maintains for the
+     * accessibility layer, which an app can't opt out of without breaking its
+     * own rendering. Deliberately scoped to a small explicit set rather than
+     * running for every app: normal apps are already covered more cheaply (and
+     * with less latency) by the accessibility-event and usage-stats paths.
+     */
+    private fun checkEvasiveAppWindows() {
+        val windowList = windows
+        try {
+            val topPkg = windowList
+                .firstOrNull { it.isFocused && it.type == AccessibilityWindowInfo.TYPE_APPLICATION }
+                ?.root?.packageName?.toString()
+                ?: return
+            if (topPkg == packageName || topPkg !in EVASIVE_WINDOW_ONLY_PACKAGES) return
+            Log.d(TAG, "windowsPoll pkg=$topPkg")
+            serviceScope.launch { handleForegroundChange(topPkg, null) }
+        } finally {
+            windowList.forEach { it.recycle() }
         }
     }
 
@@ -1116,6 +1146,17 @@ class DefangAccessibilityService : AccessibilityService() {
          * unambiguous foreground — the state the platform will grant reader mode.
          */
         const val NFC_HANDOFF_HOME_SETTLE_MS = 250L
+
+        /**
+         * Apps confirmed (via on-device logcat tracing) to withhold themselves
+         * from both typeWindowStateChanged and UsageStatsManager.queryEvents(),
+         * requiring the getWindows()-based fallback in [checkEvasiveAppWindows].
+         * Snapchat added 2026-08-17 after the usage-stats poll fallback (which
+         * fixed it 2026-07-14) stopped seeing it — see defang-launcher-prd.md.
+         */
+        val EVASIVE_WINDOW_ONLY_PACKAGES = setOf(
+            "com.snapchat.android",
+        )
 
         val DEFAULT_WATCHED_PACKAGES = setOf(
             "com.instagram.android",
