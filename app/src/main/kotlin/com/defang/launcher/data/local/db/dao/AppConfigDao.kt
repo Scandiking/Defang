@@ -42,6 +42,12 @@ interface AppConfigDao {
     @Query("UPDATE app_config SET hidden = :hidden WHERE packageName = :pkg")
     suspend fun setHidden(pkg: String, hidden: Boolean)
 
+    @Query("UPDATE app_config SET customLabel = :label WHERE packageName = :pkg")
+    suspend fun setCustomLabel(pkg: String, label: String?)
+
+    @Query("UPDATE app_config SET renamePromptDismissed = :dismissed WHERE packageName = :pkg")
+    suspend fun setRenamePromptDismissed(pkg: String, dismissed: Boolean)
+
     /** Apply new global defaults to every watched app at once. */
     @Query("""
         UPDATE app_config

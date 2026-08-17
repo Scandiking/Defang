@@ -15,19 +15,25 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -53,6 +59,8 @@ fun LauncherScreen(
     onAppTap: (AppInfo) -> Unit,
     onAppInfo: (AppInfo) -> Unit,
     onUninstall: (AppInfo) -> Unit,
+    onRename: (String, String) -> Unit,
+    getInstallSource: suspend (String) -> String,
     onClose: () -> Unit,
     searchOnOpen: Boolean = false,
 ) {
@@ -171,6 +179,8 @@ fun LauncherScreen(
                                 onTap = { onAppTap(app) },
                                 onAppInfo = onAppInfo,
                                 onUninstall = onUninstall,
+                                onRename = onRename,
+                                getInstallSource = getInstallSource,
                             )
                         }
                     }
@@ -200,6 +210,8 @@ fun LauncherScreen(
                                 onTap = { onAppTap(app) },
                                 onAppInfo = onAppInfo,
                                 onUninstall = onUninstall,
+                                onRename = onRename,
+                                getInstallSource = getInstallSource,
                             )
                         }
                     }
@@ -280,7 +292,7 @@ private fun LetterRail(
 
 /**
  * A drawer row. Tap launches; long-press opens a Pixel/One UI-style popup with
- * App info and Uninstall. `canUninstall` is false for Defang's own entry.
+ * App info, Rename, and Uninstall. `canUninstall` is false for Defang's own entry.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -290,8 +302,11 @@ fun AppRow(
     onTap: () -> Unit,
     onAppInfo: (AppInfo) -> Unit,
     onUninstall: (AppInfo) -> Unit,
+    onRename: (String, String) -> Unit,
+    getInstallSource: suspend (String) -> String,
 ) {
     var menuOpen by remember { mutableStateOf(false) }
+    var renameDialogOpen by remember { mutableStateOf(false) }
     Box {
         Text(
             text = app.label,
@@ -313,6 +328,13 @@ fun AppRow(
                     onAppInfo(app)
                 },
             )
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.app_menu_rename)) },
+                onClick = {
+                    menuOpen = false
+                    renameDialogOpen = true
+                },
+            )
             if (canUninstall) {
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.app_menu_uninstall)) },
@@ -324,4 +346,76 @@ fun AppRow(
             }
         }
     }
+    if (renameDialogOpen) {
+        RenameDialog(
+            currentValue = app.customLabel ?: "",
+            placeholder = app.rawLabel,
+            packageName = app.packageName,
+            getInstallSource = getInstallSource,
+            onConfirm = { newLabel ->
+                onRename(app.packageName, newLabel)
+                renameDialogOpen = false
+            },
+            onDismiss = { renameDialogOpen = false },
+        )
+    }
+}
+
+/**
+ * Shared by the long-press "Rename" action and the duplicate-name nudge.
+ * Cosmetic only — a blank save clears back to [placeholder], the system label.
+ * Shows where the app was installed from (Play Store / F-Droid / preinstalled)
+ * plus its package name — the closest thing Android exposes to a "developer
+ * name", and often the only way to tell apart two same-named, icon-less apps
+ * (a stock "Galleri" vs. a third-party one, which "Meldinger" is Samsung's
+ * vs. Google's). Only surfaced here, in a moment the user already asked for
+ * it — not as permanent text on every drawer row.
+ */
+@Composable
+fun RenameDialog(
+    currentValue: String,
+    placeholder: String,
+    packageName: String,
+    getInstallSource: suspend (String) -> String,
+    onConfirm: (String) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var text by remember { mutableStateOf(currentValue) }
+    val installSource by produceState(initialValue = "", packageName) {
+        value = getInstallSource(packageName)
+    }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.rename_dialog_title)) },
+        text = {
+            Column {
+                Text(
+                    text = if (installSource.isEmpty()) {
+                        packageName
+                    } else {
+                        stringResource(R.string.rename_dialog_source, installSource, packageName)
+                    },
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedTextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    placeholder = { Text(placeholder) },
+                    singleLine = true,
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { onConfirm(text) }) {
+                Text(stringResource(R.string.rename_dialog_save))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.rename_dialog_cancel))
+            }
+        },
+    )
 }

@@ -43,11 +43,20 @@ object AppModule {
         }
     }
 
+    // v4: user-chosen per-app display name override, plus the dismissed flag
+    // for the one-time "two apps share this name" prompt
+    private val MIGRATION_3_4 = object : Migration(3, 4) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE app_config ADD COLUMN customLabel TEXT")
+            db.execSQL("ALTER TABLE app_config ADD COLUMN renamePromptDismissed INTEGER NOT NULL DEFAULT 0")
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): DefangDatabase =
         Room.databaseBuilder(context, DefangDatabase::class.java, "defang.db")
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
             .fallbackToDestructiveMigration()
             .build()
 

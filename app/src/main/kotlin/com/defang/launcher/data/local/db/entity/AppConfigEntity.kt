@@ -26,4 +26,11 @@ data class AppConfigEntity(
     val cooldownEndsAt: Long = 0L,
     /** Hidden from the app drawer unless the user searches for it */
     val hidden: Boolean = false,
+    /** User-chosen display name override. Cosmetic only — never affects
+     *  packageName, which stays the identity used for gating/launching. Null
+     *  or blank means "use the system label". */
+    val customLabel: String? = null,
+    /** Whether the one-time "two apps share this name" prompt has already
+     *  been shown (and answered, either way) for this package. */
+    val renamePromptDismissed: Boolean = false,
 )

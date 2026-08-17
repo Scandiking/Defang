@@ -20,8 +20,11 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.height
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.defang.launcher.R
 import com.defang.launcher.domain.model.HomeScreenMode
 import com.defang.launcher.ui.onboarding.OnboardingActivity
@@ -65,6 +68,75 @@ class LauncherActivity : ComponentActivity() {
                     }
                 }
 
+                state.renamePrompt?.let { candidate ->
+                    var renameText by remember(candidate.packageName) { mutableStateOf("") }
+                    val installSource by androidx.compose.runtime.produceState(
+                        initialValue = "",
+                        candidate.packageName,
+                    ) {
+                        value = viewModel.installSourceLabel(candidate.packageName)
+                    }
+                    androidx.compose.material3.AlertDialog(
+                        onDismissRequest = { viewModel.dismissRenamePrompt(candidate.packageName) },
+                        title = {
+                            androidx.compose.material3.Text(
+                                stringResource(R.string.duplicate_name_title)
+                            )
+                        },
+                        text = {
+                            androidx.compose.foundation.layout.Column {
+                                androidx.compose.material3.Text(
+                                    stringResource(R.string.duplicate_name_body, candidate.label)
+                                )
+                                androidx.compose.foundation.layout.Spacer(
+                                    modifier = androidx.compose.ui.Modifier.height(8.dp)
+                                )
+                                if (installSource.isNotEmpty()) {
+                                    androidx.compose.material3.Text(
+                                        text = stringResource(
+                                            R.string.rename_dialog_source,
+                                            installSource,
+                                            candidate.packageName,
+                                        ),
+                                        style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
+                                        color = androidx.compose.material3.MaterialTheme.colorScheme.onBackground
+                                            .copy(alpha = 0.6f),
+                                    )
+                                }
+                                androidx.compose.foundation.layout.Spacer(
+                                    modifier = androidx.compose.ui.Modifier.height(12.dp)
+                                )
+                                androidx.compose.material3.OutlinedTextField(
+                                    value = renameText,
+                                    onValueChange = { renameText = it },
+                                    placeholder = {
+                                        androidx.compose.material3.Text(candidate.rawLabel)
+                                    },
+                                    singleLine = true,
+                                )
+                            }
+                        },
+                        confirmButton = {
+                            androidx.compose.material3.TextButton(
+                                onClick = { viewModel.renameApp(candidate.packageName, renameText) },
+                            ) {
+                                androidx.compose.material3.Text(
+                                    stringResource(R.string.duplicate_name_rename)
+                                )
+                            }
+                        },
+                        dismissButton = {
+                            androidx.compose.material3.TextButton(
+                                onClick = { viewModel.dismissRenamePrompt(candidate.packageName) },
+                            ) {
+                                androidx.compose.material3.Text(
+                                    stringResource(R.string.duplicate_name_not_now)
+                                )
+                            }
+                        },
+                    )
+                }
+
                 if (state.showLockdownWarning) {
                     androidx.compose.material3.AlertDialog(
                         onDismissRequest = { viewModel.dismissLockdownWarning() },
@@ -102,6 +174,8 @@ class LauncherActivity : ComponentActivity() {
                         onAppTap = { app -> launchApp(app) },
                         onAppInfo = { app -> openAppInfo(app) },
                         onUninstall = { app -> uninstallApp(app) },
+                        onRename = { pkg, newLabel -> viewModel.renameApp(pkg, newLabel) },
+                        getInstallSource = { pkg -> viewModel.installSourceLabel(pkg) },
                         onClose = { showDrawer = false },
                         searchOnOpen = homeMode == HomeScreenMode.SEARCH_ONLY,
                     )

@@ -137,7 +137,16 @@
     <string name="launcher_search_hint">Search apps…</string>
     <string name="launcher_settings">Settings</string>
     <string name="app_menu_info">App info</string>
+    <string name="app_menu_rename">Rename</string>
     <string name="app_menu_uninstall">Uninstall</string>
+    <string name="rename_dialog_title">Rename app</string>
+    <string name="rename_dialog_source">%1$s · %2$s</string>
+    <string name="rename_dialog_save">Save</string>
+    <string name="rename_dialog_cancel">Cancel</string>
+    <string name="duplicate_name_title">Two apps, one name</string>
+    <string name="duplicate_name_body">Another app on your phone is also named \"%1$s\". Give this one a different name so you can tell them apart in the drawer.</string>
+    <string name="duplicate_name_rename">Rename</string>
+    <string name="duplicate_name_not_now">Not now</string>
 
     <!-- Settings menu (Phase 2) -->
     <string name="settings_timing_title">Default timings</string>

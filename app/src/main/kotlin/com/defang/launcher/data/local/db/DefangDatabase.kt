@@ -11,7 +11,7 @@ import com.defang.launcher.data.local.db.entity.WatchedUrlEntity
 
 @Database(
     entities = [AppConfigEntity::class, SessionEntity::class, WatchedUrlEntity::class],
-    version = 3,
+    version = 4,
     exportSchema = true,
 )
 abstract class DefangDatabase : RoomDatabase() {

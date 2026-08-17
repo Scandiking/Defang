@@ -44,7 +44,7 @@ class AppTierViewModel @Inject constructor(
             list.map { entity ->
                 AppTierItem(
                     packageName = entity.packageName,
-                    label = entity.appLabel,
+                    label = entity.customLabel?.trim()?.takeIf { it.isNotEmpty() } ?: entity.appLabel,
                     tier = AppTier.fromDbValue(entity.tier),
                     hidden = entity.hidden,
                 )
