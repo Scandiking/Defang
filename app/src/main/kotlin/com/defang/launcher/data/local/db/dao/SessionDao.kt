@@ -26,6 +26,9 @@ interface SessionDao {
     @Query("SELECT * FROM sessions WHERE startTime >= :since ORDER BY startTime DESC")
     suspend fun getSince(since: Long): List<SessionEntity>
 
+    @Query("SELECT * FROM sessions ORDER BY startTime DESC")
+    suspend fun getAll(): List<SessionEntity>
+
     /**
      * Total watched-app gate passes since [since], across all packages. Drives
      * the intent gate's escalation floor (more opens today → harsher warning).
@@ -46,4 +49,17 @@ interface SessionDao {
     """
     )
     suspend fun getExtensionUsedToday(dayStartEpoch: Long): SessionEntity?
+
+    @Query("DELETE FROM sessions WHERE startTime < :cutoff")
+    suspend fun deleteOlderThan(cutoff: Long)
+
+    /**
+     * Pre-v5 extension justifications, still carrying the "Extension: $reason"
+     * prefix in [SessionEntity.intentDeclared] instead of a session_extension
+     * row. Kept readable for old history rather than discarded on migration.
+     */
+    @Query(
+        "SELECT * FROM sessions WHERE intentDeclared LIKE 'Extension: %' AND startTime >= :since ORDER BY startTime DESC"
+    )
+    suspend fun getLegacyExtensionsSince(since: Long): List<SessionEntity>
 }

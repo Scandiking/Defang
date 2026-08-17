@@ -7,6 +7,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.defang.launcher.data.local.db.DefangDatabase
 import com.defang.launcher.data.local.db.dao.AppConfigDao
 import com.defang.launcher.data.local.db.dao.SessionDao
+import com.defang.launcher.data.local.db.dao.SessionExtensionDao
 import com.defang.launcher.data.local.db.dao.WatchedUrlDao
 import dagger.Module
 import dagger.Provides
@@ -52,11 +53,31 @@ object AppModule {
         }
     }
 
+    // v5: dedicated table for gate-extension justifications, replacing the
+    // "Extension: $reason" prefix jammed into sessions.intentDeclared — links
+    // the reason back to both the session it extended and the one it started.
+    private val MIGRATION_4_5 = object : Migration(4, 5) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS session_extension (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    packageName TEXT NOT NULL,
+                    extendedSessionId INTEGER NOT NULL,
+                    newSessionId INTEGER NOT NULL,
+                    reason TEXT NOT NULL,
+                    timestamp INTEGER NOT NULL
+                )
+                """.trimIndent()
+            )
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): DefangDatabase =
         Room.databaseBuilder(context, DefangDatabase::class.java, "defang.db")
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
             .fallbackToDestructiveMigration()
             .build()
 
@@ -68,4 +89,8 @@ object AppModule {
 
     @Provides
     fun provideWatchedUrlDao(db: DefangDatabase): WatchedUrlDao = db.watchedUrlDao()
+
+    @Provides
+    fun provideSessionExtensionDao(db: DefangDatabase): SessionExtensionDao =
+        db.sessionExtensionDao()
 }
