@@ -27,9 +27,9 @@ Social media apps are engineered to pull you in without asking. Defang puts a sp
 
 <a href="https://www.star-history.com/?repos=Scandiking%2FDefang&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=Scandiking/Defang&type=date&theme=dark&legend=top-left&sealed_token=rVPRj2UnkT58wt-RHTe75GYcQaxXmZWFDUhtong0YWtM3kuORRrbzMz55yUAxaDa6-hpR8ytKmG_bQeMit96rr3hERMZbIA3Pk86XB1HYJQbz0upeJFdmOfaw1r1l9J4zzS717WGjyOfPpyo3TMZWJR-Vi1smIYVtK7yN-Yl53azAvL54JJFq-B_1vRv" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=Scandiking/Defang&type=date&legend=top-left&sealed_token=rVPRj2UnkT58wt-RHTe75GYcQaxXmZWFDUhtong0YWtM3kuORRrbzMz55yUAxaDa6-hpR8ytKmG_bQeMit96rr3hERMZbIA3Pk86XB1HYJQbz0upeJFdmOfaw1r1l9J4zzS717WGjyOfPpyo3TMZWJR-Vi1smIYVtK7yN-Yl53azAvL54JJFq-B_1vRv" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=Scandiking/Defang&type=date&legend=top-left&sealed_token=rVPRj2UnkT58wt-RHTe75GYcQaxXmZWFDUhtong0YWtM3kuORRrbzMz55yUAxaDa6-hpR8ytKmG_bQeMit96rr3hERMZbIA3Pk86XB1HYJQbz0upeJFdmOfaw1r1l9J4zzS717WGjyOfPpyo3TMZWJR-Vi1smIYVtK7yN-Yl53azAvL54JJFq-B_1vRv" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=Scandiking/Defang&type=date&theme=dark&legend=top-left&sealed_token=9fx802d0ysRphzSmrOd-Jh6i7Rpb43gtiTBaJ-T6yCYvbkOdC8GdnR5SOSrjyqJV57ETUBhO9ayFsegZgNVhb9_pva_9ePruBsJ8GExq3nn4DKtu53_KT8WwTzKiV4XmHegORNqfhPSGh9nlpQ6IDlhgpjphKBzDY1CarFjxuQGJIWJnyxnIox2Z16_q" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=Scandiking/Defang&type=date&legend=top-left&sealed_token=9fx802d0ysRphzSmrOd-Jh6i7Rpb43gtiTBaJ-T6yCYvbkOdC8GdnR5SOSrjyqJV57ETUBhO9ayFsegZgNVhb9_pva_9ePruBsJ8GExq3nn4DKtu53_KT8WwTzKiV4XmHegORNqfhPSGh9nlpQ6IDlhgpjphKBzDY1CarFjxuQGJIWJnyxnIox2Z16_q" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=Scandiking/Defang&type=date&legend=top-left&sealed_token=9fx802d0ysRphzSmrOd-Jh6i7Rpb43gtiTBaJ-T6yCYvbkOdC8GdnR5SOSrjyqJV57ETUBhO9ayFsegZgNVhb9_pva_9ePruBsJ8GExq3nn4DKtu53_KT8WwTzKiV4XmHegORNqfhPSGh9nlpQ6IDlhgpjphKBzDY1CarFjxuQGJIWJnyxnIox2Z16_q" />
  </picture>
 </a>
 
