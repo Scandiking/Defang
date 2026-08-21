@@ -133,13 +133,18 @@ app/src/main/kotlin/com/defang/launcher/
 - Weekly usage report — running totals per day and per app
 - NFC tag unlock — scan a registered tag instead of the slide; secure ID-rotating cards are rejected, with a slide-to-open fallback if the scanner is blocked
 - Live app drawer — reflects installs and uninstalls instantly; long-press for App info or to uninstall
+- QR/barcode and math-problem unlock, combinable with NFC and/or slide
+- Work profile support — view and open apps from an Android work profile, with matching App info/Uninstall
+- Search-only home screen mode
+- Long-range usage trends (3/6/12 months), extension justifications, retention, CSV export
+- Adaptive gate threshold (opt-in) — delay rises on frequent reopens, decays over time, capped and user-tunable
+- Adjustable app drawer letter index size and x-offset
+- Notification batching — watched-app notifications are cancelled and counted, then delivered as a calm summary instantly or at configured windows
+- Home-screen usage widget — today's time per watched app vs its limit, tap-through to the weekly report
 
 ### Planned / exploring
 
-- More unlock methods alongside NFC and slide: scan a user-configured QR code or barcode ([#6](https://github.com/Scandiking/Defang/issues/6)), or solve a math problem ([#7](https://github.com/Scandiking/Defang/issues/7))
-- Notification batching — hold notifications from watched apps and deliver them on a schedule
-- Home-screen widget for the daily session summary
-- Long-range usage trends — did watched-app time actually drop over the last 3/6/12 months, not just today/this week
+- Nothing queued right now
 
 ---
 
