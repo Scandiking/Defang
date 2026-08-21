@@ -144,7 +144,7 @@ app/src/main/kotlin/com/defang/launcher/
 
 ### Planned / exploring
 
-- Nothing queued right now
+- Nothing queued right now. If you have ideas, you can [create an `issue`](https://github.com/Scandiking/Defang/issues/new)
 
 ---
 
