@@ -252,6 +252,22 @@ class GlobalSettingsViewModel @Inject constructor(
         }
     }
 
+    // ── App drawer letter index (issue #18) ───────────────────────────────────
+    val letterRailScale: StateFlow<Float> = prefs.letterRailScale.stateIn(
+        viewModelScope, SharingStarted.Eagerly, 1f
+    )
+    val letterRailXOffsetDp: StateFlow<Int> = prefs.letterRailXOffsetDp.stateIn(
+        viewModelScope, SharingStarted.Eagerly, 4
+    )
+
+    fun setLetterRailScale(scale: Float) {
+        viewModelScope.launch { prefs.setLetterRailScale(scale) }
+    }
+
+    fun setLetterRailXOffsetDp(offsetDp: Int) {
+        viewModelScope.launch { prefs.setLetterRailXOffsetDp(offsetDp) }
+    }
+
     // ── Work profile apps ─────────────────────────────────────────────────────
     val workProfileAppsEnabled: StateFlow<Boolean> = prefs.workProfileAppsEnabled.stateIn(
         viewModelScope, SharingStarted.Eagerly, false

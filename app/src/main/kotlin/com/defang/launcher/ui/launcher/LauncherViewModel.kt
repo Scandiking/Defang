@@ -78,6 +78,13 @@ class LauncherViewModel @Inject constructor(
         viewModelScope, SharingStarted.Eagerly, HomeScreenMode.CLOCK_AND_TIDBIT
     )
 
+    val letterRailScale: StateFlow<Float> = prefs.letterRailScale.stateIn(
+        viewModelScope, SharingStarted.Eagerly, 1f
+    )
+    val letterRailXOffsetDp: StateFlow<Int> = prefs.letterRailXOffsetDp.stateIn(
+        viewModelScope, SharingStarted.Eagerly, 4
+    )
+
     init {
         viewModelScope.launch {
             val onboardingDone = prefs.isOnboardingDone.first()
