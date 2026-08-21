@@ -63,6 +63,8 @@ fun LauncherScreen(
     getInstallSource: suspend (String) -> String,
     onClose: () -> Unit,
     searchOnOpen: Boolean = false,
+    letterRailScale: Float = 1f,
+    letterRailXOffsetDp: Int = 4,
 ) {
     var searchActive by remember { mutableStateOf(searchOnOpen) }
 
@@ -80,8 +82,11 @@ fun LauncherScreen(
     val listState = rememberLazyListState()
     val closeThresholdPx = with(LocalDensity.current) { 72.dp.toPx() }
     // Gestures starting in this strip on the right edge belong to the letter
-    // rail, not to the swipe-down-to-close handler.
-    val railGuardPx = with(LocalDensity.current) { 40.dp.toPx() }
+    // rail, not to the swipe-down-to-close handler. Widened by the rail's own
+    // x-offset and scale so an enlarged or shifted-in rail stays fully covered.
+    val railGuardPx = with(LocalDensity.current) {
+        (40.dp * letterRailScale + letterRailXOffsetDp.dp).toPx()
+    }
 
     // Personal/Work split — a tab per profile instead of a "(Work)" label on
     // every row. The Work tab only exists once there's something to put in it
@@ -218,6 +223,8 @@ fun LauncherScreen(
                     LetterRail(
                         letterIndex = letterIndex,
                         listState = listState,
+                        scale = letterRailScale,
+                        xOffsetDp = letterRailXOffsetDp,
                         modifier = Modifier.align(Alignment.CenterEnd),
                     )
                 }
@@ -235,6 +242,8 @@ private fun LetterRail(
     letterIndex: Map<Char, Int>,
     listState: LazyListState,
     modifier: Modifier = Modifier,
+    scale: Float = 1f,
+    xOffsetDp: Int = 4,
 ) {
     if (letterIndex.isEmpty()) return
     val letters = remember(letterIndex) { letterIndex.keys.toList() }
@@ -243,7 +252,7 @@ private fun LetterRail(
 
     Column(
         modifier = modifier
-            .padding(end = 4.dp)
+            .padding(end = xOffsetDp.dp)
             .pointerInput(letters) {
                 awaitEachGesture {
                     val down = awaitFirstDown()
@@ -277,14 +286,17 @@ private fun LetterRail(
         letters.forEach { letter ->
             Text(
                 text = letter.toString(),
-                fontSize = 11.sp,
-                lineHeight = 13.sp,
+                fontSize = (11 * scale).sp,
+                lineHeight = (13 * scale).sp,
                 fontWeight = if (letter == activeLetter) FontWeight.Bold else FontWeight.Normal,
                 color = if (letter == activeLetter)
                     MaterialTheme.colorScheme.primary
                 else
                     MaterialTheme.colorScheme.onBackground.copy(alpha = 0.4f),
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 1.dp),
+                modifier = Modifier.padding(
+                    horizontal = (8 * scale).dp,
+                    vertical = (1 * scale).dp,
+                ),
             )
         }
     }

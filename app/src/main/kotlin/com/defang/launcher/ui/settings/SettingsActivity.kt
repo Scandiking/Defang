@@ -67,7 +67,7 @@ import com.defang.launcher.util.NotificationListenerHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.roundToInt
 
-private enum class SettingsPage { Menu, Timing, Apps, Sites, WorkProfile, Library, Tasks, Usage }
+private enum class SettingsPage { Menu, Timing, Apps, Sites, WorkProfile, AppDrawer, Library, Tasks, Usage }
 
 @AndroidEntryPoint
 class SettingsActivity : ComponentActivity() {
@@ -166,6 +166,7 @@ class SettingsActivity : ComponentActivity() {
                             onApps = { page = SettingsPage.Apps },
                             onSites = { page = SettingsPage.Sites },
                             onWorkProfile = { page = SettingsPage.WorkProfile },
+                            onAppDrawer = { page = SettingsPage.AppDrawer },
                             onLibrary = { page = SettingsPage.Library },
                             onTasks = { page = SettingsPage.Tasks },
                             onUsage = { page = SettingsPage.Usage },
@@ -236,6 +237,19 @@ class SettingsActivity : ComponentActivity() {
                             enabled = workProfileOn,
                             notDetected = notDetected,
                             onEnabledChange = globalVm::setWorkProfileAppsEnabled,
+                            onBack = { page = SettingsPage.Menu },
+                        )
+                    }
+
+                    SettingsPage.AppDrawer -> {
+                        val letterRailScale by globalVm.letterRailScale.collectAsStateWithLifecycle()
+                        val letterRailXOffsetDp by globalVm.letterRailXOffsetDp
+                            .collectAsStateWithLifecycle()
+                        AppDrawerSettingsScreen(
+                            letterRailScale = letterRailScale,
+                            letterRailXOffsetDp = letterRailXOffsetDp,
+                            onLetterRailScaleChange = globalVm::setLetterRailScale,
+                            onLetterRailXOffsetDpChange = globalVm::setLetterRailXOffsetDp,
                             onBack = { page = SettingsPage.Menu },
                         )
                     }
@@ -313,6 +327,7 @@ private fun SettingsMenuScreen(
     onApps: () -> Unit,
     onSites: () -> Unit,
     onWorkProfile: () -> Unit,
+    onAppDrawer: () -> Unit,
     onLibrary: () -> Unit,
     onTasks: () -> Unit,
     onUsage: () -> Unit,
@@ -464,6 +479,14 @@ private fun SettingsMenuScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onWorkProfile() },
+            )
+            HorizontalDivider()
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_appdrawer_title)) },
+                supportingContent = { Text(stringResource(R.string.settings_appdrawer_desc)) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onAppDrawer() },
             )
             HorizontalDivider()
 
@@ -901,6 +924,63 @@ private fun TimingSettingsScreen(
                 valueRange = 10f..120f,
                 steps = 10,  // (120-10)/10 - 1 = 10 steps for step=10
                 onValueChange = { onCooldownChange(it.roundToInt() / 10 * 10) },
+            )
+        }
+    }
+}
+
+// ── App drawer letter index (issue #18) ────────────────────────────────────────
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun AppDrawerSettingsScreen(
+    letterRailScale: Float,
+    letterRailXOffsetDp: Int,
+    onLetterRailScaleChange: (Float) -> Unit,
+    onLetterRailXOffsetDpChange: (Int) -> Unit,
+    onBack: () -> Unit,
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.settings_appdrawer_title)) },
+                navigationIcon = { BackIcon(onBack) },
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.background,
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .verticalScroll(rememberScrollState()),
+        ) {
+            Text(
+                text = stringResource(R.string.settings_appdrawer_scope),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 12.dp),
+            )
+
+            val scalePercent = (letterRailScale * 100).roundToInt()
+            SettingSlider(
+                label = stringResource(R.string.settings_letter_size),
+                value = scalePercent,
+                valueLabel = stringResource(R.string.unit_percent, scalePercent),
+                valueRange = 70f..160f,
+                steps = 17,  // (160-70)/5 - 1 = 17 steps for step=5
+                onValueChange = {
+                    onLetterRailScaleChange((it.roundToInt() / 5 * 5) / 100f)
+                },
+            )
+
+            SettingSlider(
+                label = stringResource(R.string.settings_letter_offset),
+                value = letterRailXOffsetDp,
+                valueLabel = stringResource(R.string.unit_dp, letterRailXOffsetDp),
+                valueRange = 0f..32f,
+                steps = 15,  // (32-0)/2 - 1 = 15 steps for step=2
+                onValueChange = { onLetterRailXOffsetDpChange(it.roundToInt() / 2 * 2) },
             )
         }
     }

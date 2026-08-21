@@ -166,6 +166,8 @@ class LauncherActivity : ComponentActivity() {
 
                 if (showDrawer) {
                     val hiddenPackages by viewModel.hiddenPackages.collectAsState()
+                    val letterRailScale by viewModel.letterRailScale.collectAsState()
+                    val letterRailXOffsetDp by viewModel.letterRailXOffsetDp.collectAsState()
                     LauncherScreen(
                         apps = viewModel.filteredApps(hiddenPackages),
                         query = state.query,
@@ -178,6 +180,8 @@ class LauncherActivity : ComponentActivity() {
                         getInstallSource = { pkg -> viewModel.installSourceLabel(pkg) },
                         onClose = { showDrawer = false },
                         searchOnOpen = homeMode == HomeScreenMode.SEARCH_ONLY,
+                        letterRailScale = letterRailScale,
+                        letterRailXOffsetDp = letterRailXOffsetDp,
                     )
                 } else {
                     val homeUsage by viewModel.homeUsage.collectAsState()

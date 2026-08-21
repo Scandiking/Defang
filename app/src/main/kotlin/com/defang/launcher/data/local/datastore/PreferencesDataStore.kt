@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -284,4 +285,23 @@ class PreferencesDataStore @Inject constructor(
 
     suspend fun setRetentionLevel(level: RetentionLevel) =
         store.edit { it[KEY_RETENTION_LEVEL] = level.ordinal }
+
+    // ── App drawer letter index (issue #18) ───────────────────────────────────
+    // Fixed size/position assumed one screen and one case profile — raised
+    // bezels and cutouts can make the rail unreachable or unreadable. Scale is
+    // a multiplier on the default text size; xOffsetDp shifts the whole rail
+    // left from the screen edge, clearing case bezels.
+    private val KEY_LETTER_RAIL_SCALE   = floatPreferencesKey("letter_rail_scale")
+    private val KEY_LETTER_RAIL_X_OFFSET = intPreferencesKey("letter_rail_x_offset_dp")
+
+    val letterRailScale: Flow<Float> = store.data.map { it[KEY_LETTER_RAIL_SCALE] ?: 1f }
+    val letterRailXOffsetDp: Flow<Int> = store.data.map { it[KEY_LETTER_RAIL_X_OFFSET] ?: 4 }
+
+    suspend fun setLetterRailScale(scale: Float) = store.edit {
+        it[KEY_LETTER_RAIL_SCALE] = scale.coerceIn(0.7f, 1.6f)
+    }
+
+    suspend fun setLetterRailXOffsetDp(offsetDp: Int) = store.edit {
+        it[KEY_LETTER_RAIL_X_OFFSET] = offsetDp.coerceIn(0, 32)
+    }
 }

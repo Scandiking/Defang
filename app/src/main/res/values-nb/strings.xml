@@ -93,6 +93,15 @@
     <string name="sites_enabled">På</string>
     <string name="sites_add">Legg til</string>
 
+    <!-- Bokstavindeks i appskuffen (issue #18) -->
+    <string name="settings_appdrawer_title">Bokstavindeks i appskuffen</string>
+    <string name="settings_appdrawer_desc">Størrelse og posisjon på bokstavindeksen langs kanten</string>
+    <string name="settings_appdrawer_scope">Juster bokstavindeksen så den ikke havner under et deksel, eller så den er lettere å treffe.</string>
+    <string name="settings_letter_size">Bokstavstørrelse</string>
+    <string name="settings_letter_offset">Avstand fra kanten</string>
+    <string name="unit_percent">%1$d%%</string>
+    <string name="unit_dp">%1$d dp</string>
+
     <!-- Jobbprofil-apper -->
     <string name="settings_workprofile_title">Jobbprofil-apper</string>
     <string name="settings_workprofile_desc">Vis og åpne apper fra jobbprofilen din</string>

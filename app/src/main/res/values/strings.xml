@@ -88,6 +88,15 @@
     <string name="settings_sites_desc">Gate specific sites in your browser</string>
     <string name="sites_desc">Sites you add are gated when opened in a browser. Adult sites get a 1-minute leash; others get the standard session and cool-down.</string>
 
+    <!-- App drawer letter index (issue #18) -->
+    <string name="settings_appdrawer_title">App drawer letter index</string>
+    <string name="settings_appdrawer_desc">Size and position of the side letter index</string>
+    <string name="settings_appdrawer_scope">Adjust the letter index so it clears case bezels and cutouts, or so it\'s easier to hit.</string>
+    <string name="settings_letter_size">Letter size</string>
+    <string name="settings_letter_offset">Distance from edge</string>
+    <string name="unit_percent">%1$d%%</string>
+    <string name="unit_dp">%1$d dp</string>
+
     <!-- Work profile apps -->
     <string name="settings_workprofile_title">Work profile apps</string>
     <string name="settings_workprofile_desc">Show and open apps from your Android work profile</string>
