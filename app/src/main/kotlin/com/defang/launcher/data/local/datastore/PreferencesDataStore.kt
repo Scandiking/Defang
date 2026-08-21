@@ -143,8 +143,8 @@ class PreferencesDataStore @Inject constructor(
     // ── QR / barcode unlock ───────────────────────────────────────────────────
     // A camera scan of a registered QR/barcode replaces the slide-to-open, same
     // idea as NFC — the code lives somewhere inconvenient, so opening a watched
-    // app costs a walk. Mutually exclusive with NFC (one unlock method at a
-    // time; enforced in the ViewModel). qrValue is the raw decoded string;
+    // app costs a walk. Mutually exclusive with NFC (enforced in the ViewModel);
+    // combines freely with math. qrValue is the raw decoded string;
     // null = none registered yet. qrScanMode picks whether the scan waits out
     // the countdown (default) or bypasses it. We keep the registered value when
     // the method is switched off so toggling back needs no re-scan.
@@ -168,8 +168,9 @@ class PreferencesDataStore @Inject constructor(
     // Solve an arithmetic problem (on a keypad drawn in the gate) to open a
     // watched app, in place of the slide. Cognitive rather than physical
     // friction — and, unlike NFC/QR, it needs no hardware and no handoff, so it
-    // also covers watched websites. Mutually exclusive with NFC and QR. The
-    // difficulty is a 1..5 level (a settings slider).
+    // also covers watched websites. Combines freely with NFC and/or QR (solve the
+    // problem, then scan/tap); NFC and QR remain mutually exclusive with each
+    // other. The difficulty is a 1..5 level (a settings slider).
     private val KEY_MATH_ENABLED    = booleanPreferencesKey("math_unlock_enabled")
     private val KEY_MATH_DIFFICULTY = intPreferencesKey("math_difficulty")
 
@@ -182,6 +183,23 @@ class PreferencesDataStore @Inject constructor(
     suspend fun setMathDifficulty(level: Int) = store.edit {
         it[KEY_MATH_DIFFICULTY] =
             level.coerceIn(MathProblemGenerator.MIN_LEVEL, MathProblemGenerator.MAX_LEVEL)
+    }
+
+    // ── Adaptive gate threshold (issue #16) ───────────────────────────────────
+    // Opt-in: reopening the same watched app/site frequently raises its gate
+    // delay automatically, decaying back down as reopening slows. Off by
+    // default. adaptiveGateStrength is the extra seconds added per escalation
+    // level (a settings slider, 1..15); the escalation itself is tracked in
+    // AdaptiveGateRepository/adaptive_gate_state, not here.
+    private val KEY_ADAPTIVE_ENABLED = booleanPreferencesKey("adaptive_gate_enabled")
+    private val KEY_ADAPTIVE_STRENGTH = intPreferencesKey("adaptive_gate_strength")
+
+    val adaptiveGateEnabled: Flow<Boolean> = store.data.map { it[KEY_ADAPTIVE_ENABLED] ?: false }
+    val adaptiveGateStrength: Flow<Int> = store.data.map { it[KEY_ADAPTIVE_STRENGTH] ?: 5 }
+
+    suspend fun setAdaptiveGateEnabled(on: Boolean) = store.edit { it[KEY_ADAPTIVE_ENABLED] = on }
+    suspend fun setAdaptiveGateStrength(secondsPerLevel: Int) = store.edit {
+        it[KEY_ADAPTIVE_STRENGTH] = secondsPerLevel.coerceIn(1, 15)
     }
 
     // ── Home screen mode ──────────────────────────────────────────────────────

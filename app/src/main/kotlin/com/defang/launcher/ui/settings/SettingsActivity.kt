@@ -113,6 +113,8 @@ class SettingsActivity : ComponentActivity() {
                         val hasCamera = remember { QrUnlock.hasCamera(this) }
                         val mathEnabled by globalVm.mathUnlockEnabled.collectAsStateWithLifecycle()
                         val mathDifficulty by globalVm.mathDifficulty.collectAsStateWithLifecycle()
+                        val adaptiveEnabled by globalVm.adaptiveGateEnabled.collectAsStateWithLifecycle()
+                        val adaptiveStrength by globalVm.adaptiveGateStrength.collectAsStateWithLifecycle()
                         SettingsMenuScreen(
                             homeMode = homeMode,
                             onHomeModeChange = globalVm::setHomeScreenMode,
@@ -146,6 +148,11 @@ class SettingsActivity : ComponentActivity() {
                             onMathEnabledChange = globalVm::setMathUnlockEnabled,
                             mathDifficulty = mathDifficulty,
                             onMathDifficultyChange = globalVm::setMathDifficulty,
+                            adaptiveEnabled = adaptiveEnabled,
+                            onAdaptiveEnabledChange = globalVm::setAdaptiveGateEnabled,
+                            adaptiveStrength = adaptiveStrength,
+                            onAdaptiveStrengthChange = globalVm::setAdaptiveGateStrength,
+                            onAdaptiveReset = globalVm::resetAdaptiveLevels,
                             grayscaleOn = grayscaleOn,
                             onGrayscaleChange = globalVm::setGrayscaleEnabled,
                             grayscaleSetupNeeded = grayscaleSetupNeeded,
@@ -288,6 +295,11 @@ private fun SettingsMenuScreen(
     onMathEnabledChange: (Boolean) -> Unit,
     mathDifficulty: Int,
     onMathDifficultyChange: (Int) -> Unit,
+    adaptiveEnabled: Boolean,
+    onAdaptiveEnabledChange: (Boolean) -> Unit,
+    adaptiveStrength: Int,
+    onAdaptiveStrengthChange: (Int) -> Unit,
+    onAdaptiveReset: () -> Unit,
     grayscaleOn: Boolean,
     onGrayscaleChange: (Boolean) -> Unit,
     grayscaleSetupNeeded: Boolean,
@@ -311,6 +323,26 @@ private fun SettingsMenuScreen(
     // (title, body) of the currently open "Why?" explanation, or null
     var whyDialog by remember { mutableStateOf<Pair<String, String>?>(null) }
     var showHomeModeDialog by remember { mutableStateOf(false) }
+    var showAdaptiveConfirm by remember { mutableStateOf(false) }
+
+    if (showAdaptiveConfirm) {
+        AlertDialog(
+            onDismissRequest = { showAdaptiveConfirm = false },
+            title = { Text(stringResource(R.string.settings_adaptive_confirm_title)) },
+            text = { Text(stringResource(R.string.settings_adaptive_confirm_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    onAdaptiveEnabledChange(true)
+                    showAdaptiveConfirm = false
+                }) { Text(stringResource(R.string.settings_adaptive_title)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { showAdaptiveConfirm = false }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
+            },
+        )
+    }
 
     if (showHomeModeDialog) {
         AlertDialog(
@@ -382,6 +414,8 @@ private fun SettingsMenuScreen(
         stringResource(R.string.settings_qr_why_body)
     val mathWhy = stringResource(R.string.settings_math_why_title) to
         stringResource(R.string.settings_math_why_body)
+    val adaptiveWhy = stringResource(R.string.settings_adaptive_why_title) to
+        stringResource(R.string.settings_adaptive_why_body)
     val packageName = androidx.compose.ui.platform.LocalContext.current.packageName
     val grayscaleSetup = stringResource(R.string.settings_grayscale_setup_title) to
         stringResource(R.string.settings_grayscale_setup_body, packageName)
@@ -541,7 +575,9 @@ private fun SettingsMenuScreen(
                 )
                 // Scan mode: off = scan after the countdown (default, keeps the
                 // wait as friction); on = scan immediately, bypassing the wait.
-                if (qrRegistered) {
+                // Hidden while math unlock is also on — immediate scan bypasses
+                // the overlay entirely, so it can't also host a math problem.
+                if (qrRegistered && !mathEnabled) {
                     ListItem(
                         headlineContent = {
                             Text(stringResource(R.string.settings_qr_skip_wait_title))
@@ -561,6 +597,13 @@ private fun SettingsMenuScreen(
                             )
                         },
                         modifier = Modifier.fillMaxWidth(),
+                    )
+                } else if (qrRegistered && mathEnabled) {
+                    Text(
+                        text = stringResource(R.string.settings_qr_math_combo_note),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                     )
                 }
                 HorizontalDivider()
@@ -600,6 +643,66 @@ private fun SettingsMenuScreen(
                     },
                     modifier = Modifier.fillMaxWidth(),
                 )
+                if (nfcEnabled || qrEnabled) {
+                    Text(
+                        text = stringResource(R.string.settings_math_combo_note),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                    )
+                }
+            }
+            HorizontalDivider()
+
+            // Adaptive gate threshold (issue #16) — opt-in, off by default.
+            // Turning it on requires an explicit acknowledgement dialog (below)
+            // since it compounds with whatever delay/unlock method is already
+            // configured and can become real friction on its own.
+            run {
+                val adaptiveContext = androidx.compose.ui.platform.LocalContext.current
+                val resetDoneMessage = stringResource(R.string.settings_adaptive_reset_done)
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.settings_adaptive_title)) },
+                    supportingContent = { Text(stringResource(R.string.settings_adaptive_desc)) },
+                    trailingContent = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            WhyButton { whyDialog = adaptiveWhy }
+                            Switch(
+                                checked = adaptiveEnabled,
+                                onCheckedChange = { on ->
+                                    if (on) showAdaptiveConfirm = true else onAdaptiveEnabledChange(false)
+                                },
+                            )
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                if (adaptiveEnabled) {
+                    SettingSlider(
+                        label = stringResource(R.string.settings_adaptive_strength),
+                        value = adaptiveStrength,
+                        valueLabel = stringResource(R.string.unit_seconds, adaptiveStrength),
+                        valueRange = 1f..15f,
+                        steps = 12,
+                        onValueChange = { onAdaptiveStrengthChange(it.roundToInt().coerceIn(1, 15)) },
+                    )
+                    ListItem(
+                        headlineContent = {
+                            Text(
+                                text = stringResource(R.string.settings_adaptive_reset),
+                                color = MaterialTheme.colorScheme.primary,
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onAdaptiveReset()
+                                android.widget.Toast.makeText(
+                                    adaptiveContext, resetDoneMessage, android.widget.Toast.LENGTH_SHORT,
+                                ).show()
+                            },
+                    )
+                }
             }
             HorizontalDivider()
             ListItem(

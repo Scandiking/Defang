@@ -225,7 +225,7 @@
 
     <!-- QR / barcode unlock -->
     <string name="settings_qr_title">QR / barcode unlock</string>
-    <string name="settings_qr_desc">Require a code scan to open watched apps, in place of the slide. Print or place the code somewhere out of reach. Mutually exclusive with NFC.</string>
+    <string name="settings_qr_desc">Require a code scan to open watched apps, in place of the slide. Print or place the code somewhere out of reach. Mutually exclusive with NFC; can combine with the math problem unlock.</string>
     <string name="settings_qr_register">Register code</string>
     <string name="settings_qr_change">Change code</string>
     <string name="settings_qr_forget">Forget code</string>
@@ -233,6 +233,7 @@
     <string name="settings_qr_none">No code registered yet</string>
     <string name="settings_qr_skip_wait_title">Skip the countdown</string>
     <string name="settings_qr_skip_wait_desc">Scan opens the app right away, without waiting out the timer. The friction becomes reaching the code, not the wait.</string>
+    <string name="settings_qr_math_combo_note">Combined with the math problem unlock — solving it opens the scanner instead of the app, so the countdown is always kept.</string>
     <string name="settings_qr_why_title">Why a code scan?</string>
     <string name="settings_qr_why_body">Like an NFC tag, a QR or barcode you have to walk to turns opening a watched app into a deliberate act — but no NFC hardware or tag needed, just a printed code. Note a code can be photographed and reused off a screen, so it is weaker than a physical tag: put it somewhere you actually have to go, not saved on the same phone.</string>
     <string name="qr_register_title">Scan the code to register</string>
@@ -250,7 +251,7 @@
 
     <!-- Math-problem unlock -->
     <string name="settings_math_title">Math problem unlock</string>
-    <string name="settings_math_desc">Solve an arithmetic problem to open watched apps, in place of the slide. Works for watched websites too. Mutually exclusive with NFC and QR.</string>
+    <string name="settings_math_desc">Solve an arithmetic problem to open watched apps, in place of the slide. Works for watched websites too. Can combine with NFC or QR — solve it, then scan or tap.</string>
     <string name="settings_math_difficulty">Difficulty — %1$s</string>
     <string name="settings_math_level_1">Level 1 · very easy</string>
     <string name="settings_math_level_2">Level 2 · easy</string>
@@ -261,6 +262,19 @@
     <string name="settings_math_why_body">A little arithmetic makes you stop and think — harder to do half-asleep than a slide, and it wakes the brain up rather than just passing time. Set the difficulty to whatever actually makes you pause: gentle if numbers aren\'t your thing, brutal if they come easily.</string>
     <string name="gate_math_question">%1$s = ?</string>
     <string name="gate_math_wrong">Not quite — try again</string>
+    <string name="settings_math_combo_note">Combined with NFC or QR — solving this opens the scanner/reader, not the app directly.</string>
+
+    <!-- Adaptive gate threshold (issue #16) -->
+    <string name="settings_adaptive_title">Adaptive threshold</string>
+    <string name="settings_adaptive_desc">Raises the wait automatically when you keep reopening an app in a short window, and eases it back off when you don\'t. Off by default — if it ever becomes too much, turn it off here, or reset it below.</string>
+    <string name="settings_adaptive_why_title">Why adapt the threshold?</string>
+    <string name="settings_adaptive_why_body">A fixed wait treats a single glance and a compulsive reopen the same. This raises the wait specifically for the second kind — reopening the same app again soon after leaving it — and lets it fall back down on its own once you stop. It only ever adds on top of your normal delay, never takes away from it.</string>
+    <string name="settings_adaptive_confirm_title">Before you turn this on</string>
+    <string name="settings_adaptive_confirm_body">This adds extra delay on top of your other settings when you reopen an app a lot in a short time. It\'s meant to interrupt compulsive reopening — not to make Defang unbearable to use. If it ever feels like too much, come back here and turn it off, or tap \"Reset to baseline.\" That\'s a completely reasonable thing to do — the goal is less social media, not an app you resent and delete.</string>
+    <string name="settings_adaptive_strength">Extra delay per repeat</string>
+    <string name="settings_adaptive_reset">Reset to baseline now</string>
+    <string name="settings_adaptive_reset_done">All gates reset to their normal delay</string>
+    <string name="gate_adaptive_note">+%1$d s — opened often recently</string>
 
     <!-- App tier search -->
     <string name="tier_search_hint">Search by app or package name</string>

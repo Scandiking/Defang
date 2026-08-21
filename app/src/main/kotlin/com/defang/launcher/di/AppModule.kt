@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.defang.launcher.data.local.db.DefangDatabase
+import com.defang.launcher.data.local.db.dao.AdaptiveGateStateDao
 import com.defang.launcher.data.local.db.dao.AppConfigDao
 import com.defang.launcher.data.local.db.dao.SessionDao
 import com.defang.launcher.data.local.db.dao.SessionExtensionDao
@@ -61,7 +62,7 @@ object AppModule {
             db.execSQL(
                 """
                 CREATE TABLE IF NOT EXISTS session_extension (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                     packageName TEXT NOT NULL,
                     extendedSessionId INTEGER NOT NULL,
                     newSessionId INTEGER NOT NULL,
@@ -73,11 +74,30 @@ object AppModule {
         }
     }
 
+    // v6: adaptive gate-threshold escalation state (issue #16, opt-in) — one row
+    // per gate (app package or watched-URL pattern) tracking its current
+    // escalation level and when it was last touched.
+    private val MIGRATION_5_6 = object : Migration(5, 6) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS adaptive_gate_state (
+                    gateKey TEXT NOT NULL PRIMARY KEY,
+                    level INTEGER NOT NULL DEFAULT 0,
+                    lastOpenAtMs INTEGER NOT NULL DEFAULT 0
+                )
+                """.trimIndent()
+            )
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): DefangDatabase =
         Room.databaseBuilder(context, DefangDatabase::class.java, "defang.db")
-            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+            .addMigrations(
+                MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6,
+            )
             .fallbackToDestructiveMigration()
             .build()
 
@@ -93,4 +113,8 @@ object AppModule {
     @Provides
     fun provideSessionExtensionDao(db: DefangDatabase): SessionExtensionDao =
         db.sessionExtensionDao()
+
+    @Provides
+    fun provideAdaptiveGateStateDao(db: DefangDatabase): AdaptiveGateStateDao =
+        db.adaptiveGateStateDao()
 }

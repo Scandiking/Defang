@@ -52,6 +52,11 @@ class IntentGateOverlay(
     private val tidbitSelector: TidbitSelector,
     private val offlinePrompt: String?,
     private val delaySeconds: Int,
+    // Extra seconds already folded into [delaySeconds] by the adaptive gate
+    // threshold (issue #16, opt-in) — passed separately purely so the overlay
+    // can surface it to the user rather than applying it silently. 0 when the
+    // feature is off or this gate hasn't escalated.
+    private val adaptiveBonusSeconds: Int = 0,
     private val opensToday: Int,
     // When true, the unlock is a physical NFC-tag scan handled by the service:
     // this overlay shows only the tidbit + countdown, and the service dismisses
@@ -131,6 +136,24 @@ class IntentGateOverlay(
             setPadding(0, 0, 0, (16 * density).toInt())
         }
         root.addView(tvCountdown)
+
+        // Adaptive-threshold note (issue #16) — only shown when this gate's
+        // delay has been raised by the adaptive feature, so the escalation is
+        // visible rather than a silent black box. Present for the whole gate,
+        // not just after the countdown, since the extra wait is already baked
+        // into [delaySeconds] from the start.
+        if (adaptiveBonusSeconds > 0) {
+            val tvAdaptiveNote = TextView(context).apply {
+                text = context.getString(
+                    com.defang.launcher.R.string.gate_adaptive_note, adaptiveBonusSeconds
+                )
+                textSize = 12f
+                setTextColor(Color.rgb(120, 90, 90))
+                gravity = Gravity.CENTER
+                setPadding(0, 0, 0, (16 * density).toInt())
+            }
+            root.addView(tvAdaptiveNote)
+        }
 
         // Offline prompt — the real-world alternative, before the unlock
         if (offlinePrompt != null) {
@@ -247,15 +270,18 @@ class IntentGateOverlay(
     private fun onTimerElapsed() {
         tvCountdown.text = ""
         timerDone = true
-        // In NFC or QR mode the service takes over here — dismisses this overlay
-        // and launches the scan activity — so we reveal neither the slide nor the
-        // math keypad. In math mode we reveal the keypad; otherwise the slide.
-        if (nfcMode || qrMode) {
-            // service handles the unlock
-        } else if (mathMode) {
+        // Math takes priority: when combined with NFC/QR, the problem is solved
+        // here first and only a correct answer triggers the service's handoff to
+        // the scan/tap activity (see checkMathAnswer -> onIntentDeclared). With no
+        // math, NFC/QR mode means the service takes over immediately — dismisses
+        // this overlay and launches the scan activity, revealing neither the
+        // slide nor the keypad. With neither, the slide is the unlock.
+        if (mathMode) {
             tvMathQuestion.visibility = View.VISIBLE
             tvMathEntry.visibility = View.VISIBLE
             mathKeypad.visibility = View.VISIBLE
+        } else if (nfcMode || qrMode) {
+            // service handles the unlock
         } else {
             tvSlideHint.visibility = View.VISIBLE
             slideToOpen.visibility = View.VISIBLE

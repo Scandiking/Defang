@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityWindowInfo
 import com.defang.launcher.data.local.datastore.PreferencesDataStore
+import com.defang.launcher.data.repository.AdaptiveGateRepository
 import com.defang.launcher.data.repository.AppConfigRepository
 import com.defang.launcher.data.repository.WatchedUrlRepository
 import com.defang.launcher.domain.model.AppConfig
@@ -80,6 +81,7 @@ class DefangAccessibilityService : AccessibilityService() {
     @Inject lateinit var offlinePromptSelector: OfflinePromptSelector
     @Inject lateinit var browserUrlExtractor: BrowserUrlExtractor
     @Inject lateinit var watchedUrlRepo: WatchedUrlRepository
+    @Inject lateinit var adaptiveGateRepo: AdaptiveGateRepository
     @Inject lateinit var grayscale: GrayscaleController
     @Inject lateinit var prefs: PreferencesDataStore
 
@@ -589,9 +591,18 @@ class DefangAccessibilityService : AccessibilityService() {
             val qrAfterCountdown = qrEnabled && qrScanMode == QrScanMode.AFTER_COUNTDOWN
             val qrImmediate = qrEnabled && qrScanMode == QrScanMode.IMMEDIATE
 
+            // Math-problem unlock — combines with NFC and/or QR (solve it, then
+            // scan/tap) or stands alone. No hardware and no handoff of its own, so
+            // it needs no app-only guard and covers browser-URL gates too.
+            val mathMode = prefs.mathUnlockEnabled.first()
+            val mathDifficulty = prefs.mathDifficulty.first()
+
             // Bypass mode: no countdown, no overlay — cover the screen with the
             // scanner straight away. Grayscale stays on so the feed never flashes.
-            if (qrImmediate) {
+            // Impossible when combined with math (nothing would host the problem);
+            // the settings side already forces AFTER_COUNTDOWN in that case, this
+            // is the defensive backstop.
+            if (qrImmediate && !mathMode) {
                 grayscale.enable()
                 activeGateKey = gateKey
                 handOffToQrUnlock(pkg, pattern, config, contentTrack, gateKey)
@@ -599,12 +610,18 @@ class DefangAccessibilityService : AccessibilityService() {
                 return@launch
             }
 
-            // Math-problem unlock — mutually exclusive with NFC/QR. No hardware
-            // and no handoff (the keypad lives in the overlay and the app is
-            // never backgrounded), so it needs no app-only guard and covers
-            // browser-URL gates too.
-            val mathMode = prefs.mathUnlockEnabled.first()
-            val mathDifficulty = prefs.mathDifficulty.first()
+            // Adaptive gate threshold (issue #16, opt-in): reopening this gate
+            // frequently raises its delay on top of the configured base, decaying
+            // back down as reopening slows. Recorded on this attempt (gate
+            // shown), not on a successful unlock — that's the reopening behavior
+            // being targeted.
+            val adaptiveOn = prefs.adaptiveGateEnabled.first()
+            val adaptiveBonusSeconds = if (adaptiveOn) {
+                val level = adaptiveGateRepo.recordOpenAndGetLevel(
+                    gateKey, ADAPTIVE_ESCALATE_WINDOW_MS, ADAPTIVE_DECAY_INTERVAL_MS, ADAPTIVE_MAX_LEVEL,
+                )
+                level * prefs.adaptiveGateStrength.first()
+            } else 0
 
             val opensToday = getTodayOpenCount.count()
             currentGateOverlay = IntentGateOverlay(
@@ -612,7 +629,8 @@ class DefangAccessibilityService : AccessibilityService() {
                 contentTrack = contentTrack,
                 tidbitSelector = tidbitSelector,
                 offlinePrompt = offlinePromptSelector.next(),
-                delaySeconds = config.gateDelaySeconds,
+                delaySeconds = config.gateDelaySeconds + adaptiveBonusSeconds,
+                adaptiveBonusSeconds = adaptiveBonusSeconds,
                 opensToday = opensToday,
                 nfcMode = nfcMode,
                 qrMode = qrAfterCountdown,
@@ -623,40 +641,68 @@ class DefangAccessibilityService : AccessibilityService() {
                     // still fully covers the screen, so the feed is already gray
                     // when the app reveals it — no color flash on the way in.
                     serviceScope.launch { grayscale.enable() }
-                    if (nfcMode) {
-                        // Hand off to the tag-scan activity: arm the result
-                        // callbacks, drop the overlay, launch the reader.
-                        pendingNfcUnlock = {
-                            completeGateUnlock(pkg, pattern, "nfc", config, contentTrack,
-                                gateKey, relaunchApp = true)
+                    // When math is also enabled, the overlay reveals the keypad
+                    // instead (see IntentGateOverlay.onTimerElapsed) and the
+                    // handoff below waits for a correct answer via onIntentDeclared.
+                    if (!mathMode) {
+                        if (nfcMode) {
+                            handOffToNfcUnlock(pkg, pattern, config, contentTrack, gateKey)
+                        } else if (qrAfterCountdown) {
+                            handOffToQrUnlock(pkg, pattern, config, contentTrack, gateKey)
                         }
-                        pendingNfcGoBack = { completeGateGoBack(gateKey, pkg) }
-                        overlayManager.dismissFullscreen()
-                        // Send the watched app to the background first. Some apps
-                        // (Snapchat) otherwise keep "top resumed activity" status,
-                        // and the platform then refuses our NFC reader mode even
-                        // though our scan screen is on top ("Reader mode Binder was
-                        // never registered"). Home always wins; launching the
-                        // scanner from the home state gives it a clean foreground.
-                        // The unlock relaunches the app afterwards regardless.
-                        goHome()
-                        serviceScope.launch {
-                            delay(NFC_HANDOFF_HOME_SETTLE_MS)
-                            launchNfcUnlock(config.appLabel)
-                        }
-                    } else if (qrAfterCountdown) {
-                        // Same handoff as NFC, but to the camera scanner.
-                        handOffToQrUnlock(pkg, pattern, config, contentTrack, gateKey)
                     }
                 },
                 onIntentDeclared = { intent ->
-                    completeGateUnlock(pkg, pattern, intent, config, contentTrack, gateKey)
+                    // A correct math answer, combined with NFC/QR, triggers the
+                    // handoff rather than completing the gate directly.
+                    when {
+                        mathMode && nfcMode ->
+                            handOffToNfcUnlock(pkg, pattern, config, contentTrack, gateKey)
+                        mathMode && qrAfterCountdown ->
+                            handOffToQrUnlock(pkg, pattern, config, contentTrack, gateKey)
+                        else ->
+                            completeGateUnlock(pkg, pattern, intent, config, contentTrack, gateKey)
+                    }
                 },
                 onGoBack = { completeGateGoBack(gateKey, pkg) },
             )
             overlayManager.showFullscreen(currentGateOverlay!!.view)
             activeGateKey = gateKey
             Log.d(TAG, "gate overlay shown for $gateKey (nfc=$nfcMode qr=$qrAfterCountdown math=$mathMode)")
+        }
+    }
+
+    /**
+     * Hand off a gate to [NfcUnlockActivity]: arm the result callbacks, drop any
+     * gate overlay, background the watched app, then launch the tag-scan screen.
+     * Used both by the math-less NFC path (from onTimerFinished) and the
+     * math+NFC combo (from onIntentDeclared, once the problem is solved). The
+     * unlock relaunches the app afterwards ([completeGateUnlock] relaunchApp =
+     * true) — the scan activity is on top, so the app is no longer foreground.
+     */
+    private fun handOffToNfcUnlock(
+        pkg: String,
+        pattern: String?,
+        config: AppConfig,
+        contentTrack: ContentTrack,
+        gateKey: String,
+    ) {
+        pendingNfcUnlock = {
+            completeGateUnlock(pkg, pattern, "nfc", config, contentTrack, gateKey,
+                relaunchApp = true)
+        }
+        pendingNfcGoBack = { completeGateGoBack(gateKey, pkg) }
+        overlayManager.dismissFullscreen()
+        // Send the watched app to the background first. Some apps (Snapchat)
+        // otherwise keep "top resumed activity" status, and the platform then
+        // refuses our NFC reader mode even though our scan screen is on top
+        // ("Reader mode Binder was never registered"). Home always wins;
+        // launching the scanner from the home state gives it a clean foreground.
+        // The unlock relaunches the app afterwards regardless.
+        goHome()
+        serviceScope.launch {
+            delay(NFC_HANDOFF_HOME_SETTLE_MS)
+            launchNfcUnlock(config.appLabel)
         }
     }
 
@@ -1129,6 +1175,18 @@ class DefangAccessibilityService : AccessibilityService() {
 
         /** Hard session limit for adult content, overriding configured defaults. */
         const val ADULT_SESSION_LIMIT_MINUTES = 1
+
+        /**
+         * Adaptive gate threshold (issue #16) tuning. Reopening a gate within
+         * [ADAPTIVE_ESCALATE_WINDOW_MS] of the last open raises its level by
+         * one; the level decays by one per [ADAPTIVE_DECAY_INTERVAL_MS] of
+         * elapsed time since. [ADAPTIVE_MAX_LEVEL] combined with the user's
+         * strength slider (1..15 seconds/level) caps the worst case at
+         * ADAPTIVE_MAX_LEVEL * 15 seconds on top of the configured base delay.
+         */
+        const val ADAPTIVE_ESCALATE_WINDOW_MS = 20 * 60_000L
+        const val ADAPTIVE_DECAY_INTERVAL_MS = 30 * 60_000L
+        const val ADAPTIVE_MAX_LEVEL = 6
 
         /** After "Go back" on the gate, don't re-fire for this long. */
         const val GO_BACK_SUPPRESS_MS = 45_000L

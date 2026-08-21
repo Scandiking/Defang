@@ -7,6 +7,7 @@ import android.os.UserManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.defang.launcher.data.local.datastore.PreferencesDataStore
+import com.defang.launcher.data.repository.AdaptiveGateRepository
 import com.defang.launcher.data.repository.AppConfigRepository
 import com.defang.launcher.domain.model.HomeScreenMode
 import com.defang.launcher.domain.model.QrScanMode
@@ -26,6 +27,7 @@ import javax.inject.Inject
 class GlobalSettingsViewModel @Inject constructor(
     private val prefs: PreferencesDataStore,
     private val appConfigRepo: AppConfigRepository,
+    private val adaptiveGateRepo: AdaptiveGateRepository,
     private val grayscale: GrayscaleController,
     private val batchWindowScheduler: BatchWindowScheduler,
     @ApplicationContext private val context: Context,
@@ -123,11 +125,11 @@ class GlobalSettingsViewModel @Inject constructor(
     fun setNfcUnlockEnabled(on: Boolean) {
         viewModelScope.launch {
             prefs.setNfcUnlockEnabled(on)
-            // NFC, QR and math are mutually exclusive — one unlock method at a
-            // time. Enabling NFC switches the others off (registrations are kept).
+            // NFC and QR are mutually exclusive (two hardware handoffs can't both
+            // own the gate), but math can combine with either — enabling NFC only
+            // switches QR off (registration is kept).
             if (on) {
                 prefs.setQrUnlockEnabled(false)
-                prefs.setMathUnlockEnabled(false)
             }
         }
     }
@@ -155,11 +157,13 @@ class GlobalSettingsViewModel @Inject constructor(
     fun setQrUnlockEnabled(on: Boolean) {
         viewModelScope.launch {
             prefs.setQrUnlockEnabled(on)
-            // Mutually exclusive — enabling QR switches NFC and math off
-            // (registrations are kept so the user can flip back).
+            // Mutually exclusive with NFC only (registration is kept so the user
+            // can flip back); math can combine with QR.
             if (on) {
                 prefs.setNfcUnlockEnabled(false)
-                prefs.setMathUnlockEnabled(false)
+                // Immediate scan bypasses the overlay entirely, so it can't also
+                // host a math problem — force back to after-countdown if combined.
+                if (mathUnlockEnabled.value) prefs.setQrScanMode(QrScanMode.AFTER_COUNTDOWN)
             }
         }
     }
@@ -187,16 +191,44 @@ class GlobalSettingsViewModel @Inject constructor(
     fun setMathUnlockEnabled(on: Boolean) {
         viewModelScope.launch {
             prefs.setMathUnlockEnabled(on)
-            // Mutually exclusive — enabling math switches NFC and QR off.
-            if (on) {
-                prefs.setNfcUnlockEnabled(false)
-                prefs.setQrUnlockEnabled(false)
+            // Math combines freely with NFC and/or QR (solve the problem, then
+            // scan/tap) — nothing to switch off here. Immediate-scan QR is the one
+            // exception: it bypasses the overlay entirely, so it can't also host a
+            // math problem — force it back to after-countdown if combined.
+            if (on && qrUnlockEnabled.value) {
+                prefs.setQrScanMode(QrScanMode.AFTER_COUNTDOWN)
             }
         }
     }
 
     fun setMathDifficulty(level: Int) {
         viewModelScope.launch { prefs.setMathDifficulty(level) }
+    }
+
+    // ── Adaptive gate threshold (issue #16) ───────────────────────────────────
+    val adaptiveGateEnabled: StateFlow<Boolean> = prefs.adaptiveGateEnabled.stateIn(
+        viewModelScope, SharingStarted.Eagerly, false
+    )
+    val adaptiveGateStrength: StateFlow<Int> = prefs.adaptiveGateStrength.stateIn(
+        viewModelScope, SharingStarted.Eagerly, 5
+    )
+
+    fun setAdaptiveGateEnabled(on: Boolean) {
+        viewModelScope.launch { prefs.setAdaptiveGateEnabled(on) }
+    }
+
+    fun setAdaptiveGateStrength(secondsPerLevel: Int) {
+        viewModelScope.launch { prefs.setAdaptiveGateStrength(secondsPerLevel) }
+    }
+
+    /**
+     * The manual override called for by issue #16's acceptance criteria: drop
+     * every gate's escalation back to baseline immediately, without having to
+     * disable the feature outright. The base gate-delay slider (Timing screen)
+     * remains a second, independent override on top of this.
+     */
+    fun resetAdaptiveLevels() {
+        viewModelScope.launch { adaptiveGateRepo.resetAll() }
     }
 
     fun setGateDelay(seconds: Int) {
