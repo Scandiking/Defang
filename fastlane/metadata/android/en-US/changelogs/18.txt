@@ -1,0 +1,1 @@
+Fixes a crash loop on launch and in the background for anyone who upgraded through 0.1.15. A database migration had quietly created one internal table without a required constraint; devices that already applied that migration were stuck failing an internal check on every start. That table is now automatically repaired on upgrade.

@@ -1,0 +1,1 @@
+Fikser en krasjløkke ved oppstart og i bakgrunnen for alle som oppgraderte via 0.1.15. En databasemigrering hadde i det stille opprettet en intern tabell uten en påkrevd begrensning; enheter som allerede hadde kjørt den migreringen satt fast med en mislykket intern sjekk ved hver oppstart. Tabellen repareres nå automatisk ved oppgradering.
