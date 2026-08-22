@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.room)
 }
 
 // Release signing credentials live in local.properties (gitignored). When they
@@ -85,6 +86,29 @@ android {
         includeInApk = false
         includeInBundle = false
     }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+
+    // Robolectric's includeAndroidResources reads the app's own merged
+    // assets (not a test-only source set), so the exported schemas need to
+    // live under main assets for MigrationTestHelper to find them here.
+    sourceSets {
+        getByName("main") {
+            assets.srcDirs("$projectDir/schemas")
+        }
+    }
+}
+
+// Exported schema JSONs (committed to git) let MigrationTestHelper build a
+// real historical version and run each Migration against it, so a mismatch
+// like issue #19 (hand-written migration SQL drifting from the entity's
+// actual schema) fails a fast unit test instead of shipping.
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 dependencies {
@@ -129,6 +153,9 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.coroutines.test)
     testImplementation(libs.mockk)
+    testImplementation(libs.room.testing)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
     androidTestImplementation(libs.android.junit)
     androidTestImplementation(libs.espresso)
 }
