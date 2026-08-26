@@ -125,13 +125,24 @@ object AppModule {
         }
     }
 
+    // v8: sessions gain watchedPattern, the browser watch-pattern/domain key
+    // (mirrors the in-memory `pattern` already threaded through startSession)
+    // so a session recovered after an unexpected process death (issue #20)
+    // knows whether its eventual cooldown belongs to a watched site or a
+    // watched app.
+    internal val MIGRATION_7_8 = object : Migration(7, 8) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL("ALTER TABLE sessions ADD COLUMN watchedPattern TEXT DEFAULT NULL")
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): DefangDatabase =
         Room.databaseBuilder(context, DefangDatabase::class.java, "defang.db")
             .addMigrations(
                 MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6,
-                MIGRATION_6_7,
+                MIGRATION_6_7, MIGRATION_7_8,
             )
             .fallbackToDestructiveMigration()
             .build()

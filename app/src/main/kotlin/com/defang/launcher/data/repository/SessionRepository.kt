@@ -25,20 +25,30 @@ class SessionRepository @Inject constructor(
     private val extensionDao: SessionExtensionDao,
     private val prefs: PreferencesDataStore,
 ) {
-    suspend fun startSession(packageName: String, intentDeclared: String?): Long {
+    suspend fun startSession(
+        packageName: String,
+        intentDeclared: String?,
+        pattern: String? = null,
+    ): Long {
         if (prefs.retentionLevel.first() == RetentionLevel.DONT_TRACK) return NO_TRACK_SESSION_ID
         val entity = SessionEntity(
             packageName = packageName,
             startTime = System.currentTimeMillis(),
             intentDeclared = intentDeclared,
+            watchedPattern = pattern,
         )
         return dao.insert(entity)
     }
 
     /** Starts the follow-on session for a gate extension and records [reason]
      *  linked back to [extendedSessionId], so it can be reviewed later. */
-    suspend fun startExtension(packageName: String, extendedSessionId: Long, reason: String): Long {
-        val newSessionId = startSession(packageName, intentDeclared = null)
+    suspend fun startExtension(
+        packageName: String,
+        extendedSessionId: Long,
+        reason: String,
+        pattern: String? = null,
+    ): Long {
+        val newSessionId = startSession(packageName, intentDeclared = null, pattern = pattern)
         if (newSessionId != NO_TRACK_SESSION_ID) {
             extensionDao.insert(
                 SessionExtensionEntity(
@@ -62,6 +72,9 @@ class SessionRepository @Inject constructor(
             )
         )
     }
+
+    /** The most recent session left open by an unexpected process death, if any. */
+    suspend fun getOpenSession(): SessionEntity? = dao.getOpenSession()
 
     suspend fun markExtensionUsed(sessionId: Long) {
         val existing = dao.getById(sessionId) ?: return

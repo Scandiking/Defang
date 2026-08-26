@@ -35,6 +35,14 @@ class DefangDatabaseMigrationTest {
         migrated.close()
     }
 
+    @Test
+    fun migrate7To8_addsSessionsWatchedPattern() {
+        helper.createDatabase(TEST_DB, 7).close()
+
+        val migrated = helper.runMigrationsAndValidate(TEST_DB, 8, true, AppModule.MIGRATION_7_8)
+        migrated.close()
+    }
+
     companion object {
         private const val TEST_DB = "migration-test"
     }
