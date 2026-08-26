@@ -46,6 +46,36 @@ class SessionRepositoryTest {
     }
 
     @Test
+    fun `startSession records the watched pattern for browser-domain sessions`() = runTest {
+        val repository = repo(RetentionLevel.INDEFINITE)
+
+        repository.startSession("com.android.chrome", null, pattern = "adult:example.com")
+
+        assertEquals("adult:example.com", sessionDao.rows.single().watchedPattern)
+    }
+
+    @Test
+    fun `getOpenSession returns the most recent session with no endTime`() = runTest {
+        val repository = repo(RetentionLevel.INDEFINITE)
+        val firstId = repository.startSession("com.example.app", null)
+        repository.endSession(firstId)
+        val openId = repository.startSession("com.example.app", null)
+
+        val open = repository.getOpenSession()
+
+        assertEquals(openId, open?.id)
+    }
+
+    @Test
+    fun `getOpenSession returns null when every session has ended`() = runTest {
+        val repository = repo(RetentionLevel.INDEFINITE)
+        val id = repository.startSession("com.example.app", null)
+        repository.endSession(id)
+
+        assertEquals(null, repository.getOpenSession())
+    }
+
+    @Test
     fun `startExtension links the new session back to the extended one`() = runTest {
         val repository = repo(RetentionLevel.INDEFINITE)
         val extendedId = repository.startSession("com.example.app", null)

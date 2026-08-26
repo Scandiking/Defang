@@ -20,6 +20,14 @@ interface SessionDao {
     @Query("SELECT * FROM sessions WHERE id = :id LIMIT 1")
     suspend fun getById(id: Long): SessionEntity?
 
+    /**
+     * The most recent session that never got an endTime — a session left open
+     * by an unexpected process death (issue #20). Recovered on service
+     * reconnect instead of re-gating from scratch.
+     */
+    @Query("SELECT * FROM sessions WHERE endTime = 0 ORDER BY startTime DESC LIMIT 1")
+    suspend fun getOpenSession(): SessionEntity?
+
     @Query("SELECT * FROM sessions WHERE packageName = :pkg ORDER BY startTime DESC LIMIT :limit")
     fun observeForApp(pkg: String, limit: Int = 50): Flow<List<SessionEntity>>
 

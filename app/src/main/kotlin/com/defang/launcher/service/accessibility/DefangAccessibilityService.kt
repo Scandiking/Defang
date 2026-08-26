@@ -148,6 +148,13 @@ class DefangAccessibilityService : AccessibilityService() {
     // if the app returns to the foreground within the grace window the pending
     // end is cancelled and the session survives. A genuine departure (task
     // swiped away, switched to home) sees no re-foreground and ends for real.
+    //
+    // Also used by handleForegroundChange's direct accessibility-event path
+    // (issue #20): a share sheet, camera/media picker, or permission dialog
+    // briefly taking the foreground delivers a real TYPE_WINDOW_STATE_CHANGED
+    // for a different package too, not just usage-stats churn, so both paths
+    // share this same debounce rather than the direct path tearing down
+    // instantly.
     private var pendingEndJob: Job? = null
 
     // Set when an NFC-mode gate hands off to NfcUnlockActivity at countdown end;
@@ -217,6 +224,7 @@ class DefangAccessibilityService : AccessibilityService() {
             // never leave the lock screen in color.
             grayscale.recoverIfStale()
             if (grayscale.isDeviceLocked()) grayscale.enable()
+            recoverOpenSession()
         }
 
         val filter = IntentFilter().apply {
@@ -435,9 +443,17 @@ class DefangAccessibilityService : AccessibilityService() {
 
     private suspend fun handleForegroundChange(pkg: String, browserUrl: String?) {
         Log.d(TAG, "fgChange pkg=$pkg watched=$currentWatchedPackage pending=$pendingGate")
-        // Navigating away from whatever we were watching — end that session
-        if (pkg != currentWatchedPackage && currentWatchedPackage != null) {
-            endCurrentSession()
+        // Navigating away from whatever we were watching — debounce the
+        // teardown rather than ending immediately. A share sheet, camera/media
+        // picker, permission dialog, etc. surfacing mid-session delivers a real
+        // TYPE_WINDOW_STATE_CHANGED for a different package too; ending right
+        // away tears the session down and re-arms the gate the instant it
+        // returns. If the watched package comes back to the foreground within
+        // the grace window, cancelPendingSessionEnd() (called below and from
+        // handleBrowserUrl) drops this and the session survives.
+        val leavingPkg = currentWatchedPackage
+        if (pkg != leavingPkg && leavingPkg != null) {
+            scheduleSessionEnd(leavingPkg)
         }
 
         // Browser: delegate to URL-based logic
@@ -813,7 +829,7 @@ class DefangAccessibilityService : AccessibilityService() {
         cooldownMinutes: Int,
         contentTrack: ContentTrack,
     ) {
-        val sessionId = recordSession.start(pkg, intentDeclared)
+        val sessionId = recordSession.start(pkg, intentDeclared, pattern)
         currentSessionId = sessionId
         currentWatchedPackage = pkg
         currentWatchedPattern = pattern
@@ -821,9 +837,29 @@ class DefangAccessibilityService : AccessibilityService() {
         extensionUsedThisSession = false
         grayscale.enable()
 
+        attachTimerOverlay(
+            pkg, pattern, sessionId,
+            remainingMs = sessionLimitMinutes * 60_000L,
+            cooldownMinutes, contentTrack,
+        )
+    }
+
+    /**
+     * Builds and shows the session HUD, wired to end the session normally when
+     * [remainingMs] elapses. Shared by [startSession] (full configured limit)
+     * and [recoverOpenSession] (whatever time was left when the service died).
+     */
+    private fun attachTimerOverlay(
+        pkg: String,
+        pattern: String?,
+        sessionId: Long,
+        remainingMs: Long,
+        cooldownMinutes: Int,
+        contentTrack: ContentTrack,
+    ) {
         currentTimerOverlay = SessionTimerOverlay(
             context = this,
-            sessionLimitMs = sessionLimitMinutes * 60_000L,
+            sessionLimitMs = remainingMs,
             onSessionExpired = {
                 serviceScope.launch {
                     onSessionExpired(pkg, pattern, sessionId, cooldownMinutes, contentTrack)
@@ -831,6 +867,65 @@ class DefangAccessibilityService : AccessibilityService() {
             },
         )
         overlayManager.showHud(currentTimerOverlay!!.view)
+    }
+
+    /**
+     * Recovers a session left open by an unexpected process death (issue #20):
+     * without this, the service comes back with no in-memory session state,
+     * the watched app is still in the foreground, and the next foreground
+     * event re-gates from scratch with the full configured limit — the app
+     * appears to "reset" mid-session, looping forever. Runs once per
+     * onServiceConnected(); a no-op when there's nothing to recover (including
+     * when retention is DONT_TRACK, since no row was ever written for such a
+     * session — recovery has nothing to read).
+     */
+    private suspend fun recoverOpenSession() {
+        val open = recordSession.getOpenSession() ?: return
+        val pkg = open.packageName
+        val pattern = open.watchedPattern
+
+        val contentTrack = if (pattern == null) {
+            selectContentTrack.forPackage(pkg)
+        } else {
+            val match = watchedUrlRepo.observeAll().first().firstOrNull { it.pattern == pattern }
+            if (match?.isAdult == true || pattern.startsWith("adult:")) ContentTrack.ADULT
+            else ContentTrack.GENERAL
+        }
+
+        val baseConfig = if (pattern == null) resolveConfig(pkg) else null
+        val config = baseConfig ?: defaultBrowserConfig(pkg)
+        val effectiveConfig = if (contentTrack == ContentTrack.ADULT) {
+            config.copy(sessionLimitMinutes = ADULT_SESSION_LIMIT_MINUTES)
+        } else config
+
+        val remaining = effectiveConfig.sessionLimitMinutes * 60_000L -
+            (System.currentTimeMillis() - open.startTime)
+
+        if (remaining <= 0L) {
+            // The limit already elapsed while the service was down — go
+            // straight to the normal expiry flow instead of resuming a HUD
+            // with negative/zero time on it.
+            currentSessionId = open.id
+            currentWatchedPackage = pkg
+            currentWatchedPattern = pattern
+            sessionStartMs = open.startTime
+            extensionUsedThisSession = open.extensionUsed
+            onSessionExpired(pkg, pattern, open.id, effectiveConfig.cooldownMinutes, contentTrack)
+            return
+        }
+
+        Log.d(TAG, "recovered open session pkg=$pkg pattern=$pattern remainingMs=$remaining")
+        currentSessionId = open.id
+        currentWatchedPackage = pkg
+        currentWatchedPattern = pattern
+        sessionStartMs = open.startTime
+        extensionUsedThisSession = open.extensionUsed
+        grayscale.enable()
+        attachTimerOverlay(
+            pkg, pattern, open.id,
+            remainingMs = remaining,
+            effectiveConfig.cooldownMinutes, contentTrack,
+        )
     }
 
     private suspend fun onSessionExpired(
@@ -891,7 +986,7 @@ class DefangAccessibilityService : AccessibilityService() {
         extensionUsedThisSession = true
         recordSession.end(sessionId, extensionUsed = true)
 
-        val newSessionId = recordSession.startExtension(pkg, sessionId, reason)
+        val newSessionId = recordSession.startExtension(pkg, sessionId, reason, pattern)
         currentSessionId = newSessionId
         sessionStartMs = System.currentTimeMillis()
 

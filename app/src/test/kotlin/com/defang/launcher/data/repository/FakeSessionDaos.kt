@@ -30,6 +30,9 @@ class FakeSessionDao : SessionDao {
 
     override suspend fun getById(id: Long): SessionEntity? = rows.find { it.id == id }
 
+    override suspend fun getOpenSession(): SessionEntity? =
+        rows.filter { it.endTime == 0L }.maxByOrNull { it.startTime }
+
     override fun observeForApp(pkg: String, limit: Int): Flow<List<SessionEntity>> =
         flowOf(rows.filter { it.packageName == pkg }.sortedByDescending { it.startTime }.take(limit))
 
