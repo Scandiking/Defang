@@ -13,7 +13,8 @@ import javax.inject.Singleton
  *
  * Supported browsers and their URL bar view IDs:
  *   Chrome / Chromium-based   → url_bar
- *   Firefox                   → mozac_browser_toolbar_url_view
+ *   Firefox (Play Store)      → mozac_browser_toolbar_url_view
+ *   Firefox Fenix (F-Droid)   → mozac_browser_toolbar_url_view
  *   Samsung Internet          → location_bar_edit_text
  *   Edge, Brave, Opera        → url_bar / url_field
  *   DuckDuckGo                → omnibarTextInput
@@ -33,6 +34,14 @@ class BrowserUrlExtractor @Inject constructor() {
         ),
         "org.mozilla.firefox_beta"      to listOf(
             "org.mozilla.firefox_beta:id/mozac_browser_toolbar_url_view",
+        ),
+        // Fenix (Firefox for Android) F-Droid / GitHub build — different package ID
+        // than the Play Store build (org.mozilla.firefox) but shares the same view IDs.
+        "org.mozilla.fenix"             to listOf(
+            "org.mozilla.fenix:id/mozac_browser_toolbar_url_view",
+        ),
+        "org.mozilla.fennec_fdroid"     to listOf(
+            "org.mozilla.fennec_fdroid:id/mozac_browser_toolbar_url_view",
         ),
         "com.sec.android.app.sbrowser"  to listOf(
             "com.sec.android.app.sbrowser:id/location_bar_edit_text",

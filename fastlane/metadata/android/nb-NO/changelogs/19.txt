@@ -1,0 +1,1 @@
+Fikser at overvåkede nettsteder ikke ble utløst på Firefox Fenix installert fra F-Droid. Pakke-IDen er forskjellig fra Play Store-versjonen, så den falt utenfor listen over nettlesere Defang leser adressefeltet fra.
