@@ -1,0 +1,1 @@
+Fixes watched websites not triggering on Firefox Fenix installed from F-Droid. Its package ID differs from the Play Store build, so it fell outside the list of browsers Defang reads the address bar from.
