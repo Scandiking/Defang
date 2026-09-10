@@ -4,6 +4,7 @@ import android.app.Notification
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import com.defang.launcher.data.local.datastore.PreferencesDataStore
+import com.defang.launcher.data.local.db.entity.AppConfigEntity
 import com.defang.launcher.data.repository.AppConfigRepository
 import com.defang.launcher.domain.model.AppTier
 import com.defang.launcher.service.accessibility.DefangAccessibilityService
@@ -59,16 +60,12 @@ class DefangNotificationListenerService : NotificationListenerService() {
         contactNames.refreshIfStale()
         serviceScope.launch {
             appConfigRepo.observeAll().collect { all ->
-                val watched = all.filter { it.tier == AppTier.WATCHED.dbValue }
-                val knownPackages = all.map { it.packageName }.toSet()
-                // Defaults only fill in for packages not yet seeded in the DB
-                // (cold start). Once a row exists, its tier is authoritative —
-                // otherwise a user downgrading a default-watched app (e.g.
-                // Snapchat) to Utility would never actually stop being watched.
-                val unseededDefaults = DefangAccessibilityService.DEFAULT_WATCHED_PACKAGES -
-                    knownPackages
-                watchedPackages = watched.map { it.packageName }.toSet() + unseededDefaults
-                watched.forEach { appLabels[it.packageName] = it.appLabel }
+                watchedPackages = computeWatchedPackages(
+                    all,
+                    DefangAccessibilityService.DEFAULT_WATCHED_PACKAGES,
+                )
+                all.filter { it.tier == AppTier.WATCHED.dbValue }
+                    .forEach { appLabels[it.packageName] = it.appLabel }
             }
         }
         serviceScope.launch {
@@ -146,6 +143,28 @@ class DefangNotificationListenerService : NotificationListenerService() {
         val counts = prefs.suppressedCounts.first().toMutableMap()
         if (counts.remove(pkg) != null) {
             prefs.setSuppressedCounts(counts)
+        }
+    }
+
+    companion object {
+        /**
+         * Merges DB-configured watched packages with the hardcoded default
+         * list. A default is only used as a fallback for packages with no
+         * [AppConfigEntity] row yet (cold start before seeding) — once a row
+         * exists, its tier is authoritative, so a user downgrading a
+         * default-watched app (e.g. Snapchat) to Utility actually takes
+         * effect instead of being silently overridden by the default.
+         */
+        internal fun computeWatchedPackages(
+            all: List<AppConfigEntity>,
+            defaultWatchedPackages: Set<String>,
+        ): Set<String> {
+            val watched = all.filter { it.tier == AppTier.WATCHED.dbValue }
+                .map { it.packageName }
+                .toSet()
+            val knownPackages = all.map { it.packageName }.toSet()
+            val unseededDefaults = defaultWatchedPackages - knownPackages
+            return watched + unseededDefaults
         }
     }
 }
