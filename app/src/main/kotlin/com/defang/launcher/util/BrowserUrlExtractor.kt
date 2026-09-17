@@ -13,6 +13,7 @@ import javax.inject.Singleton
  *
  * Supported browsers and their URL bar view IDs:
  *   Chrome / Chromium-based   → url_bar
+ *   Vanadium (GrapheneOS)     → url_bar
  *   Firefox (Play Store)      → mozac_browser_toolbar_url_view
  *   Firefox Fenix (F-Droid)   → mozac_browser_toolbar_url_view
  *   Samsung Internet          → location_bar_edit_text
@@ -28,6 +29,8 @@ class BrowserUrlExtractor @Inject constructor() {
         "com.chrome.beta"               to listOf("com.chrome.beta:id/url_bar"),
         "com.chrome.dev"                to listOf("com.chrome.dev:id/url_bar"),
         "com.chrome.canary"             to listOf("com.chrome.canary:id/url_bar"),
+        // Vanadium — GrapheneOS's hardened Chromium build, same view IDs as Chrome.
+        "app.vanadium.browser"          to listOf("app.vanadium.browser:id/url_bar"),
         "org.mozilla.firefox"           to listOf(
             "org.mozilla.firefox:id/mozac_browser_toolbar_url_view",
             "org.mozilla.firefox:id/url_bar_title",
