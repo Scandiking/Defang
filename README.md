@@ -144,7 +144,7 @@ app/src/main/kotlin/com/defang/launcher/
 
 ### Planned / exploring
 
-- Nothing queued right now. If you have ideas, you can [create an `issue`](https://github.com/Scandiking/Defang/issues/new)
+- Nothing queued right now. If you have ideas or experience shortcomings you'd like to see fixed, you can [create an `issue`](https://github.com/Scandiking/Defang/issues/new)
 
 ---
 
@@ -197,6 +197,9 @@ The keyguard is a protected system surface owned by `SystemUI`; no public API le
 
 > [!TIP]  
 > You can get most of the way there yourself: in your lock screen settings, remove all widgets/shortcuts and set an all-black wallpaper. Combined with Defang's grayscale, that's as close to a blank lock screen as the OS permits any app, first- or third-party, to get you.
+
+**Why is it called Defang?**
+It's a play on [FAANG](https://en.wikipedia.org/wiki/Big_Tech#Acronyms), the tech giants that built their business on harvesting your attention. They've had their fangs in you for years. Defang uses the same behavioral mechanics they do, but for _your_ benefit instead of theirs. Bit by bit, the fangs come out. You're being de-FAANG-ed.
 
 ## License
 
