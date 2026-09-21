@@ -16,6 +16,7 @@ import javax.inject.Singleton
  *   Vanadium (GrapheneOS)     → url_bar
  *   Firefox (Play Store)      → mozac_browser_toolbar_url_view
  *   Firefox Fenix (F-Droid)   → mozac_browser_toolbar_url_view
+ *   IronFox                   → mozac_browser_toolbar_url_view
  *   Samsung Internet          → location_bar_edit_text
  *   Edge, Brave, Opera        → url_bar / url_field
  *   DuckDuckGo                → omnibarTextInput
@@ -45,6 +46,13 @@ class BrowserUrlExtractor @Inject constructor() {
         ),
         "org.mozilla.fennec_fdroid"     to listOf(
             "org.mozilla.fennec_fdroid:id/mozac_browser_toolbar_url_view",
+        ),
+        // IronFox — hardened Fenix fork, same Mozilla Components view IDs.
+        "org.ironfoxoss.ironfox"        to listOf(
+            "org.ironfoxoss.ironfox:id/mozac_browser_toolbar_url_view",
+        ),
+        "org.ironfoxoss.ironfox.nightly" to listOf(
+            "org.ironfoxoss.ironfox.nightly:id/mozac_browser_toolbar_url_view",
         ),
         "com.sec.android.app.sbrowser"  to listOf(
             "com.sec.android.app.sbrowser:id/location_bar_edit_text",
