@@ -1,1 +1,1 @@
-Fixes Utility-level notifications being wrongly downgraded for default-watched apps, and adds support for reading the address bar in Vanadium (GrapheneOS's browser).
+Fixes Utility-level notifications being wrongly downgraded for default-watched apps, and adds support for reading the address bar in Vanadium (GrapheneOS's browser) and IronFox.

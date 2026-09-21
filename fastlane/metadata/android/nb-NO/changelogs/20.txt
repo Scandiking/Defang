@@ -1,1 +1,1 @@
-Fikser at Utility-varsler feilaktig ble nedgradert for apper som er standard-overvåket, og legger til støtte for å lese adressefeltet i Vanadium (GrapheneOS' nettleser).
+Fikser at Utility-varsler feilaktig ble nedgradert for apper som er standard-overvåket, og legger til støtte for å lese adressefeltet i Vanadium (GrapheneOS' nettleser) og IronFox.
