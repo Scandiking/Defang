@@ -20,6 +20,9 @@ import javax.inject.Singleton
  *   Samsung Internet          → location_bar_edit_text
  *   Edge, Brave, Opera        → url_bar / url_field
  *   DuckDuckGo                → omnibarTextInput
+ *   Fulguris                  → search
+ *   Other Chromium forks      → url_bar (Vivaldi, Kiwi, Bromite, Cromite, Ecosia, …)
+ *   Other Mozilla forks       → mozac_browser_toolbar_url_view (Focus, Iceraven, Mull, Tor, …)
  */
 @Singleton
 class BrowserUrlExtractor @Inject constructor() {
@@ -65,7 +68,42 @@ class BrowserUrlExtractor @Inject constructor() {
         "com.duckduckgo.mobile.android" to listOf(
             "com.duckduckgo.mobile.android:id/omnibarTextInput",
         ),
+        // Fulguris — own WebView-based UI; address bar is fulguris.view.SearchView
+        // (@id/search in layout/search.xml). Package = net.slions.fulguris
+        // + .full/.lite + .fdroid/.playstore/.download build flavors.
+        *listOf("full", "lite").flatMap { version ->
+            listOf("fdroid", "playstore", "download").map { publisher ->
+                "net.slions.fulguris.$version.$publisher".let { it to listOf("$it:id/search") }
+            }
+        }.toTypedArray(),
+        // Chromium forks that keep Chrome's toolbar. An unverified ID is harmless:
+        // extractUrl() falls back to the BFS scan when the fast path misses, so
+        // being listed here is what matters — it's what marks the package a browser.
+        *listOf(
+            "com.microsoft.emmx.beta", "com.microsoft.emmx.dev", "com.microsoft.emmx.canary",
+            "com.brave.browser_beta", "com.brave.browser_nightly",
+            "com.vivaldi.browser", "com.vivaldi.browser.snapshot",
+            "com.kiwibrowser.browser",
+            "org.bromite.bromite",
+            "org.cromite.cromite",
+            "org.chromium.chrome",          // ungoogled-chromium and plain Chromium builds
+            "com.ecosia.android",
+            "com.sec.android.app.sbrowser.beta",
+        ).map { chromium(it) }.toTypedArray(),
+        // Mozilla Components (Fenix/Focus) derivatives.
+        *listOf(
+            "org.mozilla.focus", "org.mozilla.klar",
+            "io.github.forkmaintainers.iceraven",
+            "us.spotco.fennec_dos",         // Mull
+            "net.waterfox.android.release",
+            "org.torproject.torbrowser",
+        ).map { mozilla(it) }.toTypedArray(),
+        "com.opera.browser.beta"        to listOf("com.opera.browser.beta:id/url_field"),
     )
+
+    private fun chromium(pkg: String) = pkg to listOf("$pkg:id/url_bar")
+
+    private fun mozilla(pkg: String) = pkg to listOf("$pkg:id/mozac_browser_toolbar_url_view")
 
     /** All package names we treat as browsers. */
     val browserPackages: Set<String> get() = urlBarIds.keys
