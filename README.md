@@ -144,7 +144,8 @@ app/src/main/kotlin/com/defang/launcher/
 
 ### Planned / exploring
 
-- Nothing queued right now. If you have ideas or experience shortcomings you'd like to see fixed, you can [create an `issue`](https://github.com/Scandiking/Defang/issues/new)
+- Weblate crowd translation for multi-language support. Currently only ships English and incomplete Norwegian.
+- If you have ideas or experience shortcomings you'd like to see fixed, you can [create an `issue`](https://github.com/Scandiking/Defang/issues/new)
 
 ---
 
