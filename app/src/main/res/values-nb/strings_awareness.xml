@@ -3,99 +3,96 @@
 <resources>
 
     <!-- ════════ GENERAL TRACK ════════ -->
-    <string-array name="tidbits_general">
-        <item>Dra-for-å-oppdatere ble bevisst modellert etter spaken på en spilleautomat. Den korte forsinkelsen før innholdet lastes er konstruert spenning, ikke treg lasting.</item>
-        <item>Uendelig skrolling ble oppfunnet av Aza Raskin i 2006. Han har offentlig kalt det en feil og anslår at det koster menneskeheten 200 000 timer oppmerksomhet per dag.</item>
-        <item>Uforutsigbarheten i hva som dukker opp i feeden din er selve funksjonen, ikke en bivirkning. Faste belønninger gir tilvenning. Variable belønninger gir tvang.</item>
-        <item>«Foreslåtte innlegg» dukker opp når du har tømt din egentlige sosiale feed, fordi en tom feed ville avsluttet økten. Det finnes ingen bunn.</item>
-        <item>Den høye fargemetningen og kontrasten i sosiale mediers grensesnitt er kalibrert til å føles mer levende og givende enn den fysiske verdenen rundt deg. Det er derfor telefonen ser mer interessant ut enn rommet du sitter i.</item>
-        <item>Gråtonemodus reduserer tvangsmessig telefonbruk i kontrollerte studier — ikke fordi grått er kjedelig, men fordi fargekodingen i sosiale apper bærer emosjonelle signaler som gråtoner fjerner.</item>
-        <item>Autoavspilling starter før du bevisst har bestemt deg for å se. Bevegelse er en førbevisst oppmerksomhetstrigger; beslutningen om å se skjer etter at oppmerksomheten din allerede er fanget.</item>
-        <item>Apper sender ikke varsler når ting skjer. De sender varsler når modellene deres forutsier at du mest sannsynlig åpner appen. Tidspunktet er optimalisert for gjenengasjement, ikke for din informasjon.</item>
-        <item>Det røde merket på et appikon skaper en åpen løkke i arbeidsminnet — en uløst oppgave. Mennesker er skrudd sammen for å lukke åpne løkker. Merket utnytter dette uten kostnad for appen.</item>
-        <item>Å skru av varsler reduserer passiv telefonplukking med rundt 30 % i atferdsstudier — ikke fordi varslene var informative, men fordi de var triggere.</item>
-        <item>Sosiale apper er gratis fordi betaling ville begrenset inntektene til det du er villig til å betale. Å selge oppmerksomheten din til annonsører har ingen slik grense.</item>
-        <item>FOMO er ikke et personlighetstrekk. Det er en respons på et system designet for å få deg til å føle at det viktigste alltid skjer et sted du ikke ser akkurat nå.</item>
-        <item>Formuleringen «X personer har reagert på innlegget ditt» handler om andres atferd, ikke innholdet ditt. Andres meninger er en sterkere gjenengasjementstrigger enn dine egne handlinger.</item>
-        <item>Gjentatt aktivering av dopaminbanen med samme stimulus gir sensitivisering (suget blir sterkere) og samtidig desensitivisering (gleden blir svakere). Du trenger mer for å føle det samme, men føler mindre når du får det.</item>
-        <item>Stressystemet og belønningssystemet henger sammen. Når en vanemessig belønning er utilgjengelig, aktiveres stressystemet. Ubehaget ved å ikke sjekke er fysiologisk, ikke en karakterbrist.</item>
-        <item>Hver gang du åpner en sosial app av kjedsomhet, forsterkes nervebanen som kobler kjedsomhet → telefon → app. Atferden blir mer automatisk over tid, ikke mindre, uten bevisst avbrytelse. (Hebb, 1949)</item>
-        <item>DeltaFosB hoper seg opp i hjernens belønningskretser ved gjentatt tvangsmessig atferd. I motsetning til andre nevrologiske markører forsvinner det ikke raskt — det varer i ukevis. Det driver suget selv når den bevisste motivasjonen for å slutte er til stede.</item>
-        <item>Dopamin er ikke et nytelsesstoff. Det er et forventningsstoff — det topper seg før belønningen, ikke under. Det er derfor skrolling føles tvingende selv når innholdet ikke er bra.</item>
-        <item>Dopamin fra å fullføre noe vanskelig — et prosjekt, en ferdighet — varer i timevis. Dopamin fra et varsel topper seg på sekunder og faller under grunnivået når det forsvinner.</item>
-        <item>Hjernens belønningssystem skiller ikke mellom en «like» på et bilde og en bit mat. Begge utløser samme bane. Appene mater deg i svært små, uforutsigbare porsjoner med vilje.</item>
-        <item>Å bevisst utsette en belønning styrker prefrontal cortex\' evne til å overstyre impulser. Friksjonen i denne appen er trening, ikke straff.</item>
-        <item>Flere store studier som hevder å vise at sosiale medier ikke gjør nevneverdig skade, ble gjennomført i samarbeid med eller finansiert av sosiale medieselskaper. Det gjør dem ikke feil. Det er verdt å vite når du vurderer bevisene.</item>
-        <item>Studier av sosiale medier og psykisk helse baserer seg ofte på selvrapportert skjermtid, som brukere konsekvent underestimerer med 30–50 %. Forskning med objektive bruksdata finner gjerne sterkere effekter.</item>
-        <item>Medianinntekten i de fleste vestlige land er mellom 300 000 og 450 000 kroner i året. Livsstilen som fremstilles som normal på sosiale medier krever mange ganger det, typisk finansiert av arvet formue, gjeld eller en karriere bygget på å fremføre livsstilen for et publikum.</item>
-        <item>Algoritmene viser deg ikke representative mennesker. De viser deg folk valgt for visuell effekt, på sitt mest forberedte, i sitt beste lys, filtrert, retusjert og ofte kirurgisk endret. Referansepunktet ditt for hvordan et vanlig attraktivt menneske ser ut, er rekalibrert av årevis med eksponering for den øverste brøkdelen av en prosent.</item>
-        <item>Innhold som gjør menn sinte på kvinner og innhold som gjør kvinner sinte på menn gir identiske engasjementssignaler. Raseri mot det andre kjønnet sprer seg raskere enn nesten alle andre innholdskategorier på alle store plattformer. Konflikten er produktet.</item>
-        <item>Algoritmen viser deg ikke representative mennesker. Den viser deg de mest ekstreme, mest provoserende eksemplene fordi de skaper mest reaksjon. Begge grupper får se en karikatur av den andre.</item>
-        <item>De fleste politiske spørsmål har mer enn to sammenhengende posisjoner. Sosiale medier presser dem sammen til binære konfliktpar fordi konflikt mellom to sider gir mer engasjement enn et nyansert spekter.</item>
-        <item>Forskning på politiske innholdsalgoritmer viser konsekvent en kaninhull-effekt: brukere får servert innhold som er litt mer ekstremt enn det de nettopp så. Over måneder ender noen som startet med mainstream-innhold langt utenfor det — ikke fordi de oppsøkte det, men fordi hvert steg føltes som en liten fortsettelse av det forrige.</item>
-        <item>Blått lys fra skjermer hemmer melatoninproduksjonen og utsetter innsovning med opptil 90 minutter. Dette er en målt hormonell effekt, ikke en metafor.</item>
-        <item>Søvnmangel svekker prefrontal cortex — samme region som står for impulskontroll og evnen til å la være å åpne appen i utgangspunktet. Sen kveldsbruk gjør neste dags bruk vanskeligere å motstå.</item>
-        <item>«Like»-knappen het opprinnelig «awesome»-knappen hos Facebook. Den ble omdøpt fordi «like» er mer tvetydig — folk liker ting de ikke støtter, noe som øker signalvolumet og holder deg sjekkende.</item>
-        <item>Snapchat-streaks har ingen verdi. De er en kunstig sosial forpliktelse — en daglig tvungen handling utkledd som en vennskapsfunksjon.</item>
+    <!-- tidbits_general (array items, in order) -->
+    <string name="tidbits_general_0">Dra-for-å-oppdatere ble bevisst modellert etter spaken på en spilleautomat. Den korte forsinkelsen før innholdet lastes er konstruert spenning, ikke treg lasting.</string>
+    <string name="tidbits_general_1">Uendelig skrolling ble oppfunnet av Aza Raskin i 2006. Han har offentlig kalt det en feil og anslår at det koster menneskeheten 200 000 timer oppmerksomhet per dag.</string>
+    <string name="tidbits_general_2">Uforutsigbarheten i hva som dukker opp i feeden din er selve funksjonen, ikke en bivirkning. Faste belønninger gir tilvenning. Variable belønninger gir tvang.</string>
+    <string name="tidbits_general_3">«Foreslåtte innlegg» dukker opp når du har tømt din egentlige sosiale feed, fordi en tom feed ville avsluttet økten. Det finnes ingen bunn.</string>
+    <string name="tidbits_general_4">Den høye fargemetningen og kontrasten i sosiale mediers grensesnitt er kalibrert til å føles mer levende og givende enn den fysiske verdenen rundt deg. Det er derfor telefonen ser mer interessant ut enn rommet du sitter i.</string>
+    <string name="tidbits_general_5">Gråtonemodus reduserer tvangsmessig telefonbruk i kontrollerte studier — ikke fordi grått er kjedelig, men fordi fargekodingen i sosiale apper bærer emosjonelle signaler som gråtoner fjerner.</string>
+    <string name="tidbits_general_6">Autoavspilling starter før du bevisst har bestemt deg for å se. Bevegelse er en førbevisst oppmerksomhetstrigger; beslutningen om å se skjer etter at oppmerksomheten din allerede er fanget.</string>
+    <string name="tidbits_general_7">Apper sender ikke varsler når ting skjer. De sender varsler når modellene deres forutsier at du mest sannsynlig åpner appen. Tidspunktet er optimalisert for gjenengasjement, ikke for din informasjon.</string>
+    <string name="tidbits_general_8">Det røde merket på et appikon skaper en åpen løkke i arbeidsminnet — en uløst oppgave. Mennesker er skrudd sammen for å lukke åpne løkker. Merket utnytter dette uten kostnad for appen.</string>
+    <string name="tidbits_general_9">Å skru av varsler reduserer passiv telefonplukking med rundt 30 % i atferdsstudier — ikke fordi varslene var informative, men fordi de var triggere.</string>
+    <string name="tidbits_general_10">Sosiale apper er gratis fordi betaling ville begrenset inntektene til det du er villig til å betale. Å selge oppmerksomheten din til annonsører har ingen slik grense.</string>
+    <string name="tidbits_general_11">FOMO er ikke et personlighetstrekk. Det er en respons på et system designet for å få deg til å føle at det viktigste alltid skjer et sted du ikke ser akkurat nå.</string>
+    <string name="tidbits_general_12">Formuleringen «X personer har reagert på innlegget ditt» handler om andres atferd, ikke innholdet ditt. Andres meninger er en sterkere gjenengasjementstrigger enn dine egne handlinger.</string>
+    <string name="tidbits_general_13">Gjentatt aktivering av dopaminbanen med samme stimulus gir sensitivisering (suget blir sterkere) og samtidig desensitivisering (gleden blir svakere). Du trenger mer for å føle det samme, men føler mindre når du får det.</string>
+    <string name="tidbits_general_14">Stressystemet og belønningssystemet henger sammen. Når en vanemessig belønning er utilgjengelig, aktiveres stressystemet. Ubehaget ved å ikke sjekke er fysiologisk, ikke en karakterbrist.</string>
+    <string name="tidbits_general_15">Hver gang du åpner en sosial app av kjedsomhet, forsterkes nervebanen som kobler kjedsomhet → telefon → app. Atferden blir mer automatisk over tid, ikke mindre, uten bevisst avbrytelse. (Hebb, 1949)</string>
+    <string name="tidbits_general_16">DeltaFosB hoper seg opp i hjernens belønningskretser ved gjentatt tvangsmessig atferd. I motsetning til andre nevrologiske markører forsvinner det ikke raskt — det varer i ukevis. Det driver suget selv når den bevisste motivasjonen for å slutte er til stede.</string>
+    <string name="tidbits_general_17">Dopamin er ikke et nytelsesstoff. Det er et forventningsstoff — det topper seg før belønningen, ikke under. Det er derfor skrolling føles tvingende selv når innholdet ikke er bra.</string>
+    <string name="tidbits_general_18">Dopamin fra å fullføre noe vanskelig — et prosjekt, en ferdighet — varer i timevis. Dopamin fra et varsel topper seg på sekunder og faller under grunnivået når det forsvinner.</string>
+    <string name="tidbits_general_19">Hjernens belønningssystem skiller ikke mellom en «like» på et bilde og en bit mat. Begge utløser samme bane. Appene mater deg i svært små, uforutsigbare porsjoner med vilje.</string>
+    <string name="tidbits_general_20">Å bevisst utsette en belønning styrker prefrontal cortex\' evne til å overstyre impulser. Friksjonen i denne appen er trening, ikke straff.</string>
+    <string name="tidbits_general_21">Flere store studier som hevder å vise at sosiale medier ikke gjør nevneverdig skade, ble gjennomført i samarbeid med eller finansiert av sosiale medieselskaper. Det gjør dem ikke feil. Det er verdt å vite når du vurderer bevisene.</string>
+    <string name="tidbits_general_22">Studier av sosiale medier og psykisk helse baserer seg ofte på selvrapportert skjermtid, som brukere konsekvent underestimerer med 30–50 %. Forskning med objektive bruksdata finner gjerne sterkere effekter.</string>
+    <string name="tidbits_general_23">Medianinntekten i de fleste vestlige land er mellom 300 000 og 450 000 kroner i året. Livsstilen som fremstilles som normal på sosiale medier krever mange ganger det, typisk finansiert av arvet formue, gjeld eller en karriere bygget på å fremføre livsstilen for et publikum.</string>
+    <string name="tidbits_general_24">Algoritmene viser deg ikke representative mennesker. De viser deg folk valgt for visuell effekt, på sitt mest forberedte, i sitt beste lys, filtrert, retusjert og ofte kirurgisk endret. Referansepunktet ditt for hvordan et vanlig attraktivt menneske ser ut, er rekalibrert av årevis med eksponering for den øverste brøkdelen av en prosent.</string>
+    <string name="tidbits_general_25">Innhold som gjør menn sinte på kvinner og innhold som gjør kvinner sinte på menn gir identiske engasjementssignaler. Raseri mot det andre kjønnet sprer seg raskere enn nesten alle andre innholdskategorier på alle store plattformer. Konflikten er produktet.</string>
+    <string name="tidbits_general_26">Algoritmen viser deg ikke representative mennesker. Den viser deg de mest ekstreme, mest provoserende eksemplene fordi de skaper mest reaksjon. Begge grupper får se en karikatur av den andre.</string>
+    <string name="tidbits_general_27">De fleste politiske spørsmål har mer enn to sammenhengende posisjoner. Sosiale medier presser dem sammen til binære konfliktpar fordi konflikt mellom to sider gir mer engasjement enn et nyansert spekter.</string>
+    <string name="tidbits_general_28">Forskning på politiske innholdsalgoritmer viser konsekvent en kaninhull-effekt: brukere får servert innhold som er litt mer ekstremt enn det de nettopp så. Over måneder ender noen som startet med mainstream-innhold langt utenfor det — ikke fordi de oppsøkte det, men fordi hvert steg føltes som en liten fortsettelse av det forrige.</string>
+    <string name="tidbits_general_29">Blått lys fra skjermer hemmer melatoninproduksjonen og utsetter innsovning med opptil 90 minutter. Dette er en målt hormonell effekt, ikke en metafor.</string>
+    <string name="tidbits_general_30">Søvnmangel svekker prefrontal cortex — samme region som står for impulskontroll og evnen til å la være å åpne appen i utgangspunktet. Sen kveldsbruk gjør neste dags bruk vanskeligere å motstå.</string>
+    <string name="tidbits_general_31">«Like»-knappen het opprinnelig «awesome»-knappen hos Facebook. Den ble omdøpt fordi «like» er mer tvetydig — folk liker ting de ikke støtter, noe som øker signalvolumet og holder deg sjekkende.</string>
+    <string name="tidbits_general_32">Snapchat-streaks har ingen verdi. De er en kunstig sosial forpliktelse — en daglig tvungen handling utkledd som en vennskapsfunksjon.</string>
 
-        <!-- Foreldredistraksjon -->
-        <item>I still face-eksperimentet blir spedbarn synlig stresset i løpet av øyeblikk når forelderens ansikt slutter å respondere. Et spedbarn kan ikke skille mellom en forelder hvis ansikt har stivnet og en forelder som ser ned i en telefon.</item>
-        <item>Forskere har et ord for telefoner som avbryter samspillet mellom forelder og barn: technoference. Varselet som trakk blikket ditt bort, ble tidsbestemt av en modell som optimaliserer gjenengasjementet ditt. Modellen vet ikke at du så på barnet ditt.</item>
-        <item>I en kontrollert studie lærte småbarn et nytt ord av en forelder — men bare når ingen telefonsamtale avbrøt dem. Språk vokser når barn og voksen svarer hverandre etter tur, og en avbrutt tur lærer barnet ingenting av.</item>
-        <item>Spedbarn utvikler seg gjennom «serve and return»: barnet signaliserer, den voksne svarer. Omsorgspersoner oppslukt av en telefon svarer på færre av disse initiativene — og mer irritert på dem som trenger gjennom.</item>
-        <item>Gjensidig blikkontakt mellom en voksen og et spedbarn synkroniserer målbart hjernebølgene deres — en kobling som støtter tidlig kommunikasjon og læring. Ingen app-metrikk registrerer hva varselet avbrøt.</item>
-        <item>Modellen som kjemper om oppmerksomheten din, har ingen kategori for hva den trekker deg bort fra. For den er tiden du bruker på å se på barnet ditt, bare oppmerksomhet den ennå ikke har fanget.</item>
-    </string-array>
+    <!-- Foreldredistraksjon -->
+    <string name="tidbits_general_33">I still face-eksperimentet blir spedbarn synlig stresset i løpet av øyeblikk når forelderens ansikt slutter å respondere. Et spedbarn kan ikke skille mellom en forelder hvis ansikt har stivnet og en forelder som ser ned i en telefon.</string>
+    <string name="tidbits_general_34">Forskere har et ord for telefoner som avbryter samspillet mellom forelder og barn: technoference. Varselet som trakk blikket ditt bort, ble tidsbestemt av en modell som optimaliserer gjenengasjementet ditt. Modellen vet ikke at du så på barnet ditt.</string>
+    <string name="tidbits_general_35">I en kontrollert studie lærte småbarn et nytt ord av en forelder — men bare når ingen telefonsamtale avbrøt dem. Språk vokser når barn og voksen svarer hverandre etter tur, og en avbrutt tur lærer barnet ingenting av.</string>
+    <string name="tidbits_general_36">Spedbarn utvikler seg gjennom «serve and return»: barnet signaliserer, den voksne svarer. Omsorgspersoner oppslukt av en telefon svarer på færre av disse initiativene — og mer irritert på dem som trenger gjennom.</string>
+    <string name="tidbits_general_37">Gjensidig blikkontakt mellom en voksen og et spedbarn synkroniserer målbart hjernebølgene deres — en kobling som støtter tidlig kommunikasjon og læring. Ingen app-metrikk registrerer hva varselet avbrøt.</string>
+    <string name="tidbits_general_38">Modellen som kjemper om oppmerksomheten din, har ingen kategori for hva den trekker deg bort fra. For den er tiden du bruker på å se på barnet ditt, bare oppmerksomhet den ennå ikke har fanget.</string>
 
     <!-- ════════ SOCIAL TRACK ════════ -->
-    <string-array name="tidbits_social">
-        <item>Dra-for-å-oppdatere ble bevisst modellert etter spaken på en spilleautomat. Den korte forsinkelsen før innholdet lastes er konstruert spenning, ikke treg lasting.</item>
-        <item>Uendelig skrolling ble oppfunnet av Aza Raskin i 2006. Han har offentlig kalt det en feil og anslår at det koster menneskeheten 200 000 timer oppmerksomhet per dag.</item>
-        <item>Uforutsigbarheten i hva som dukker opp i feeden din er selve funksjonen, ikke en bivirkning. Faste belønninger gir tilvenning. Variable belønninger gir tvang.</item>
-        <item>«Foreslåtte innlegg» dukker opp når du har tømt din egentlige sosiale feed, fordi en tom feed ville avsluttet økten. Det finnes ingen bunn.</item>
-        <item>Instagrams varselmerke er rødt fordi rødt fanger ufrivillig oppmerksomhet raskere enn noen annen farge i det synlige spekteret. Dette ble testet og valgt med vilje.</item>
-        <item>Autoavspilling starter før du bevisst har bestemt deg for å se. Bevegelse er en førbevisst oppmerksomhetstrigger; beslutningen om å se skjer etter at oppmerksomheten din allerede er fanget.</item>
-        <item>Instagram, TikTok og Snapchat er ikke sosiale apper. De er annonseplattformer. Hvert minutt du bruker i appen er varelager solgt til merkevarer. Oppmerksomheten din er produktet.</item>
-        <item>«Like»-telleren ble skjult fra offentligheten i 2019 etter at intern forskning viste at den skadet psykisk helse. Den ble gjeninnført da engasjementstallene falt. Forskningen endret seg ikke; forretningsbeslutningen gjorde det.</item>
-        <item>Instagram Stories utløper etter 24 timer. Det er ikke en teknisk begrensning. Det er en designet hastverksmekanisme — en nedtellingsklokke på sosial deltakelse.</item>
-        <item>Snapchat-streaks våpengjør FOMO ved å feste en daglig sosial forpliktelse til vennskap. Å gå glipp av en dag føles som å svikte forholdet. Forholdet er til et app-tall.</item>
-        <item>Gjentatt aktivering av dopaminbanen med samme stimulus gir sensitivisering (suget blir sterkere) og samtidig desensitivisering (gleden blir svakere).</item>
-        <item>Prefrontal cortex står for impulskontroll, langsiktig planlegging og evnen til å si nei. Kronisk tvangsmessig telefonbruk er assosiert med målbare reduksjoner i grå substans i prefrontal cortex.</item>
-        <item>Hver gang du åpner denne appen av kjedsomhet, forsterkes nervebanen som kobler kjedsomhet → telefon → app. Atferden blir mer automatisk over tid, ikke mindre, uten bevisst avbrytelse.</item>
-        <item>Dopamin er ikke et nytelsesstoff. Det er et forventningsstoff — det topper seg før belønningen, ikke under. Det er derfor skrolling føles tvingende selv når innholdet ikke er bra.</item>
-        <item>Dopamin fra å fullføre noe vanskelig varer i timevis. Dopamin fra et varsel topper seg på sekunder og faller under grunnivået når det forsvinner.</item>
-        <item>Gjennomsnittshøyden for menn i Vest-Europa er 178 cm. Færre enn 15 % av menn er 183 cm eller høyere. Mannskroppen som fremstilles som normal på sosiale medier krever en høyde det overveldende flertallet av menn aldri vil ha, uansett hva de gjør.</item>
-        <item>Skjønnhetsstandardene kvinner møter på sosiale medier krever en kombinasjon av genetikk, penger, tid, profesjonell hjelp og bilderedigering som ikke er tilgjengelig for folk flest og ikke oppgis ærlig.</item>
-        <item>Mannsfysikken som fremstilles som oppnåelig gjennom treningsinnhold, innebærer ofte farmakologisk hjelp som ikke nevnes.</item>
-        <item>Apper sender ikke varsler når ting skjer. De sender varsler når modellene deres forutsier at du mest sannsynlig åpner appen.</item>
-        <item>Det røde merket på et appikon skaper en åpen løkke i arbeidsminnet. Mennesker er skrudd sammen for å lukke åpne løkker. Merket utnytter dette uten kostnad for appen.</item>
-        <item>Sosiale medieselskaper kjenner sine beste engasjementstimer. Innholdet du får servert klokka 23 er optimalisert for å holde deg våken, ikke for å runde av.</item>
-        <item>Søvnmangel svekker prefrontal cortex — samme region som står for evnen til å la være å åpne appen i utgangspunktet.</item>
-        <item>Instagram viser deg hvem som har sett Storyen din i en bestemt rekkefølge, optimalisert for å få deg til å sjekke igjen om en bestemt person har sett den ennå.</item>
-        <item>«Like»-knappen het opprinnelig «awesome»-knappen hos Facebook. Den ble omdøpt fordi «like» er mer tvetydig — folk liker ting de ikke støtter, noe som øker signalvolumet og holder deg sjekkende.</item>
+    <!-- tidbits_social (array items, in order) -->
+    <string name="tidbits_social_0">Dra-for-å-oppdatere ble bevisst modellert etter spaken på en spilleautomat. Den korte forsinkelsen før innholdet lastes er konstruert spenning, ikke treg lasting.</string>
+    <string name="tidbits_social_1">Uendelig skrolling ble oppfunnet av Aza Raskin i 2006. Han har offentlig kalt det en feil og anslår at det koster menneskeheten 200 000 timer oppmerksomhet per dag.</string>
+    <string name="tidbits_social_2">Uforutsigbarheten i hva som dukker opp i feeden din er selve funksjonen, ikke en bivirkning. Faste belønninger gir tilvenning. Variable belønninger gir tvang.</string>
+    <string name="tidbits_social_3">«Foreslåtte innlegg» dukker opp når du har tømt din egentlige sosiale feed, fordi en tom feed ville avsluttet økten. Det finnes ingen bunn.</string>
+    <string name="tidbits_social_4">Instagrams varselmerke er rødt fordi rødt fanger ufrivillig oppmerksomhet raskere enn noen annen farge i det synlige spekteret. Dette ble testet og valgt med vilje.</string>
+    <string name="tidbits_social_5">Autoavspilling starter før du bevisst har bestemt deg for å se. Bevegelse er en førbevisst oppmerksomhetstrigger; beslutningen om å se skjer etter at oppmerksomheten din allerede er fanget.</string>
+    <string name="tidbits_social_6">Instagram, TikTok og Snapchat er ikke sosiale apper. De er annonseplattformer. Hvert minutt du bruker i appen er varelager solgt til merkevarer. Oppmerksomheten din er produktet.</string>
+    <string name="tidbits_social_7">«Like»-telleren ble skjult fra offentligheten i 2019 etter at intern forskning viste at den skadet psykisk helse. Den ble gjeninnført da engasjementstallene falt. Forskningen endret seg ikke; forretningsbeslutningen gjorde det.</string>
+    <string name="tidbits_social_8">Instagram Stories utløper etter 24 timer. Det er ikke en teknisk begrensning. Det er en designet hastverksmekanisme — en nedtellingsklokke på sosial deltakelse.</string>
+    <string name="tidbits_social_9">Snapchat-streaks våpengjør FOMO ved å feste en daglig sosial forpliktelse til vennskap. Å gå glipp av en dag føles som å svikte forholdet. Forholdet er til et app-tall.</string>
+    <string name="tidbits_social_10">Gjentatt aktivering av dopaminbanen med samme stimulus gir sensitivisering (suget blir sterkere) og samtidig desensitivisering (gleden blir svakere).</string>
+    <string name="tidbits_social_11">Prefrontal cortex står for impulskontroll, langsiktig planlegging og evnen til å si nei. Kronisk tvangsmessig telefonbruk er assosiert med målbare reduksjoner i grå substans i prefrontal cortex.</string>
+    <string name="tidbits_social_12">Hver gang du åpner denne appen av kjedsomhet, forsterkes nervebanen som kobler kjedsomhet → telefon → app. Atferden blir mer automatisk over tid, ikke mindre, uten bevisst avbrytelse.</string>
+    <string name="tidbits_social_13">Dopamin er ikke et nytelsesstoff. Det er et forventningsstoff — det topper seg før belønningen, ikke under. Det er derfor skrolling føles tvingende selv når innholdet ikke er bra.</string>
+    <string name="tidbits_social_14">Dopamin fra å fullføre noe vanskelig varer i timevis. Dopamin fra et varsel topper seg på sekunder og faller under grunnivået når det forsvinner.</string>
+    <string name="tidbits_social_15">Gjennomsnittshøyden for menn i Vest-Europa er 178 cm. Færre enn 15 % av menn er 183 cm eller høyere. Mannskroppen som fremstilles som normal på sosiale medier krever en høyde det overveldende flertallet av menn aldri vil ha, uansett hva de gjør.</string>
+    <string name="tidbits_social_16">Skjønnhetsstandardene kvinner møter på sosiale medier krever en kombinasjon av genetikk, penger, tid, profesjonell hjelp og bilderedigering som ikke er tilgjengelig for folk flest og ikke oppgis ærlig.</string>
+    <string name="tidbits_social_17">Mannsfysikken som fremstilles som oppnåelig gjennom treningsinnhold, innebærer ofte farmakologisk hjelp som ikke nevnes.</string>
+    <string name="tidbits_social_18">Apper sender ikke varsler når ting skjer. De sender varsler når modellene deres forutsier at du mest sannsynlig åpner appen.</string>
+    <string name="tidbits_social_19">Det røde merket på et appikon skaper en åpen løkke i arbeidsminnet. Mennesker er skrudd sammen for å lukke åpne løkker. Merket utnytter dette uten kostnad for appen.</string>
+    <string name="tidbits_social_20">Sosiale medieselskaper kjenner sine beste engasjementstimer. Innholdet du får servert klokka 23 er optimalisert for å holde deg våken, ikke for å runde av.</string>
+    <string name="tidbits_social_21">Søvnmangel svekker prefrontal cortex — samme region som står for evnen til å la være å åpne appen i utgangspunktet.</string>
+    <string name="tidbits_social_22">Instagram viser deg hvem som har sett Storyen din i en bestemt rekkefølge, optimalisert for å få deg til å sjekke igjen om en bestemt person har sett den ennå.</string>
+    <string name="tidbits_social_23">«Like»-knappen het opprinnelig «awesome»-knappen hos Facebook. Den ble omdøpt fordi «like» er mer tvetydig — folk liker ting de ikke støtter, noe som øker signalvolumet og holder deg sjekkende.</string>
 
-        <!-- Foreldredistraksjon (delt med generelt spor) -->
-        <item>I still face-eksperimentet blir spedbarn synlig stresset i løpet av øyeblikk når forelderens ansikt slutter å respondere. Et spedbarn kan ikke skille mellom en forelder hvis ansikt har stivnet og en forelder som ser ned i en telefon.</item>
-        <item>Forskere har et ord for telefoner som avbryter samspillet mellom forelder og barn: technoference. Varselet som trakk blikket ditt bort, ble tidsbestemt av en modell som optimaliserer gjenengasjementet ditt. Modellen vet ikke at du så på barnet ditt.</item>
-        <item>I en kontrollert studie lærte småbarn et nytt ord av en forelder — men bare når ingen telefonsamtale avbrøt dem. Språk vokser når barn og voksen svarer hverandre etter tur, og en avbrutt tur lærer barnet ingenting av.</item>
-        <item>Modellen som kjemper om oppmerksomheten din, har ingen kategori for hva den trekker deg bort fra. For den er tiden du bruker på å se på barnet ditt, bare oppmerksomhet den ennå ikke har fanget.</item>
-    </string-array>
+    <!-- Foreldredistraksjon (delt med generelt spor) -->
+    <string name="tidbits_social_24">I still face-eksperimentet blir spedbarn synlig stresset i løpet av øyeblikk når forelderens ansikt slutter å respondere. Et spedbarn kan ikke skille mellom en forelder hvis ansikt har stivnet og en forelder som ser ned i en telefon.</string>
+    <string name="tidbits_social_25">Forskere har et ord for telefoner som avbryter samspillet mellom forelder og barn: technoference. Varselet som trakk blikket ditt bort, ble tidsbestemt av en modell som optimaliserer gjenengasjementet ditt. Modellen vet ikke at du så på barnet ditt.</string>
+    <string name="tidbits_social_26">I en kontrollert studie lærte småbarn et nytt ord av en forelder — men bare når ingen telefonsamtale avbrøt dem. Språk vokser når barn og voksen svarer hverandre etter tur, og en avbrutt tur lærer barnet ingenting av.</string>
+    <string name="tidbits_social_27">Modellen som kjemper om oppmerksomheten din, har ingen kategori for hva den trekker deg bort fra. For den er tiden du bruker på å se på barnet ditt, bare oppmerksomhet den ennå ikke har fanget.</string>
 
     <!-- ════════ ADULT TRACK ════════ -->
-    <string-array name="tidbits_adult">
-        <item>Coolidge-effekten er et reelt nevrologisk fenomen: seksuell opphisselse dempes av samme stimulus, men gjenopprettes av nyhet. Internettpornografi gir uendelig nyhet uten anstrengelse — en stimulus hjernen ikke utviklet seg for å møte og ikke har noe naturlig forsvar mot.</item>
-        <item>Pornografi er en superstimulus — en stimulus som overgår parameterne menneskets belønningssystem utviklet seg for å håndtere. Som mat konstruert for å treffe fett, salt og sukker samtidig, utløser den en respons langt sterkere enn noe den utviklet seg sammen med.</item>
-        <item>Mat har et stoppsignal: du blir mett. Alkohol har et stoppsignal: du besvimer eller blir kvalm. Pornografi har ikke noe tilsvarende fysiologisk stoppsignal. Metthet etter et måltid er en funksjon; det finnes ingen tilsvarende arkitektur for visuell seksuell stimulering.</item>
-        <item>DeltaFosB hoper seg opp i hjernens belønningskretser ved gjentatt pornografibruk, akkurat som ved annen tvangsmessig atferd. Det varer i ukevis etter at atferden stopper. Det driver følelsen av sug selv når den bevisste motivasjonen for å slutte er til stede.</item>
-        <item>PIED (pornoindusert erektil dysfunksjon) er et dokumentert klinisk fenomen hos menn uten andre risikofaktorer, også unge menn. Mekanismen er desensitivisering: gjentatt eksponering for superstimuli reduserer belønningssystemets følsomhet for normale stimuli.</item>
-        <item>Eskaleringsmønsteret i pornografikonsum er samme mekanisme som toleranse ved rusbruk: hjernen venner seg til en stimulus og krever nyhet for å skape samme respons. Hvordan sluttpunktet ser ut er forskjellig for alle; at retningen finnes, er ikke omdiskutert.</item>
-        <item>Prefrontal cortex fungerer normalt som en brems på impulser. Kronisk overstimulering av belønningssystemet svekker denne bremsen. Forskere kaller det hypofrontalitet. Det er derfor folk beskriver atferden som tvangsmessig selv når de bevisst vil slutte.</item>
-        <item>Om tvangsmessig pornografibruk oppfyller den kliniske definisjonen av avhengighet, er genuint omdiskutert. Den subjektive opplevelsen av tapt kontroll, eskalering og svekkede virkelige relasjoner er ikke omdiskutert. Merkelappen er det.</item>
-        <item>Noen studier finner ingen årsakssammenheng mellom pornografibruk og erektil dysfunksjon i laboratoriesettinger. Disse studiene måler typisk akutt opphisselsesrespons, ikke langsiktig tilvenning. Det metodiske gapet er reelt og verdt å kjenne til.</item>
-        <item>Forskning på tvangsmessig pornografibruk hos kvinner er vesentlig mindre utviklet enn forskningen på mannlige brukere, men studiene som finnes viser lignende eskaleringsmønstre, lignende desensitivisering og lignende rapporter om svekket seksuell tilfredshet i virkeligheten.</item>
-        <item>Kroppsstandardene for kvinnelige utøvere i mainstream-pornografi innebærer kirurgi, groomingnormer og fysiske konfigurasjoner som ikke er representative for spekteret av virkelige kropper. Dette påvirker kvinnelige seeres forhold til egen kropp og mannlige seeres forventninger til virkelige partnere — samtidig, i motsatte retninger, fra samme innhold.</item>
-        <item>Pornografi former de seksuelle forventningene mannlige partnere tar med seg inn i forhold, uavhengig av om kvinner selv ser på. Kvinner påvirkes av partnerens pornografibruk enten de er brukere selv eller ikke.</item>
-    </string-array>
+    <!-- tidbits_adult (array items, in order) -->
+    <string name="tidbits_adult_0">Coolidge-effekten er et reelt nevrologisk fenomen: seksuell opphisselse dempes av samme stimulus, men gjenopprettes av nyhet. Internettpornografi gir uendelig nyhet uten anstrengelse — en stimulus hjernen ikke utviklet seg for å møte og ikke har noe naturlig forsvar mot.</string>
+    <string name="tidbits_adult_1">Pornografi er en superstimulus — en stimulus som overgår parameterne menneskets belønningssystem utviklet seg for å håndtere. Som mat konstruert for å treffe fett, salt og sukker samtidig, utløser den en respons langt sterkere enn noe den utviklet seg sammen med.</string>
+    <string name="tidbits_adult_2">Mat har et stoppsignal: du blir mett. Alkohol har et stoppsignal: du besvimer eller blir kvalm. Pornografi har ikke noe tilsvarende fysiologisk stoppsignal. Metthet etter et måltid er en funksjon; det finnes ingen tilsvarende arkitektur for visuell seksuell stimulering.</string>
+    <string name="tidbits_adult_3">DeltaFosB hoper seg opp i hjernens belønningskretser ved gjentatt pornografibruk, akkurat som ved annen tvangsmessig atferd. Det varer i ukevis etter at atferden stopper. Det driver følelsen av sug selv når den bevisste motivasjonen for å slutte er til stede.</string>
+    <string name="tidbits_adult_4">PIED (pornoindusert erektil dysfunksjon) er et dokumentert klinisk fenomen hos menn uten andre risikofaktorer, også unge menn. Mekanismen er desensitivisering: gjentatt eksponering for superstimuli reduserer belønningssystemets følsomhet for normale stimuli.</string>
+    <string name="tidbits_adult_5">Eskaleringsmønsteret i pornografikonsum er samme mekanisme som toleranse ved rusbruk: hjernen venner seg til en stimulus og krever nyhet for å skape samme respons. Hvordan sluttpunktet ser ut er forskjellig for alle; at retningen finnes, er ikke omdiskutert.</string>
+    <string name="tidbits_adult_6">Prefrontal cortex fungerer normalt som en brems på impulser. Kronisk overstimulering av belønningssystemet svekker denne bremsen. Forskere kaller det hypofrontalitet. Det er derfor folk beskriver atferden som tvangsmessig selv når de bevisst vil slutte.</string>
+    <string name="tidbits_adult_7">Om tvangsmessig pornografibruk oppfyller den kliniske definisjonen av avhengighet, er genuint omdiskutert. Den subjektive opplevelsen av tapt kontroll, eskalering og svekkede virkelige relasjoner er ikke omdiskutert. Merkelappen er det.</string>
+    <string name="tidbits_adult_8">Noen studier finner ingen årsakssammenheng mellom pornografibruk og erektil dysfunksjon i laboratoriesettinger. Disse studiene måler typisk akutt opphisselsesrespons, ikke langsiktig tilvenning. Det metodiske gapet er reelt og verdt å kjenne til.</string>
+    <string name="tidbits_adult_9">Forskning på tvangsmessig pornografibruk hos kvinner er vesentlig mindre utviklet enn forskningen på mannlige brukere, men studiene som finnes viser lignende eskaleringsmønstre, lignende desensitivisering og lignende rapporter om svekket seksuell tilfredshet i virkeligheten.</string>
+    <string name="tidbits_adult_10">Kroppsstandardene for kvinnelige utøvere i mainstream-pornografi innebærer kirurgi, groomingnormer og fysiske konfigurasjoner som ikke er representative for spekteret av virkelige kropper. Dette påvirker kvinnelige seeres forhold til egen kropp og mannlige seeres forventninger til virkelige partnere — samtidig, i motsatte retninger, fra samme innhold.</string>
+    <string name="tidbits_adult_11">Pornografi former de seksuelle forventningene mannlige partnere tar med seg inn i forhold, uavhengig av om kvinner selv ser på. Kvinner påvirkes av partnerens pornografibruk enten de er brukere selv eller ikke.</string>
 
     <!-- ════════ GATE ESCALATION LADDERS ════════
          Korte, sigarett-advarsel-aktige linjer på selve porten. Ordnet mildest →
@@ -108,248 +105,207 @@
          nivåsettene like lange (12), hardeste linjer på nivå 11. -->
 
     <!-- ── GENERAL-nivåer ── -->
-    <string-array name="tidbits_general_lvl0">
-        <item>Denne appen er laget for å være vanskelig å legge fra seg.</item>
-        <item>Den er designet for å holde deg lenger enn du planla.</item>
-        <item>Å bli er standard her; å gå krever innsats.</item>
-    </string-array>
-    <string-array name="tidbits_general_lvl1">
-        <item>Dra-for-å-oppdatere er spaken på en spilleautomat.</item>
-        <item>Den lille forsinkelsen før den laster er konstruert spenning.</item>
-        <item>Oppdatering utbetaler på variabel plan, som en spilleautomat.</item>
-    </string-array>
-    <string-array name="tidbits_general_lvl2">
-        <item>Hver tomgangsåpning graver vanen dypere.</item>
-        <item>Hvert kjede-tapp styrker refleksen om å ta telefonen.</item>
-        <item>Å åpne uten grunn trener deg til å åpne uten grunn.</item>
-    </string-array>
-    <string-array name="tidbits_general_lvl3">
-        <item>Du åpnet den igjen uten å bestemme deg for det.</item>
-        <item>Hånden din var her før viljen din.</item>
-        <item>Den åpningen var ikke et valg; den var en refleks.</item>
-    </string-array>
-    <string-array name="tidbits_general_lvl4">
-        <item>Dette er autopilot nå, ikke vilje.</item>
-        <item>Du kjører et manus du ikke skrev.</item>
-        <item>Beslutningen om å åpne sluttet å være en beslutning.</item>
-    </string-array>
-    <string-array name="tidbits_general_lvl5">
-        <item>Gleden avtar; suget vokser.</item>
-        <item>Du føler det mindre hver gang, og vil ha det mer.</item>
-        <item>Avtagende utbytte, økende sug — det er fella.</item>
-    </string-array>
-    <string-array name="tidbits_general_lvl6">
-        <item>Du bruker oppmerksomhet du mente å beholde.</item>
-        <item>Fokuset du trengte i dag lekker ut her.</item>
-        <item>Dette tapper oppmerksomhet du ikke kan fylle på.</item>
-    </string-array>
-    <string-array name="tidbits_general_lvl7">
-        <item>Dette er en løkke nå, og løkker strammer seg.</item>
-        <item>Hver runde gjør neste runde lettere og raskere.</item>
-        <item>Kretsen blir kortere hver gang.</item>
-    </string-array>
-    <string-array name="tidbits_general_lvl8">
-        <item>Du strekker deg etter den i hvert tomme sekund.</item>
-        <item>Enhver pause, og hånden finner denne.</item>
-        <item>Stillhet føles nå som et signal om å åpne.</item>
-    </string-array>
-    <string-array name="tidbits_general_lvl9">
-        <item>Den spiser dagen din i små, umerkelige biter.</item>
-        <item>Minutter forsvinner her uten å etterlate et minne.</item>
-        <item>Legg sammen disse åpningene, og det er timer.</item>
-    </string-array>
-    <string-array name="tidbits_general_lvl10">
-        <item>Du har sluttet å velge. Refleksen valgte.</item>
-        <item>Det er ingen beslutning igjen i dette, bare vane.</item>
-        <item>Du bestemte ikke å være her; mønsteret gjorde det.</item>
-    </string-array>
-    <string-array name="tidbits_general_lvl11">
-        <item>Dette er oppførselen til en avhengighet, rett og slett.</item>
-        <item>Etter alle mål som betyr noe, er dette avhengighet.</item>
-        <item>Kall det det det er: du har ikke kontroll her.</item>
-    </string-array>
+    <!-- tidbits_general_lvl0 (array items, in order) -->
+    <string name="tidbits_general_lvl0_0">Denne appen er laget for å være vanskelig å legge fra seg.</string>
+    <string name="tidbits_general_lvl0_1">Den er designet for å holde deg lenger enn du planla.</string>
+    <string name="tidbits_general_lvl0_2">Å bli er standard her; å gå krever innsats.</string>
+    <!-- tidbits_general_lvl1 (array items, in order) -->
+    <string name="tidbits_general_lvl1_0">Dra-for-å-oppdatere er spaken på en spilleautomat.</string>
+    <string name="tidbits_general_lvl1_1">Den lille forsinkelsen før den laster er konstruert spenning.</string>
+    <string name="tidbits_general_lvl1_2">Oppdatering utbetaler på variabel plan, som en spilleautomat.</string>
+    <!-- tidbits_general_lvl2 (array items, in order) -->
+    <string name="tidbits_general_lvl2_0">Hver tomgangsåpning graver vanen dypere.</string>
+    <string name="tidbits_general_lvl2_1">Hvert kjede-tapp styrker refleksen om å ta telefonen.</string>
+    <string name="tidbits_general_lvl2_2">Å åpne uten grunn trener deg til å åpne uten grunn.</string>
+    <!-- tidbits_general_lvl3 (array items, in order) -->
+    <string name="tidbits_general_lvl3_0">Du åpnet den igjen uten å bestemme deg for det.</string>
+    <string name="tidbits_general_lvl3_1">Hånden din var her før viljen din.</string>
+    <string name="tidbits_general_lvl3_2">Den åpningen var ikke et valg; den var en refleks.</string>
+    <!-- tidbits_general_lvl4 (array items, in order) -->
+    <string name="tidbits_general_lvl4_0">Dette er autopilot nå, ikke vilje.</string>
+    <string name="tidbits_general_lvl4_1">Du kjører et manus du ikke skrev.</string>
+    <string name="tidbits_general_lvl4_2">Beslutningen om å åpne sluttet å være en beslutning.</string>
+    <!-- tidbits_general_lvl5 (array items, in order) -->
+    <string name="tidbits_general_lvl5_0">Gleden avtar; suget vokser.</string>
+    <string name="tidbits_general_lvl5_1">Du føler det mindre hver gang, og vil ha det mer.</string>
+    <string name="tidbits_general_lvl5_2">Avtagende utbytte, økende sug — det er fella.</string>
+    <!-- tidbits_general_lvl6 (array items, in order) -->
+    <string name="tidbits_general_lvl6_0">Du bruker oppmerksomhet du mente å beholde.</string>
+    <string name="tidbits_general_lvl6_1">Fokuset du trengte i dag lekker ut her.</string>
+    <string name="tidbits_general_lvl6_2">Dette tapper oppmerksomhet du ikke kan fylle på.</string>
+    <!-- tidbits_general_lvl7 (array items, in order) -->
+    <string name="tidbits_general_lvl7_0">Dette er en løkke nå, og løkker strammer seg.</string>
+    <string name="tidbits_general_lvl7_1">Hver runde gjør neste runde lettere og raskere.</string>
+    <string name="tidbits_general_lvl7_2">Kretsen blir kortere hver gang.</string>
+    <!-- tidbits_general_lvl8 (array items, in order) -->
+    <string name="tidbits_general_lvl8_0">Du strekker deg etter den i hvert tomme sekund.</string>
+    <string name="tidbits_general_lvl8_1">Enhver pause, og hånden finner denne.</string>
+    <string name="tidbits_general_lvl8_2">Stillhet føles nå som et signal om å åpne.</string>
+    <!-- tidbits_general_lvl9 (array items, in order) -->
+    <string name="tidbits_general_lvl9_0">Den spiser dagen din i små, umerkelige biter.</string>
+    <string name="tidbits_general_lvl9_1">Minutter forsvinner her uten å etterlate et minne.</string>
+    <string name="tidbits_general_lvl9_2">Legg sammen disse åpningene, og det er timer.</string>
+    <!-- tidbits_general_lvl10 (array items, in order) -->
+    <string name="tidbits_general_lvl10_0">Du har sluttet å velge. Refleksen valgte.</string>
+    <string name="tidbits_general_lvl10_1">Det er ingen beslutning igjen i dette, bare vane.</string>
+    <string name="tidbits_general_lvl10_2">Du bestemte ikke å være her; mønsteret gjorde det.</string>
+    <!-- tidbits_general_lvl11 (array items, in order) -->
+    <string name="tidbits_general_lvl11_0">Dette er oppførselen til en avhengighet, rett og slett.</string>
+    <string name="tidbits_general_lvl11_1">Etter alle mål som betyr noe, er dette avhengighet.</string>
+    <string name="tidbits_general_lvl11_2">Kall det det det er: du har ikke kontroll her.</string>
 
     <!-- ── SOCIAL-nivåer ── -->
-    <string-array name="tidbits_social_lvl0">
-        <item>Laget for å være vanskelig å legge fra seg.</item>
-        <item>Designet for å holde deg skrollende forbi der du mente å stoppe.</item>
-        <item>Å gå tidlig er det ene den er bygd for å hindre.</item>
-    </string-array>
-    <string-array name="tidbits_social_lvl1">
-        <item>Uendelig skrolling har ingen bunn, med vilje.</item>
-        <item>Det finnes ingen sluttskjerm, for en slutt ville frigjort deg.</item>
-        <item>Feeden fylles for alltid så økten aldri må avsluttes.</item>
-    </string-array>
-    <string-array name="tidbits_social_lvl2">
-        <item>Hver åpning er et nytt trekk i samme spak.</item>
-        <item>Hver oppstart er nok et spinn for samme gevinst.</item>
-        <item>Du mater mynter i den samme maskinen.</item>
-    </string-array>
-    <string-array name="tidbits_social_lvl3">
-        <item>Du er tilbake igjen. Appen regnet med det.</item>
-        <item>Den forutså denne åpningen, og den hadde rett.</item>
-        <item>Returen din er et tall på noens dashbord.</item>
-    </string-array>
-    <string-array name="tidbits_social_lvl4">
-        <item>Dette er en vane nå, ikke et valg.</item>
-        <item>Du planla ikke denne åpningen; vanen gjorde det.</item>
-        <item>Valget forlot dette for en stund siden.</item>
-    </string-array>
-    <string-array name="tidbits_social_lvl5">
-        <item>Du sjekker mer enn du lever.</item>
-        <item>Mer av dagen din går til å se på enn å gjøre.</item>
-        <item>Skrollingen har begynt å veie tyngre enn livet.</item>
-    </string-array>
-    <string-array name="tidbits_social_lvl6">
-        <item>Dette er tvangsmessig, og appen har designet det.</item>
-        <item>Suget du kjenner ble designet med vilje.</item>
-        <item>Den trangen er ikke din; den ble produsert.</item>
-    </string-array>
-    <string-array name="tidbits_social_lvl7">
-        <item>Du strekker deg etter den før du merker at du kjeder deg.</item>
-        <item>Kjedsomhet hopper nå rett til dette.</item>
-        <item>Gapet mellom følelse og åpning er borte.</item>
-    </string-array>
-    <string-array name="tidbits_social_lvl8">
-        <item>Du er produktet, og du er på salg hele dagen.</item>
-        <item>Oppmerksomheten din er varelageret som selges akkurat nå.</item>
-        <item>Hvert minutt her auksjoneres til en annonsør.</item>
-    </string-array>
-    <string-array name="tidbits_social_lvl9">
-        <item>Du bruker dette som en parasosial erstatning. Ring en venn.</item>
-        <item>Fremmede på en skjerm er ikke selskapet du trenger. Ring noen.</item>
-        <item>Dette erstatter ekte kontakt. Ta kontakt med et ekte menneske.</item>
-    </string-array>
-    <string-array name="tidbits_social_lvl10">
-        <item>Du har sluttet å bestemme. Løkka bestemmer.</item>
-        <item>Løkka styrer deg nå, ikke omvendt.</item>
-        <item>Det finnes ingen sjåfør her lenger, bare løkka.</item>
-    </string-array>
-    <string-array name="tidbits_social_lvl11">
-        <item>Var dette en sigarett, ville du vært kjederøyker.</item>
-        <item>Bytt feeden med sigaretter, og du tenner den neste på den forrige.</item>
-        <item>I sigarett-termer legger du den aldri fra deg i dette tempoet.</item>
-    </string-array>
+    <!-- tidbits_social_lvl0 (array items, in order) -->
+    <string name="tidbits_social_lvl0_0">Laget for å være vanskelig å legge fra seg.</string>
+    <string name="tidbits_social_lvl0_1">Designet for å holde deg skrollende forbi der du mente å stoppe.</string>
+    <string name="tidbits_social_lvl0_2">Å gå tidlig er det ene den er bygd for å hindre.</string>
+    <!-- tidbits_social_lvl1 (array items, in order) -->
+    <string name="tidbits_social_lvl1_0">Uendelig skrolling har ingen bunn, med vilje.</string>
+    <string name="tidbits_social_lvl1_1">Det finnes ingen sluttskjerm, for en slutt ville frigjort deg.</string>
+    <string name="tidbits_social_lvl1_2">Feeden fylles for alltid så økten aldri må avsluttes.</string>
+    <!-- tidbits_social_lvl2 (array items, in order) -->
+    <string name="tidbits_social_lvl2_0">Hver åpning er et nytt trekk i samme spak.</string>
+    <string name="tidbits_social_lvl2_1">Hver oppstart er nok et spinn for samme gevinst.</string>
+    <string name="tidbits_social_lvl2_2">Du mater mynter i den samme maskinen.</string>
+    <!-- tidbits_social_lvl3 (array items, in order) -->
+    <string name="tidbits_social_lvl3_0">Du er tilbake igjen. Appen regnet med det.</string>
+    <string name="tidbits_social_lvl3_1">Den forutså denne åpningen, og den hadde rett.</string>
+    <string name="tidbits_social_lvl3_2">Returen din er et tall på noens dashbord.</string>
+    <!-- tidbits_social_lvl4 (array items, in order) -->
+    <string name="tidbits_social_lvl4_0">Dette er en vane nå, ikke et valg.</string>
+    <string name="tidbits_social_lvl4_1">Du planla ikke denne åpningen; vanen gjorde det.</string>
+    <string name="tidbits_social_lvl4_2">Valget forlot dette for en stund siden.</string>
+    <!-- tidbits_social_lvl5 (array items, in order) -->
+    <string name="tidbits_social_lvl5_0">Du sjekker mer enn du lever.</string>
+    <string name="tidbits_social_lvl5_1">Mer av dagen din går til å se på enn å gjøre.</string>
+    <string name="tidbits_social_lvl5_2">Skrollingen har begynt å veie tyngre enn livet.</string>
+    <!-- tidbits_social_lvl6 (array items, in order) -->
+    <string name="tidbits_social_lvl6_0">Dette er tvangsmessig, og appen har designet det.</string>
+    <string name="tidbits_social_lvl6_1">Suget du kjenner ble designet med vilje.</string>
+    <string name="tidbits_social_lvl6_2">Den trangen er ikke din; den ble produsert.</string>
+    <!-- tidbits_social_lvl7 (array items, in order) -->
+    <string name="tidbits_social_lvl7_0">Du strekker deg etter den før du merker at du kjeder deg.</string>
+    <string name="tidbits_social_lvl7_1">Kjedsomhet hopper nå rett til dette.</string>
+    <string name="tidbits_social_lvl7_2">Gapet mellom følelse og åpning er borte.</string>
+    <!-- tidbits_social_lvl8 (array items, in order) -->
+    <string name="tidbits_social_lvl8_0">Du er produktet, og du er på salg hele dagen.</string>
+    <string name="tidbits_social_lvl8_1">Oppmerksomheten din er varelageret som selges akkurat nå.</string>
+    <string name="tidbits_social_lvl8_2">Hvert minutt her auksjoneres til en annonsør.</string>
+    <!-- tidbits_social_lvl9 (array items, in order) -->
+    <string name="tidbits_social_lvl9_0">Du bruker dette som en parasosial erstatning. Ring en venn.</string>
+    <string name="tidbits_social_lvl9_1">Fremmede på en skjerm er ikke selskapet du trenger. Ring noen.</string>
+    <string name="tidbits_social_lvl9_2">Dette erstatter ekte kontakt. Ta kontakt med et ekte menneske.</string>
+    <!-- tidbits_social_lvl10 (array items, in order) -->
+    <string name="tidbits_social_lvl10_0">Du har sluttet å bestemme. Løkka bestemmer.</string>
+    <string name="tidbits_social_lvl10_1">Løkka styrer deg nå, ikke omvendt.</string>
+    <string name="tidbits_social_lvl10_2">Det finnes ingen sjåfør her lenger, bare løkka.</string>
+    <!-- tidbits_social_lvl11 (array items, in order) -->
+    <string name="tidbits_social_lvl11_0">Var dette en sigarett, ville du vært kjederøyker.</string>
+    <string name="tidbits_social_lvl11_1">Bytt feeden med sigaretter, og du tenner den neste på den forrige.</string>
+    <string name="tidbits_social_lvl11_2">I sigarett-termer legger du den aldri fra deg i dette tempoet.</string>
 
     <!-- ── ADULT-nivåer ── -->
-    <string-array name="tidbits_adult_lvl0">
-        <item>Dette er en superstimulus hjernen din ikke kan forsvare seg mot.</item>
-        <item>Belønningssystemet ditt utviklet seg aldri for noe så sterkt.</item>
-        <item>Dette overgår alle naturlige signaler hjernen din ble bygd for.</item>
-    </string-array>
-    <string-array name="tidbits_adult_lvl1">
-        <item>Nyhet er uendelig her; belønningssystemet ditt er det ikke.</item>
-        <item>Endeløst nytt er nettopp det hjernen ikke kan venne seg til trygt.</item>
-        <item>Ubegrenset nyhet er det ene opphisselse ikke kan slå av.</item>
-    </string-array>
-    <string-array name="tidbits_adult_lvl2">
-        <item>Hvert besøk hever listen for det neste.</item>
-        <item>Det som funker i dag vil føles flatt i morgen.</item>
-        <item>Hver økt setter grunnlinjen høyere.</item>
-    </string-array>
-    <string-array name="tidbits_adult_lvl3">
-        <item>Du er tilbake raskere enn sist. Det er mønsteret.</item>
-        <item>Gapet mellom besøk krymper. Det er tegnet.</item>
-        <item>Å komme tilbake raskere hver gang er slik dette utvikler seg.</item>
-    </string-array>
-    <string-array name="tidbits_adult_lvl4">
-        <item>Dette er eskalering — samme mekanisme som toleranse.</item>
-        <item>Du trenger mer eller nyere for å føle det samme. Det er toleranse.</item>
-        <item>Driften mot sterkere materiale er ikke tilfeldig; det er toleranse.</item>
-    </string-array>
-    <string-array name="tidbits_adult_lvl5">
-        <item>Det omkobler opphisselse mot en skjerm.</item>
-        <item>Opphisselsen din trenes til et pikselmønster.</item>
-        <item>En skjerm blir triggeren kroppen din svarer på.</item>
-    </string-array>
-    <string-array name="tidbits_adult_lvl6">
-        <item>Den desensitiviserer deg for en virkelig partner.</item>
-        <item>Et ekte menneske kan ikke konkurrere med uendelig nyhet — det er skaden.</item>
-        <item>Dette sløver responsen din på en faktisk partner.</item>
-    </string-array>
-    <string-array name="tidbits_adult_lvl7">
-        <item>Suget blir høyere; belønningen blir lavere.</item>
-        <item>Du vil ha det mer og nyter det mindre hver gang.</item>
-        <item>Økende sug, fallende belønning — avhengighetens signatur.</item>
-    </string-array>
-    <string-array name="tidbits_adult_lvl8">
-        <item>Dette er tvangsmessig bruk, per sin egen definisjon.</item>
-        <item>Å fortsette mot din egen vilje er definisjonen på tvangsmessig.</item>
-        <item>Du har sagt til deg selv at du skal slutte, og du er her — det er tvang.</item>
-    </string-array>
-    <string-array name="tidbits_adult_lvl9">
-        <item>PIED er dokumentert hos friske, unge menn — slik skjer det.</item>
-        <item>Pornoindusert ED dukker opp hos unge menn uten annen årsak. Dette er veien.</item>
-        <item>Mekanismen bak PIED er nettopp dette, gjentatt.</item>
-    </string-array>
-    <string-array name="tidbits_adult_lvl10">
-        <item>Du har sluttet å bestemme. Suget bestemmer.</item>
-        <item>Suget sitter i førersetet nå.</item>
-        <item>Det er ingen valg igjen i dette, bare draget.</item>
-    </string-array>
-    <string-array name="tidbits_adult_lvl11">
-        <item>Dette er en avhengighet som styrer deg, ikke en vane.</item>
-        <item>Forbi et visst punkt er det ikke en vane; det er avhengighet, og dette er forbi det.</item>
-        <item>Dette er ikke en preferanse lenger. Det er en avhengighet som styrer deg.</item>
-    </string-array>
+    <!-- tidbits_adult_lvl0 (array items, in order) -->
+    <string name="tidbits_adult_lvl0_0">Dette er en superstimulus hjernen din ikke kan forsvare seg mot.</string>
+    <string name="tidbits_adult_lvl0_1">Belønningssystemet ditt utviklet seg aldri for noe så sterkt.</string>
+    <string name="tidbits_adult_lvl0_2">Dette overgår alle naturlige signaler hjernen din ble bygd for.</string>
+    <!-- tidbits_adult_lvl1 (array items, in order) -->
+    <string name="tidbits_adult_lvl1_0">Nyhet er uendelig her; belønningssystemet ditt er det ikke.</string>
+    <string name="tidbits_adult_lvl1_1">Endeløst nytt er nettopp det hjernen ikke kan venne seg til trygt.</string>
+    <string name="tidbits_adult_lvl1_2">Ubegrenset nyhet er det ene opphisselse ikke kan slå av.</string>
+    <!-- tidbits_adult_lvl2 (array items, in order) -->
+    <string name="tidbits_adult_lvl2_0">Hvert besøk hever listen for det neste.</string>
+    <string name="tidbits_adult_lvl2_1">Det som funker i dag vil føles flatt i morgen.</string>
+    <string name="tidbits_adult_lvl2_2">Hver økt setter grunnlinjen høyere.</string>
+    <!-- tidbits_adult_lvl3 (array items, in order) -->
+    <string name="tidbits_adult_lvl3_0">Du er tilbake raskere enn sist. Det er mønsteret.</string>
+    <string name="tidbits_adult_lvl3_1">Gapet mellom besøk krymper. Det er tegnet.</string>
+    <string name="tidbits_adult_lvl3_2">Å komme tilbake raskere hver gang er slik dette utvikler seg.</string>
+    <!-- tidbits_adult_lvl4 (array items, in order) -->
+    <string name="tidbits_adult_lvl4_0">Dette er eskalering — samme mekanisme som toleranse.</string>
+    <string name="tidbits_adult_lvl4_1">Du trenger mer eller nyere for å føle det samme. Det er toleranse.</string>
+    <string name="tidbits_adult_lvl4_2">Driften mot sterkere materiale er ikke tilfeldig; det er toleranse.</string>
+    <!-- tidbits_adult_lvl5 (array items, in order) -->
+    <string name="tidbits_adult_lvl5_0">Det omkobler opphisselse mot en skjerm.</string>
+    <string name="tidbits_adult_lvl5_1">Opphisselsen din trenes til et pikselmønster.</string>
+    <string name="tidbits_adult_lvl5_2">En skjerm blir triggeren kroppen din svarer på.</string>
+    <!-- tidbits_adult_lvl6 (array items, in order) -->
+    <string name="tidbits_adult_lvl6_0">Den desensitiviserer deg for en virkelig partner.</string>
+    <string name="tidbits_adult_lvl6_1">Et ekte menneske kan ikke konkurrere med uendelig nyhet — det er skaden.</string>
+    <string name="tidbits_adult_lvl6_2">Dette sløver responsen din på en faktisk partner.</string>
+    <!-- tidbits_adult_lvl7 (array items, in order) -->
+    <string name="tidbits_adult_lvl7_0">Suget blir høyere; belønningen blir lavere.</string>
+    <string name="tidbits_adult_lvl7_1">Du vil ha det mer og nyter det mindre hver gang.</string>
+    <string name="tidbits_adult_lvl7_2">Økende sug, fallende belønning — avhengighetens signatur.</string>
+    <!-- tidbits_adult_lvl8 (array items, in order) -->
+    <string name="tidbits_adult_lvl8_0">Dette er tvangsmessig bruk, per sin egen definisjon.</string>
+    <string name="tidbits_adult_lvl8_1">Å fortsette mot din egen vilje er definisjonen på tvangsmessig.</string>
+    <string name="tidbits_adult_lvl8_2">Du har sagt til deg selv at du skal slutte, og du er her — det er tvang.</string>
+    <!-- tidbits_adult_lvl9 (array items, in order) -->
+    <string name="tidbits_adult_lvl9_0">PIED er dokumentert hos friske, unge menn — slik skjer det.</string>
+    <string name="tidbits_adult_lvl9_1">Pornoindusert ED dukker opp hos unge menn uten annen årsak. Dette er veien.</string>
+    <string name="tidbits_adult_lvl9_2">Mekanismen bak PIED er nettopp dette, gjentatt.</string>
+    <!-- tidbits_adult_lvl10 (array items, in order) -->
+    <string name="tidbits_adult_lvl10_0">Du har sluttet å bestemme. Suget bestemmer.</string>
+    <string name="tidbits_adult_lvl10_1">Suget sitter i førersetet nå.</string>
+    <string name="tidbits_adult_lvl10_2">Det er ingen valg igjen i dette, bare draget.</string>
+    <!-- tidbits_adult_lvl11 (array items, in order) -->
+    <string name="tidbits_adult_lvl11_0">Dette er en avhengighet som styrer deg, ikke en vane.</string>
+    <string name="tidbits_adult_lvl11_1">Forbi et visst punkt er det ikke en vane; det er avhengighet, og dette er forbi det.</string>
+    <string name="tidbits_adult_lvl11_2">Dette er ikke en preferanse lenger. Det er en avhengighet som styrer deg.</string>
 
     <!-- ════════ OFFLINE ACTIVITY PROMPTS ════════ -->
-    <string-array name="offline_prompts_movement">
-        <item>Ta en tur rundt kvartalet.</item>
-        <item>Reis deg og tøy i 30 sekunder.</item>
-        <item>Gjør 10 rolige knebøy.</item>
-        <item>Gå til kjøkkenet og drikk et glass vann.</item>
-        <item>Gå ut i 2 minutter. Bare stå der.</item>
-        <item>Gå til et annet rom uten grunn.</item>
-        <item>Stå på ett bein mens du teller til 20. Bytt.</item>
-        <item>Åpne ytterdøra og sjekk været med kroppen, ikke med en app.</item>
-        <item>Rull skuldrene ti ganger. Sakte.</item>
-        <item>Gå opp og ned trappa én gang, hvis du har trapp. Sakte går fint.</item>
-    </string-array>
+    <!-- offline_prompts_movement (array items, in order) -->
+    <string name="offline_prompts_movement_0">Ta en tur rundt kvartalet.</string>
+    <string name="offline_prompts_movement_1">Reis deg og tøy i 30 sekunder.</string>
+    <string name="offline_prompts_movement_2">Gjør 10 rolige knebøy.</string>
+    <string name="offline_prompts_movement_3">Gå til kjøkkenet og drikk et glass vann.</string>
+    <string name="offline_prompts_movement_4">Gå ut i 2 minutter. Bare stå der.</string>
+    <string name="offline_prompts_movement_5">Gå til et annet rom uten grunn.</string>
+    <string name="offline_prompts_movement_6">Stå på ett bein mens du teller til 20. Bytt.</string>
+    <string name="offline_prompts_movement_7">Åpne ytterdøra og sjekk været med kroppen, ikke med en app.</string>
+    <string name="offline_prompts_movement_8">Rull skuldrene ti ganger. Sakte.</string>
+    <string name="offline_prompts_movement_9">Gå opp og ned trappa én gang, hvis du har trapp. Sakte går fint.</string>
 
-    <string-array name="offline_prompts_space">
-        <item>Rydd stuebordet.</item>
-        <item>Legg én ting tilbake der den hører hjemme.</item>
-        <item>Kast én ting søppel du har ignorert.</item>
-        <item>Re opp senga (eller strekk på dyna).</item>
-        <item>Tørk av nærmeste overflate.</item>
-        <item>Legg telefonen med skjermen ned et annet sted enn der du pleier å ha den.</item>
-        <item>Heng opp ett plagg fra klesstolen.</item>
-        <item>Vann én plante som ser ut som den trenger det.</item>
-        <item>Rett opp skoene ved døra.</item>
-        <item>Rydd bort fem ting fra oppvaskstativet eller oppvaskmaskinen.</item>
-    </string-array>
+    <!-- offline_prompts_space (array items, in order) -->
+    <string name="offline_prompts_space_0">Rydd stuebordet.</string>
+    <string name="offline_prompts_space_1">Legg én ting tilbake der den hører hjemme.</string>
+    <string name="offline_prompts_space_2">Kast én ting søppel du har ignorert.</string>
+    <string name="offline_prompts_space_3">Re opp senga (eller strekk på dyna).</string>
+    <string name="offline_prompts_space_4">Tørk av nærmeste overflate.</string>
+    <string name="offline_prompts_space_5">Legg telefonen med skjermen ned et annet sted enn der du pleier å ha den.</string>
+    <string name="offline_prompts_space_6">Heng opp ett plagg fra klesstolen.</string>
+    <string name="offline_prompts_space_7">Vann én plante som ser ut som den trenger det.</string>
+    <string name="offline_prompts_space_8">Rett opp skoene ved døra.</string>
+    <string name="offline_prompts_space_9">Rydd bort fem ting fra oppvaskstativet eller oppvaskmaskinen.</string>
 
-    <string-array name="offline_prompts_sensory">
-        <item>Se ut av vinduet. Nevn tre ting du kan se.</item>
-        <item>Lukk øynene og nevn fem ting du hører akkurat nå.</item>
-        <item>Åpne et vindu og legg merke til hva lufta lukter.</item>
-        <item>Lag en kopp med noe varmt og hold den med begge hender.</item>
-        <item>Legg merke til temperaturen i rommet. Er den behagelig?</item>
-        <item>Vask hendene sakte med varmt vann. Legg merke til det.</item>
-        <item>Spis en frukt uten å gjøre noe annet samtidig.</item>
-        <item>Gå ut og ta tre langsomme åndedrag med uteluft.</item>
-        <item>Finn den mykeste tingen innen rekkevidde. Bekreft med hånden.</item>
-    </string-array>
+    <!-- offline_prompts_sensory (array items, in order) -->
+    <string name="offline_prompts_sensory_0">Se ut av vinduet. Nevn tre ting du kan se.</string>
+    <string name="offline_prompts_sensory_1">Lukk øynene og nevn fem ting du hører akkurat nå.</string>
+    <string name="offline_prompts_sensory_2">Åpne et vindu og legg merke til hva lufta lukter.</string>
+    <string name="offline_prompts_sensory_3">Lag en kopp med noe varmt og hold den med begge hender.</string>
+    <string name="offline_prompts_sensory_4">Legg merke til temperaturen i rommet. Er den behagelig?</string>
+    <string name="offline_prompts_sensory_5">Vask hendene sakte med varmt vann. Legg merke til det.</string>
+    <string name="offline_prompts_sensory_6">Spis en frukt uten å gjøre noe annet samtidig.</string>
+    <string name="offline_prompts_sensory_7">Gå ut og ta tre langsomme åndedrag med uteluft.</string>
+    <string name="offline_prompts_sensory_8">Finn den mykeste tingen innen rekkevidde. Bekreft med hånden.</string>
 
-    <string-array name="offline_prompts_social">
-        <item>Tenk på én person du ikke har snakket med på en stund. Du trenger ikke kontakte dem — bare tenk på dem.</item>
-        <item>Skriv én setning for hånd. Hva som helst.</item>
-        <item>Hvis noen er i nærheten, si noe til dem som ikke handler om logistikk.</item>
-        <item>Hvis barnet ditt er i rommet, se på hva det driver med i ett minutt. Bare se.</item>
-        <item>Hvis du har et kjæledyr, gi det to minutter med full oppmerksomhet.</item>
-        <item>Tenk tilbake på den siste gode samtalen du hadde. Hva gjorde den god?</item>
-    </string-array>
+    <!-- offline_prompts_social (array items, in order) -->
+    <string name="offline_prompts_social_0">Tenk på én person du ikke har snakket med på en stund. Du trenger ikke kontakte dem — bare tenk på dem.</string>
+    <string name="offline_prompts_social_1">Skriv én setning for hånd. Hva som helst.</string>
+    <string name="offline_prompts_social_2">Hvis noen er i nærheten, si noe til dem som ikke handler om logistikk.</string>
+    <string name="offline_prompts_social_3">Hvis barnet ditt er i rommet, se på hva det driver med i ett minutt. Bare se.</string>
+    <string name="offline_prompts_social_4">Hvis du har et kjæledyr, gi det to minutter med full oppmerksomhet.</string>
+    <string name="offline_prompts_social_5">Tenk tilbake på den siste gode samtalen du hadde. Hva gjorde den god?</string>
 
-    <string-array name="offline_prompts_creative">
-        <item>Plukk opp en bok — hvilken som helst — og les én side.</item>
-        <item>Tegn noe dårlig. Det spiller ingen rolle hva.</item>
-        <item>Nynn eller plystre på noe.</item>
-        <item>Flytt på én gjenstand i en hylle til den ser bedre ut for deg.</item>
-        <item>Brett et papirark til noe. Hva som helst teller.</item>
-        <item>Stable tre ting i nærheten til et lite tårn.</item>
-        <item>Fremfør et helt refreng etter hukommelsen. Høyt eller inni deg.</item>
-        <item>Beskriv rommet du er i, i én håndskrevet setning.</item>
-    </string-array>
+    <!-- offline_prompts_creative (array items, in order) -->
+    <string name="offline_prompts_creative_0">Plukk opp en bok — hvilken som helst — og les én side.</string>
+    <string name="offline_prompts_creative_1">Tegn noe dårlig. Det spiller ingen rolle hva.</string>
+    <string name="offline_prompts_creative_2">Nynn eller plystre på noe.</string>
+    <string name="offline_prompts_creative_3">Flytt på én gjenstand i en hylle til den ser bedre ut for deg.</string>
+    <string name="offline_prompts_creative_4">Brett et papirark til noe. Hva som helst teller.</string>
+    <string name="offline_prompts_creative_5">Stable tre ting i nærheten til et lite tårn.</string>
+    <string name="offline_prompts_creative_6">Fremfør et helt refreng etter hukommelsen. Høyt eller inni deg.</string>
+    <string name="offline_prompts_creative_7">Beskriv rommet du er i, i én håndskrevet setning.</string>
 
 </resources>

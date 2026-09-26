@@ -11,9 +11,11 @@
     - Keep the tone: flat, factual, blunt. No softening, no exclamation
       marks, no "you should". The lines work by stating mechanism, not
       by scolding or cheering.
-    - Translate every item of an array. Never add, drop or reorder items:
-      the tidbit arrays are index-aligned with untranslated citation
-      arrays, and the ladder levels (lvl0–lvl11) run mildest → harshest.
+    - Each numbered string (tidbits_general_0, _1, …) is one item of an
+      array wired up in arrays_awareness.xml. Translate each one as the
+      same fact — never swap content between numbers: the tidbit items
+      are matched to untranslated citations by number, and the ladder
+      levels (lvl0–lvl11) run mildest → harshest.
     - Gate ladder lines stay one short sentence; they must fit the gate.
 -->
 <resources>
@@ -23,73 +25,71 @@
          Shown for all watched apps and in default contexts.
          ════════════════════════════════════════════ -->
 
-    <string-array name="tidbits_general">
-        <!-- Variable reward / slot machine mechanics -->
-        <item>Pull-to-refresh was deliberately modelled on a slot machine lever. The brief delay before content loads is engineered suspense, not a loading lag.</item>
-        <item>Infinite scroll was invented by Aza Raskin in 2006. He has publicly called it a mistake and estimates it costs humanity 200,000 hours of attention per day.</item>
-        <item>The unpredictability of what appears in your feed is the feature, not a side effect. Fixed rewards cause habituation. Variable rewards cause compulsion.</item>
-        <item>\"Suggested posts\" appear after you exhaust your actual social feed because an empty feed would end the session. There is no bottom.</item>
+    <!-- tidbits_general (array items, in order) -->
+    <!-- Variable reward / slot machine mechanics -->
+    <string name="tidbits_general_0">Pull-to-refresh was deliberately modelled on a slot machine lever. The brief delay before content loads is engineered suspense, not a loading lag.</string>
+    <string name="tidbits_general_1">Infinite scroll was invented by Aza Raskin in 2006. He has publicly called it a mistake and estimates it costs humanity 200,000 hours of attention per day.</string>
+    <string name="tidbits_general_2">The unpredictability of what appears in your feed is the feature, not a side effect. Fixed rewards cause habituation. Variable rewards cause compulsion.</string>
+    <string name="tidbits_general_3">\"Suggested posts\" appear after you exhaust your actual social feed because an empty feed would end the session. There is no bottom.</string>
 
-        <!-- Color and visual design as manipulation -->
-        <item>The high saturation and contrast of social media UIs is calibrated to feel more vivid and rewarding than the physical world around you. This is why your phone looks more interesting than the room you\'re sitting in.</item>
-        <item>Grayscale mode reduces compulsive phone use in controlled studies — not because gray is boring, but because the color coding in social UIs carries emotional signals that gray removes.</item>
-        <item>Autoplay video starts moving before you consciously decide to watch it. Motion is a pre-conscious attention trigger; the decision to watch happens after your attention is already captured.</item>
+    <!-- Color and visual design as manipulation -->
+    <string name="tidbits_general_4">The high saturation and contrast of social media UIs is calibrated to feel more vivid and rewarding than the physical world around you. This is why your phone looks more interesting than the room you\'re sitting in.</string>
+    <string name="tidbits_general_5">Grayscale mode reduces compulsive phone use in controlled studies — not because gray is boring, but because the color coding in social UIs carries emotional signals that gray removes.</string>
+    <string name="tidbits_general_6">Autoplay video starts moving before you consciously decide to watch it. Motion is a pre-conscious attention trigger; the decision to watch happens after your attention is already captured.</string>
 
-        <!-- Notifications as a mechanism -->
-        <item>Apps do not send notifications when things happen. They send notifications when their models predict you are most likely to open the app. The timing is optimised for re-engagement, not for your information.</item>
-        <item>The red badge on an app icon creates an open loop in working memory — an unresolved task. Humans are wired to resolve open loops. The badge exploits this at zero cost to the app.</item>
-        <item>Turning off notifications reduces passive phone pickup by around 30% in behavioural studies — not because the notifications were informative, but because they were triggers.</item>
+    <!-- Notifications as a mechanism -->
+    <string name="tidbits_general_7">Apps do not send notifications when things happen. They send notifications when their models predict you are most likely to open the app. The timing is optimised for re-engagement, not for your information.</string>
+    <string name="tidbits_general_8">The red badge on an app icon creates an open loop in working memory — an unresolved task. Humans are wired to resolve open loops. The badge exploits this at zero cost to the app.</string>
+    <string name="tidbits_general_9">Turning off notifications reduces passive phone pickup by around 30% in behavioural studies — not because the notifications were informative, but because they were triggers.</string>
 
-        <!-- Business model -->
-        <item>Social apps are free because making you pay would cap their revenue at what you\'re willing to pay. Selling your attention to advertisers has no such cap.</item>
+    <!-- Business model -->
+    <string name="tidbits_general_10">Social apps are free because making you pay would cap their revenue at what you\'re willing to pay. Selling your attention to advertisers has no such cap.</string>
 
-        <!-- FOMO and social anxiety engineering -->
-        <item>FOMO is not a personality trait. It is a response to a system designed to make you feel like the most important things are always happening somewhere you are not currently looking.</item>
-        <item>The phrase \"X people reacted to your post\" is phrased in terms of other people\'s behaviour, not your content. Other people\'s opinions are a stronger re-engagement trigger than your own actions.</item>
+    <!-- FOMO and social anxiety engineering -->
+    <string name="tidbits_general_11">FOMO is not a personality trait. It is a response to a system designed to make you feel like the most important things are always happening somewhere you are not currently looking.</string>
+    <string name="tidbits_general_12">The phrase \"X people reacted to your post\" is phrased in terms of other people\'s behaviour, not your content. Other people\'s opinions are a stronger re-engagement trigger than your own actions.</string>
 
-        <!-- Neurological effects -->
-        <item>Repeated activation of the dopamine reward pathway by the same stimulus causes sensitisation (the craving gets stronger) while simultaneously causing desensitisation (the pleasure gets weaker). You need more to feel the same, but you also feel less when you get it.</item>
-        <item>The stress system and the reward system are linked. When a habitual reward is unavailable, the stress system activates. The discomfort of not checking is physiological, not a character flaw.</item>
-        <item>Every time you open a social app out of boredom, the neural pathway linking boredom → phone → app gets stronger. The behaviour becomes more automatic over time, not less, without deliberate interruption. (Hebb, 1949)</item>
-        <item>DeltaFosB accumulates in the brain\'s reward circuitry with repeated compulsive behaviour. Unlike other neurological markers it does not clear quickly — it persists for weeks. It drives craving even when the conscious motivation to stop is present.</item>
+    <!-- Neurological effects -->
+    <string name="tidbits_general_13">Repeated activation of the dopamine reward pathway by the same stimulus causes sensitisation (the craving gets stronger) while simultaneously causing desensitisation (the pleasure gets weaker). You need more to feel the same, but you also feel less when you get it.</string>
+    <string name="tidbits_general_14">The stress system and the reward system are linked. When a habitual reward is unavailable, the stress system activates. The discomfort of not checking is physiological, not a character flaw.</string>
+    <string name="tidbits_general_15">Every time you open a social app out of boredom, the neural pathway linking boredom → phone → app gets stronger. The behaviour becomes more automatic over time, not less, without deliberate interruption. (Hebb, 1949)</string>
+    <string name="tidbits_general_16">DeltaFosB accumulates in the brain\'s reward circuitry with repeated compulsive behaviour. Unlike other neurological markers it does not clear quickly — it persists for weeks. It drives craving even when the conscious motivation to stop is present.</string>
 
-        <!-- Dopamine and delayed gratification -->
-        <item>Dopamine is not a pleasure chemical. It is an anticipation chemical — it peaks before the reward, not during it. This is why scrolling feels compelling even when the content is not good.</item>
-        <item>Dopamine from completing something difficult — finishing a project, learning a skill — persists for hours. Dopamine from a notification peaks in seconds and drops below baseline when it fades.</item>
-        <item>The brain\'s reward system does not distinguish between a \"like\" on a photo and a piece of food. Both trigger the same pathway. The apps are feeding you in very small, unpredictable portions on purpose.</item>
-        <item>Deliberately delaying a reward strengthens the prefrontal cortex\'s ability to override impulse. The friction in this app is practice, not punishment.</item>
+    <!-- Dopamine and delayed gratification -->
+    <string name="tidbits_general_17">Dopamine is not a pleasure chemical. It is an anticipation chemical — it peaks before the reward, not during it. This is why scrolling feels compelling even when the content is not good.</string>
+    <string name="tidbits_general_18">Dopamine from completing something difficult — finishing a project, learning a skill — persists for hours. Dopamine from a notification peaks in seconds and drops below baseline when it fades.</string>
+    <string name="tidbits_general_19">The brain\'s reward system does not distinguish between a \"like\" on a photo and a piece of food. Both trigger the same pathway. The apps are feeding you in very small, unpredictable portions on purpose.</string>
+    <string name="tidbits_general_20">Deliberately delaying a reward strengthens the prefrontal cortex\'s ability to override impulse. The friction in this app is practice, not punishment.</string>
 
-        <!-- Epistemic honesty -->
-        <item>Several large studies claiming to show no meaningful harm from social media use were conducted in partnership with, or funded by, social media companies. This does not make them wrong. It is worth knowing when evaluating the evidence.</item>
-        <item>Studies on social media and mental health often rely on self-reported screen time, which users consistently underestimate by 30–50%. Research using objective usage data tends to find stronger effects.</item>
+    <!-- Epistemic honesty -->
+    <string name="tidbits_general_21">Several large studies claiming to show no meaningful harm from social media use were conducted in partnership with, or funded by, social media companies. This does not make them wrong. It is worth knowing when evaluating the evidence.</string>
+    <string name="tidbits_general_22">Studies on social media and mental health often rely on self-reported screen time, which users consistently underestimate by 30–50%. Research using objective usage data tends to find stronger effects.</string>
 
-        <!-- Reality check -->
-        <item>The median income in most Western countries is between $30,000 and $45,000 per year. The lifestyle presented as normal on social media requires multiples of that, typically sustained by generational wealth, debt, or a career built around performing the lifestyle for an audience.</item>
-        <item>Social media algorithms show you people selected for visual impact, at their most prepared, in their best light, filtered, retouched, and often surgically altered. Your reference point for what an ordinary attractive person looks like has been recalibrated by years of exposure to the top fraction of a percent.</item>
+    <!-- Reality check -->
+    <string name="tidbits_general_23">The median income in most Western countries is between $30,000 and $45,000 per year. The lifestyle presented as normal on social media requires multiples of that, typically sustained by generational wealth, debt, or a career built around performing the lifestyle for an audience.</string>
+    <string name="tidbits_general_24">Social media algorithms show you people selected for visual impact, at their most prepared, in their best light, filtered, retouched, and often surgically altered. Your reference point for what an ordinary attractive person looks like has been recalibrated by years of exposure to the top fraction of a percent.</string>
 
-        <!-- Algorithmic conflict and radicalization -->
-        <item>Content that makes men angry at women and content that makes women angry at men generate identical engagement signals. Outrage about the other sex travels faster than almost any other content category on every major platform. The conflict is the product.</item>
-        <item>The algorithm does not show you representative people. It shows you the most extreme, most provocative examples because those generate the most reaction. Both groups are being shown a caricature of the other.</item>
-        <item>Most political issues have more than two coherent positions. Social media collapses them into binary conflict pairs because conflict between two sides generates more engagement than a nuanced spectrum.</item>
-        <item>Research on political content algorithms consistently shows a rabbit hole effect: users are served content slightly more extreme than what they just watched. Over months, someone who started with mainstream content ends up far outside it — not because they sought it out, but because each step felt like a small continuation of the last.</item>
+    <!-- Algorithmic conflict and radicalization -->
+    <string name="tidbits_general_25">Content that makes men angry at women and content that makes women angry at men generate identical engagement signals. Outrage about the other sex travels faster than almost any other content category on every major platform. The conflict is the product.</string>
+    <string name="tidbits_general_26">The algorithm does not show you representative people. It shows you the most extreme, most provocative examples because those generate the most reaction. Both groups are being shown a caricature of the other.</string>
+    <string name="tidbits_general_27">Most political issues have more than two coherent positions. Social media collapses them into binary conflict pairs because conflict between two sides generates more engagement than a nuanced spectrum.</string>
+    <string name="tidbits_general_28">Research on political content algorithms consistently shows a rabbit hole effect: users are served content slightly more extreme than what they just watched. Over months, someone who started with mainstream content ends up far outside it — not because they sought it out, but because each step felt like a small continuation of the last.</string>
 
-        <!-- Sleep -->
-        <item>Blue light from screens suppresses melatonin production and delays sleep onset by up to 90 minutes. This is a measured hormonal effect, not a metaphor.</item>
-        <item>Sleep deprivation impairs the prefrontal cortex — the same region responsible for impulse control and the ability to resist opening the app in the first place. Late-night use makes the next day\'s use harder to resist.</item>
+    <!-- Sleep -->
+    <string name="tidbits_general_29">Blue light from screens suppresses melatonin production and delays sleep onset by up to 90 minutes. This is a measured hormonal effect, not a metaphor.</string>
+    <string name="tidbits_general_30">Sleep deprivation impairs the prefrontal cortex — the same region responsible for impulse control and the ability to resist opening the app in the first place. Late-night use makes the next day\'s use harder to resist.</string>
 
-        <!-- Social validation -->
-        <item>The \"like\" was originally called the \"awesome\" button at Facebook. It was renamed because \"like\" is more ambiguous — people give likes to things they don\'t endorse, which increases the signal volume and keeps you checking.</item>
-        <item>Snapchat streaks have no value. They are an artificial social obligation — a daily compulsory action dressed as a friendship feature.</item>
+    <!-- Social validation -->
+    <string name="tidbits_general_31">The \"like\" was originally called the \"awesome\" button at Facebook. It was renamed because \"like\" is more ambiguous — people give likes to things they don\'t endorse, which increases the signal volume and keeps you checking.</string>
+    <string name="tidbits_general_32">Snapchat streaks have no value. They are an artificial social obligation — a daily compulsory action dressed as a friendship feature.</string>
 
-        <!-- Parental distraction -->
-        <item>In the still-face experiment, infants become visibly distressed within moments when a parent\'s face stops responding. An infant cannot tell the difference between a parent whose face has gone still and a parent looking down at a phone.</item>
-        <item>Researchers have a word for phones interrupting parent–child interaction: technoference. The notification that pulled your eyes away was timed by a model optimising your re-engagement. The model does not know you were looking at your child.</item>
-        <item>In a controlled study, toddlers learned a new word from a parent — unless the teaching was interrupted by a phone call. Language grows in conversational turns, and an interrupted turn teaches nothing.</item>
-        <item>Infants develop through \"serve and return\": the child signals, the adult responds. Caregivers absorbed in a phone respond to fewer of these bids — and more harshly to the ones that break through.</item>
-        <item>Mutual gaze between an adult and an infant measurably synchronises their brain waves — a coupling that supports early communication and learning. No app metric records what its notification interrupted.</item>
-        <item>The engagement model competing for your attention has no category for what it is pulling you away from. Time spent looking at your child is, to the model, simply inventory it has not captured yet.</item>
-    </string-array>
-
+    <!-- Parental distraction -->
+    <string name="tidbits_general_33">In the still-face experiment, infants become visibly distressed within moments when a parent\'s face stops responding. An infant cannot tell the difference between a parent whose face has gone still and a parent looking down at a phone.</string>
+    <string name="tidbits_general_34">Researchers have a word for phones interrupting parent–child interaction: technoference. The notification that pulled your eyes away was timed by a model optimising your re-engagement. The model does not know you were looking at your child.</string>
+    <string name="tidbits_general_35">In a controlled study, toddlers learned a new word from a parent — unless the teaching was interrupted by a phone call. Language grows in conversational turns, and an interrupted turn teaches nothing.</string>
+    <string name="tidbits_general_36">Infants develop through \"serve and return\": the child signals, the adult responds. Caregivers absorbed in a phone respond to fewer of these bids — and more harshly to the ones that break through.</string>
+    <string name="tidbits_general_37">Mutual gaze between an adult and an infant measurably synchronises their brain waves — a coupling that supports early communication and learning. No app metric records what its notification interrupted.</string>
+    <string name="tidbits_general_38">The engagement model competing for your attention has no category for what it is pulling you away from. Time spent looking at your child is, to the model, simply inventory it has not captured yet.</string>
 
     <!-- ════════════════════════════════════════════
          SOCIAL TRACK
@@ -97,58 +97,56 @@
          Includes all general tidbits plus social-specific ones.
          ════════════════════════════════════════════ -->
 
-    <string-array name="tidbits_social">
-        <!-- Same variable reward -->
-        <item>Pull-to-refresh was deliberately modelled on a slot machine lever. The brief delay before content loads is engineered suspense, not a loading lag.</item>
-        <item>Infinite scroll was invented by Aza Raskin in 2006. He has publicly called it a mistake and estimates it costs humanity 200,000 hours of attention per day.</item>
-        <item>The unpredictability of what appears in your feed is the feature, not a side effect. Fixed rewards cause habituation. Variable rewards cause compulsion.</item>
-        <item>\"Suggested posts\" appear after you exhaust your actual social feed because an empty feed would end the session. There is no bottom.</item>
+    <!-- tidbits_social (array items, in order) -->
+    <!-- Same variable reward -->
+    <string name="tidbits_social_0">Pull-to-refresh was deliberately modelled on a slot machine lever. The brief delay before content loads is engineered suspense, not a loading lag.</string>
+    <string name="tidbits_social_1">Infinite scroll was invented by Aza Raskin in 2006. He has publicly called it a mistake and estimates it costs humanity 200,000 hours of attention per day.</string>
+    <string name="tidbits_social_2">The unpredictability of what appears in your feed is the feature, not a side effect. Fixed rewards cause habituation. Variable rewards cause compulsion.</string>
+    <string name="tidbits_social_3">\"Suggested posts\" appear after you exhaust your actual social feed because an empty feed would end the session. There is no bottom.</string>
 
-        <!-- Social-specific color -->
-        <item>Instagram\'s notification badge is red because red triggers faster involuntary attention capture than any other colour on the visible spectrum. This was tested and chosen deliberately.</item>
-        <item>Autoplay video starts moving before you consciously decide to watch it. Motion is a pre-conscious attention trigger; the decision to watch happens after your attention is already captured.</item>
+    <!-- Social-specific color -->
+    <string name="tidbits_social_4">Instagram\'s notification badge is red because red triggers faster involuntary attention capture than any other colour on the visible spectrum. This was tested and chosen deliberately.</string>
+    <string name="tidbits_social_5">Autoplay video starts moving before you consciously decide to watch it. Motion is a pre-conscious attention trigger; the decision to watch happens after your attention is already captured.</string>
 
-        <!-- Business model — specific -->
-        <item>Instagram, TikTok, and Snapchat are not social apps. They are advertising platforms. Every minute you spend in the app is inventory sold to brands. Your attention is the product.</item>
-        <item>The \"likes\" counter was hidden from public view in 2019 after internal research showed it was damaging mental health. It was restored after engagement metrics dropped. The research didn\'t change; the business decision did.</item>
+    <!-- Business model — specific -->
+    <string name="tidbits_social_6">Instagram, TikTok, and Snapchat are not social apps. They are advertising platforms. Every minute you spend in the app is inventory sold to brands. Your attention is the product.</string>
+    <string name="tidbits_social_7">The \"likes\" counter was hidden from public view in 2019 after internal research showed it was damaging mental health. It was restored after engagement metrics dropped. The research didn\'t change; the business decision did.</string>
 
-        <!-- FOMO — specific -->
-        <item>Instagram Stories expire after 24 hours. This is not a technical limitation. It is a designed urgency mechanism — a countdown clock on social participation.</item>
-        <item>Snapchat streaks weaponise FOMO by attaching a daily social obligation to friendship. Missing a day feels like failing the relationship. The relationship is with an app metric.</item>
+    <!-- FOMO — specific -->
+    <string name="tidbits_social_8">Instagram Stories expire after 24 hours. This is not a technical limitation. It is a designed urgency mechanism — a countdown clock on social participation.</string>
+    <string name="tidbits_social_9">Snapchat streaks weaponise FOMO by attaching a daily social obligation to friendship. Missing a day feels like failing the relationship. The relationship is with an app metric.</string>
 
-        <!-- Neurological -->
-        <item>Repeated activation of the dopamine reward pathway by the same stimulus causes sensitisation (the craving gets stronger) while simultaneously causing desensitisation (the pleasure gets weaker).</item>
-        <item>The prefrontal cortex is responsible for impulse control, long-term planning, and the ability to say no. Chronic compulsive phone use is associated with measurable reductions in prefrontal grey matter density.</item>
-        <item>Every time you open this app out of boredom, the neural pathway linking boredom → phone → app gets stronger. The behaviour becomes more automatic over time, not less, without deliberate interruption.</item>
+    <!-- Neurological -->
+    <string name="tidbits_social_10">Repeated activation of the dopamine reward pathway by the same stimulus causes sensitisation (the craving gets stronger) while simultaneously causing desensitisation (the pleasure gets weaker).</string>
+    <string name="tidbits_social_11">The prefrontal cortex is responsible for impulse control, long-term planning, and the ability to say no. Chronic compulsive phone use is associated with measurable reductions in prefrontal grey matter density.</string>
+    <string name="tidbits_social_12">Every time you open this app out of boredom, the neural pathway linking boredom → phone → app gets stronger. The behaviour becomes more automatic over time, not less, without deliberate interruption.</string>
 
-        <!-- Dopamine -->
-        <item>Dopamine is not a pleasure chemical. It is an anticipation chemical — it peaks before the reward, not during it. This is why scrolling feels compelling even when the content is not good.</item>
-        <item>Dopamine from completing something difficult persists for hours. Dopamine from a notification peaks in seconds and drops below baseline when it fades.</item>
+    <!-- Dopamine -->
+    <string name="tidbits_social_13">Dopamine is not a pleasure chemical. It is an anticipation chemical — it peaks before the reward, not during it. This is why scrolling feels compelling even when the content is not good.</string>
+    <string name="tidbits_social_14">Dopamine from completing something difficult persists for hours. Dopamine from a notification peaks in seconds and drops below baseline when it fades.</string>
 
-        <!-- Reality check -->
-        <item>The average height of a man in Western Europe is 5\'10\". Fewer than 15% of men are 6 feet or taller. The male body presented as normal on social media requires a height the overwhelming majority of men will never have, regardless of anything they do.</item>
-        <item>The beauty standards presented to women on social media require a combination of genetics, money, time, professional assistance, and image editing that is not available to most people and is not honestly disclosed.</item>
-        <item>The male physique presented as attainable through fitness content frequently involves pharmacological assistance that is not mentioned.</item>
+    <!-- Reality check -->
+    <string name="tidbits_social_15">The average height of a man in Western Europe is 5\'10\". Fewer than 15% of men are 6 feet or taller. The male body presented as normal on social media requires a height the overwhelming majority of men will never have, regardless of anything they do.</string>
+    <string name="tidbits_social_16">The beauty standards presented to women on social media require a combination of genetics, money, time, professional assistance, and image editing that is not available to most people and is not honestly disclosed.</string>
+    <string name="tidbits_social_17">The male physique presented as attainable through fitness content frequently involves pharmacological assistance that is not mentioned.</string>
 
-        <!-- Notification mechanics -->
-        <item>Apps do not send notifications when things happen. They send notifications when their models predict you are most likely to open the app.</item>
-        <item>The red badge on an app icon creates an open loop in working memory. Humans are wired to resolve open loops. The badge exploits this at zero cost to the app.</item>
+    <!-- Notification mechanics -->
+    <string name="tidbits_social_18">Apps do not send notifications when things happen. They send notifications when their models predict you are most likely to open the app.</string>
+    <string name="tidbits_social_19">The red badge on an app icon creates an open loop in working memory. Humans are wired to resolve open loops. The badge exploits this at zero cost to the app.</string>
 
-        <!-- Sleep -->
-        <item>Social media companies know their peak engagement hours. The content served to you at 23:00 is optimised to keep you up, not to wrap things up.</item>
-        <item>Sleep deprivation impairs the prefrontal cortex — the same region responsible for the ability to resist opening the app in the first place.</item>
+    <!-- Sleep -->
+    <string name="tidbits_social_20">Social media companies know their peak engagement hours. The content served to you at 23:00 is optimised to keep you up, not to wrap things up.</string>
+    <string name="tidbits_social_21">Sleep deprivation impairs the prefrontal cortex — the same region responsible for the ability to resist opening the app in the first place.</string>
 
-        <!-- Validation -->
-        <item>Instagram shows you who viewed your Story in a specific order, optimised to keep you checking back to see if a particular person has viewed it yet.</item>
-        <item>The \"like\" was originally called the \"awesome\" button at Facebook. It was renamed because \"like\" is more ambiguous — people give likes to things they don\'t endorse, which increases signal volume and keeps you checking.</item>
+    <!-- Validation -->
+    <string name="tidbits_social_22">Instagram shows you who viewed your Story in a specific order, optimised to keep you checking back to see if a particular person has viewed it yet.</string>
+    <string name="tidbits_social_23">The \"like\" was originally called the \"awesome\" button at Facebook. It was renamed because \"like\" is more ambiguous — people give likes to things they don\'t endorse, which increases signal volume and keeps you checking.</string>
 
-        <!-- Parental distraction (shared with general track) -->
-        <item>In the still-face experiment, infants become visibly distressed within moments when a parent\'s face stops responding. An infant cannot tell the difference between a parent whose face has gone still and a parent looking down at a phone.</item>
-        <item>Researchers have a word for phones interrupting parent–child interaction: technoference. The notification that pulled your eyes away was timed by a model optimising your re-engagement. The model does not know you were looking at your child.</item>
-        <item>In a controlled study, toddlers learned a new word from a parent — unless the teaching was interrupted by a phone call. Language grows in conversational turns, and an interrupted turn teaches nothing.</item>
-        <item>The engagement model competing for your attention has no category for what it is pulling you away from. Time spent looking at your child is, to the model, simply inventory it has not captured yet.</item>
-    </string-array>
-
+    <!-- Parental distraction (shared with general track) -->
+    <string name="tidbits_social_24">In the still-face experiment, infants become visibly distressed within moments when a parent\'s face stops responding. An infant cannot tell the difference between a parent whose face has gone still and a parent looking down at a phone.</string>
+    <string name="tidbits_social_25">Researchers have a word for phones interrupting parent–child interaction: technoference. The notification that pulled your eyes away was timed by a model optimising your re-engagement. The model does not know you were looking at your child.</string>
+    <string name="tidbits_social_26">In a controlled study, toddlers learned a new word from a parent — unless the teaching was interrupted by a phone call. Language grows in conversational turns, and an interrupted turn teaches nothing.</string>
+    <string name="tidbits_social_27">The engagement model competing for your attention has no category for what it is pulling you away from. Time spent looking at your child is, to the model, simply inventory it has not captured yet.</string>
 
     <!-- ════════════════════════════════════════════
          ADULT TRACK
@@ -156,25 +154,23 @@
          Tone: identical to other tracks — factual, specific, no moralising.
          ════════════════════════════════════════════ -->
 
-    <string-array name="tidbits_adult">
-        <item>The Coolidge effect is a real neurological phenomenon: sexual arousal is dampened by the same stimulus but restored by novelty. Internet pornography provides infinite novelty at zero effort — a stimulus the brain did not evolve to encounter and has no natural defence against.</item>
-        <item>Pornography is a superstimulus — a stimulus that exceeds the parameters the human reward system evolved to respond to. Like food engineered to hit fat, salt, and sugar simultaneously, it triggers a response far stronger than anything it evolved alongside.</item>
-        <item>Food has a stop signal: you become full. Alcohol has a stop signal: you pass out or feel sick. Pornography has no equivalent physiological stop signal. Satiety from a meal is a feature; there is no equivalent architecture for visual sexual stimulation.</item>
-        <item>DeltaFosB accumulates in the brain\'s reward circuitry with repeated pornography use, just as it does with other compulsive behaviours. Its presence persists for weeks after behaviour stops. It drives the sensation of craving even when conscious motivation to stop is present.</item>
-        <item>PIED (porn-induced erectile dysfunction) is a documented clinical phenomenon in men without other risk factors, including young men. The mechanism is desensitisation: repeated exposure to superstimuli reduces the reward system\'s sensitivity to normal stimuli.</item>
-        <item>The escalation pattern in pornography consumption is the same mechanism as tolerance in substance use: the brain habituates to a stimulus and requires novelty to generate the same response. What the end point looks like is different for everyone; that the direction of travel exists is not.</item>
-        <item>The prefrontal cortex normally applies a brake to impulse. Chronic hyperstimulation of the reward system impairs this brake. Researchers call it hypofrontality. This is why people describe the behaviour feeling compulsive even when they consciously want to stop.</item>
+    <!-- tidbits_adult (array items, in order) -->
+    <string name="tidbits_adult_0">The Coolidge effect is a real neurological phenomenon: sexual arousal is dampened by the same stimulus but restored by novelty. Internet pornography provides infinite novelty at zero effort — a stimulus the brain did not evolve to encounter and has no natural defence against.</string>
+    <string name="tidbits_adult_1">Pornography is a superstimulus — a stimulus that exceeds the parameters the human reward system evolved to respond to. Like food engineered to hit fat, salt, and sugar simultaneously, it triggers a response far stronger than anything it evolved alongside.</string>
+    <string name="tidbits_adult_2">Food has a stop signal: you become full. Alcohol has a stop signal: you pass out or feel sick. Pornography has no equivalent physiological stop signal. Satiety from a meal is a feature; there is no equivalent architecture for visual sexual stimulation.</string>
+    <string name="tidbits_adult_3">DeltaFosB accumulates in the brain\'s reward circuitry with repeated pornography use, just as it does with other compulsive behaviours. Its presence persists for weeks after behaviour stops. It drives the sensation of craving even when conscious motivation to stop is present.</string>
+    <string name="tidbits_adult_4">PIED (porn-induced erectile dysfunction) is a documented clinical phenomenon in men without other risk factors, including young men. The mechanism is desensitisation: repeated exposure to superstimuli reduces the reward system\'s sensitivity to normal stimuli.</string>
+    <string name="tidbits_adult_5">The escalation pattern in pornography consumption is the same mechanism as tolerance in substance use: the brain habituates to a stimulus and requires novelty to generate the same response. What the end point looks like is different for everyone; that the direction of travel exists is not.</string>
+    <string name="tidbits_adult_6">The prefrontal cortex normally applies a brake to impulse. Chronic hyperstimulation of the reward system impairs this brake. Researchers call it hypofrontality. This is why people describe the behaviour feeling compulsive even when they consciously want to stop.</string>
 
-        <!-- Counter-research honesty -->
-        <item>Whether compulsive pornography use meets the clinical definition of addiction is genuinely debated. The subjective experience of loss of control, escalation, and impaired real-world relationships is not debated. The label is.</item>
-        <item>Some studies find no causal link between pornography use and erectile dysfunction in laboratory settings. These studies typically measure acute arousal response, not long-term habituation. The methodological gap is real and worth knowing about.</item>
+    <!-- Counter-research honesty -->
+    <string name="tidbits_adult_7">Whether compulsive pornography use meets the clinical definition of addiction is genuinely debated. The subjective experience of loss of control, escalation, and impaired real-world relationships is not debated. The label is.</string>
+    <string name="tidbits_adult_8">Some studies find no causal link between pornography use and erectile dysfunction in laboratory settings. These studies typically measure acute arousal response, not long-term habituation. The methodological gap is real and worth knowing about.</string>
 
-        <!-- Effects specific to women -->
-        <item>Research into compulsive pornography use in women is substantially less developed than research on male users, but the studies that exist show similar escalation patterns, similar desensitisation effects, and similar reports of impaired real-world sexual satisfaction.</item>
-        <item>The body standards in mainstream pornography for female performers involve surgery, grooming norms, and physical configurations that are not representative of the range of real bodies. This affects female viewers\' relationship with their own bodies and male viewers\' expectations of real partners — simultaneously, in opposite directions, from the same content.</item>
-        <item>Pornography shapes the sexual expectations that male partners bring into relationships, regardless of whether women themselves watch it. Women are affected by their partners\' pornography use whether or not they are users themselves.</item>
-    </string-array>
-
+    <!-- Effects specific to women -->
+    <string name="tidbits_adult_9">Research into compulsive pornography use in women is substantially less developed than research on male users, but the studies that exist show similar escalation patterns, similar desensitisation effects, and similar reports of impaired real-world sexual satisfaction.</string>
+    <string name="tidbits_adult_10">The body standards in mainstream pornography for female performers involve surgery, grooming norms, and physical configurations that are not representative of the range of real bodies. This affects female viewers\' relationship with their own bodies and male viewers\' expectations of real partners — simultaneously, in opposite directions, from the same content.</string>
+    <string name="tidbits_adult_11">Pornography shapes the sexual expectations that male partners bring into relationships, regardless of whether women themselves watch it. Women are affected by their partners\' pornography use whether or not they are users themselves.</string>
 
     <!-- ════════════════════════════════════════════
          GATE ESCALATION LADDERS
@@ -193,351 +189,210 @@
          length (12) and the bluntest lines at lvl11. -->
 
     <!-- ── GENERAL levels ── -->
-    <string-array name="tidbits_general_lvl0">
-        <item>This app is built to be hard to put down.</item>
-        <item>It was designed to hold you longer than you planned.</item>
-        <item>Staying is the default here; leaving takes effort.</item>
-    </string-array>
-    <string-array name="tidbits_general_lvl1">
-        <item>The pull-to-refresh is a slot-machine lever.</item>
-        <item>The little delay before it loads is engineered suspense.</item>
-        <item>Refreshing pays out on a variable schedule, like a slot.</item>
-    </string-array>
-    <string-array name="tidbits_general_lvl2">
-        <item>Every idle open wires the habit deeper.</item>
-        <item>Each bored tap strengthens the reach-for-phone reflex.</item>
-        <item>Opening without a reason trains you to open without a reason.</item>
-    </string-array>
-    <string-array name="tidbits_general_lvl3">
-        <item>You opened it again without deciding to.</item>
-        <item>Your hand got here before your intention did.</item>
-        <item>That open wasn\'t a choice; it was a reflex.</item>
-    </string-array>
-    <string-array name="tidbits_general_lvl4">
-        <item>This is autopilot now, not intention.</item>
-        <item>You\'re running a script you didn\'t write.</item>
-        <item>The decision to open already stopped being a decision.</item>
-    </string-array>
-    <string-array name="tidbits_general_lvl5">
-        <item>The pleasure fades; the craving grows.</item>
-        <item>You feel it less each time, and want it more.</item>
-        <item>Diminishing returns, rising urge — that\'s the trap.</item>
-    </string-array>
-    <string-array name="tidbits_general_lvl6">
-        <item>You\'re spending attention you meant to keep.</item>
-        <item>The focus you needed today is leaking out here.</item>
-        <item>This is drawing down attention you can\'t refill.</item>
-    </string-array>
-    <string-array name="tidbits_general_lvl7">
-        <item>This is a loop now, and loops tighten.</item>
-        <item>Each pass makes the next pass easier and faster.</item>
-        <item>The circuit is getting shorter every time.</item>
-    </string-array>
-    <string-array name="tidbits_general_lvl8">
-        <item>You reach for it in every empty second.</item>
-        <item>Any pause and your hand finds this.</item>
-        <item>Silence now feels like a cue to open.</item>
-    </string-array>
-    <string-array name="tidbits_general_lvl9">
-        <item>It\'s eating your day in small, unnoticed bites.</item>
-        <item>Minutes vanish here without leaving a memory.</item>
-        <item>Add up these openings and it\'s hours.</item>
-    </string-array>
-    <string-array name="tidbits_general_lvl10">
-        <item>You\'ve stopped choosing. The reflex chose.</item>
-        <item>There\'s no decision left in this, only habit.</item>
-        <item>You didn\'t decide to be here; the pattern did.</item>
-    </string-array>
-    <string-array name="tidbits_general_lvl11">
-        <item>This is the behaviour of an addiction, plainly.</item>
-        <item>By every measure that matters, this is addiction.</item>
-        <item>Call it what it is: you\'re not in control here.</item>
-    </string-array>
+    <!-- tidbits_general_lvl0 (array items, in order) -->
+    <string name="tidbits_general_lvl0_0">This app is built to be hard to put down.</string>
+    <string name="tidbits_general_lvl0_1">It was designed to hold you longer than you planned.</string>
+    <string name="tidbits_general_lvl0_2">Staying is the default here; leaving takes effort.</string>
+    <!-- tidbits_general_lvl1 (array items, in order) -->
+    <string name="tidbits_general_lvl1_0">The pull-to-refresh is a slot-machine lever.</string>
+    <string name="tidbits_general_lvl1_1">The little delay before it loads is engineered suspense.</string>
+    <string name="tidbits_general_lvl1_2">Refreshing pays out on a variable schedule, like a slot.</string>
+    <!-- tidbits_general_lvl2 (array items, in order) -->
+    <string name="tidbits_general_lvl2_0">Every idle open wires the habit deeper.</string>
+    <string name="tidbits_general_lvl2_1">Each bored tap strengthens the reach-for-phone reflex.</string>
+    <string name="tidbits_general_lvl2_2">Opening without a reason trains you to open without a reason.</string>
+    <!-- tidbits_general_lvl3 (array items, in order) -->
+    <string name="tidbits_general_lvl3_0">You opened it again without deciding to.</string>
+    <string name="tidbits_general_lvl3_1">Your hand got here before your intention did.</string>
+    <string name="tidbits_general_lvl3_2">That open wasn\'t a choice; it was a reflex.</string>
+    <!-- tidbits_general_lvl4 (array items, in order) -->
+    <string name="tidbits_general_lvl4_0">This is autopilot now, not intention.</string>
+    <string name="tidbits_general_lvl4_1">You\'re running a script you didn\'t write.</string>
+    <string name="tidbits_general_lvl4_2">The decision to open already stopped being a decision.</string>
+    <!-- tidbits_general_lvl5 (array items, in order) -->
+    <string name="tidbits_general_lvl5_0">The pleasure fades; the craving grows.</string>
+    <string name="tidbits_general_lvl5_1">You feel it less each time, and want it more.</string>
+    <string name="tidbits_general_lvl5_2">Diminishing returns, rising urge — that\'s the trap.</string>
+    <!-- tidbits_general_lvl6 (array items, in order) -->
+    <string name="tidbits_general_lvl6_0">You\'re spending attention you meant to keep.</string>
+    <string name="tidbits_general_lvl6_1">The focus you needed today is leaking out here.</string>
+    <string name="tidbits_general_lvl6_2">This is drawing down attention you can\'t refill.</string>
+    <!-- tidbits_general_lvl7 (array items, in order) -->
+    <string name="tidbits_general_lvl7_0">This is a loop now, and loops tighten.</string>
+    <string name="tidbits_general_lvl7_1">Each pass makes the next pass easier and faster.</string>
+    <string name="tidbits_general_lvl7_2">The circuit is getting shorter every time.</string>
+    <!-- tidbits_general_lvl8 (array items, in order) -->
+    <string name="tidbits_general_lvl8_0">You reach for it in every empty second.</string>
+    <string name="tidbits_general_lvl8_1">Any pause and your hand finds this.</string>
+    <string name="tidbits_general_lvl8_2">Silence now feels like a cue to open.</string>
+    <!-- tidbits_general_lvl9 (array items, in order) -->
+    <string name="tidbits_general_lvl9_0">It\'s eating your day in small, unnoticed bites.</string>
+    <string name="tidbits_general_lvl9_1">Minutes vanish here without leaving a memory.</string>
+    <string name="tidbits_general_lvl9_2">Add up these openings and it\'s hours.</string>
+    <!-- tidbits_general_lvl10 (array items, in order) -->
+    <string name="tidbits_general_lvl10_0">You\'ve stopped choosing. The reflex chose.</string>
+    <string name="tidbits_general_lvl10_1">There\'s no decision left in this, only habit.</string>
+    <string name="tidbits_general_lvl10_2">You didn\'t decide to be here; the pattern did.</string>
+    <!-- tidbits_general_lvl11 (array items, in order) -->
+    <string name="tidbits_general_lvl11_0">This is the behaviour of an addiction, plainly.</string>
+    <string name="tidbits_general_lvl11_1">By every measure that matters, this is addiction.</string>
+    <string name="tidbits_general_lvl11_2">Call it what it is: you\'re not in control here.</string>
 
     <!-- ── SOCIAL levels ── -->
-    <string-array name="tidbits_social_lvl0">
-        <item>Built to be hard to put down.</item>
-        <item>Designed to keep you scrolling past when you meant to stop.</item>
-        <item>Leaving early is the one thing it\'s built to prevent.</item>
-    </string-array>
-    <string-array name="tidbits_social_lvl1">
-        <item>Infinite scroll has no bottom, on purpose.</item>
-        <item>There\'s no end screen because an end would free you.</item>
-        <item>The feed refills forever so the session never has to close.</item>
-    </string-array>
-    <string-array name="tidbits_social_lvl2">
-        <item>Each open is a pull of the same lever.</item>
-        <item>Every launch is another spin for the same payout.</item>
-        <item>You\'re feeding coins into the same machine.</item>
-    </string-array>
-    <string-array name="tidbits_social_lvl3">
-        <item>You\'re back again. The app counted on that.</item>
-        <item>It predicted this open, and it was right.</item>
-        <item>Your return is a number on someone\'s dashboard.</item>
-    </string-array>
-    <string-array name="tidbits_social_lvl4">
-        <item>This is a habit now, not a choice.</item>
-        <item>You didn\'t plan this open; the habit did.</item>
-        <item>Choice left this a while ago.</item>
-    </string-array>
-    <string-array name="tidbits_social_lvl5">
-        <item>You\'re checking more than you\'re living.</item>
-        <item>More of your day is spent watching than doing.</item>
-        <item>The scrolling has started to outweigh the living.</item>
-    </string-array>
-    <string-array name="tidbits_social_lvl6">
-        <item>This is compulsive, and the app engineered it.</item>
-        <item>The pull you feel was designed on purpose.</item>
-        <item>That urge isn\'t yours; it was manufactured.</item>
-    </string-array>
-    <string-array name="tidbits_social_lvl7">
-        <item>You reach for it before you notice you\'re bored.</item>
-        <item>Boredom now skips straight to this.</item>
-        <item>The gap between feeling and opening has closed.</item>
-    </string-array>
-    <string-array name="tidbits_social_lvl8">
-        <item>You\'re the product, and you\'re on sale all day.</item>
-        <item>Your attention is the inventory being sold right now.</item>
-        <item>Every minute here is auctioned to an advertiser.</item>
-    </string-array>
-    <string-array name="tidbits_social_lvl9">
-        <item>You\'re using this as a parasocial substitute. Call a friend.</item>
-        <item>Strangers on a screen aren\'t the company you need. Call someone.</item>
-        <item>This is standing in for real connection. Reach out to a real person.</item>
-    </string-array>
-    <string-array name="tidbits_social_lvl10">
-        <item>You\'ve stopped deciding. The loop decides.</item>
-        <item>The loop is running you now, not the other way round.</item>
-        <item>There\'s no driver here anymore, just the loop.</item>
-    </string-array>
-    <string-array name="tidbits_social_lvl11">
-        <item>If this were a cigarette, you\'d be a chain smoker.</item>
-        <item>Swap the feed for cigarettes and you\'d be lighting the next off the last.</item>
-        <item>At this rate, in cigarette terms, you never put it down.</item>
-    </string-array>
+    <!-- tidbits_social_lvl0 (array items, in order) -->
+    <string name="tidbits_social_lvl0_0">Built to be hard to put down.</string>
+    <string name="tidbits_social_lvl0_1">Designed to keep you scrolling past when you meant to stop.</string>
+    <string name="tidbits_social_lvl0_2">Leaving early is the one thing it\'s built to prevent.</string>
+    <!-- tidbits_social_lvl1 (array items, in order) -->
+    <string name="tidbits_social_lvl1_0">Infinite scroll has no bottom, on purpose.</string>
+    <string name="tidbits_social_lvl1_1">There\'s no end screen because an end would free you.</string>
+    <string name="tidbits_social_lvl1_2">The feed refills forever so the session never has to close.</string>
+    <!-- tidbits_social_lvl2 (array items, in order) -->
+    <string name="tidbits_social_lvl2_0">Each open is a pull of the same lever.</string>
+    <string name="tidbits_social_lvl2_1">Every launch is another spin for the same payout.</string>
+    <string name="tidbits_social_lvl2_2">You\'re feeding coins into the same machine.</string>
+    <!-- tidbits_social_lvl3 (array items, in order) -->
+    <string name="tidbits_social_lvl3_0">You\'re back again. The app counted on that.</string>
+    <string name="tidbits_social_lvl3_1">It predicted this open, and it was right.</string>
+    <string name="tidbits_social_lvl3_2">Your return is a number on someone\'s dashboard.</string>
+    <!-- tidbits_social_lvl4 (array items, in order) -->
+    <string name="tidbits_social_lvl4_0">This is a habit now, not a choice.</string>
+    <string name="tidbits_social_lvl4_1">You didn\'t plan this open; the habit did.</string>
+    <string name="tidbits_social_lvl4_2">Choice left this a while ago.</string>
+    <!-- tidbits_social_lvl5 (array items, in order) -->
+    <string name="tidbits_social_lvl5_0">You\'re checking more than you\'re living.</string>
+    <string name="tidbits_social_lvl5_1">More of your day is spent watching than doing.</string>
+    <string name="tidbits_social_lvl5_2">The scrolling has started to outweigh the living.</string>
+    <!-- tidbits_social_lvl6 (array items, in order) -->
+    <string name="tidbits_social_lvl6_0">This is compulsive, and the app engineered it.</string>
+    <string name="tidbits_social_lvl6_1">The pull you feel was designed on purpose.</string>
+    <string name="tidbits_social_lvl6_2">That urge isn\'t yours; it was manufactured.</string>
+    <!-- tidbits_social_lvl7 (array items, in order) -->
+    <string name="tidbits_social_lvl7_0">You reach for it before you notice you\'re bored.</string>
+    <string name="tidbits_social_lvl7_1">Boredom now skips straight to this.</string>
+    <string name="tidbits_social_lvl7_2">The gap between feeling and opening has closed.</string>
+    <!-- tidbits_social_lvl8 (array items, in order) -->
+    <string name="tidbits_social_lvl8_0">You\'re the product, and you\'re on sale all day.</string>
+    <string name="tidbits_social_lvl8_1">Your attention is the inventory being sold right now.</string>
+    <string name="tidbits_social_lvl8_2">Every minute here is auctioned to an advertiser.</string>
+    <!-- tidbits_social_lvl9 (array items, in order) -->
+    <string name="tidbits_social_lvl9_0">You\'re using this as a parasocial substitute. Call a friend.</string>
+    <string name="tidbits_social_lvl9_1">Strangers on a screen aren\'t the company you need. Call someone.</string>
+    <string name="tidbits_social_lvl9_2">This is standing in for real connection. Reach out to a real person.</string>
+    <!-- tidbits_social_lvl10 (array items, in order) -->
+    <string name="tidbits_social_lvl10_0">You\'ve stopped deciding. The loop decides.</string>
+    <string name="tidbits_social_lvl10_1">The loop is running you now, not the other way round.</string>
+    <string name="tidbits_social_lvl10_2">There\'s no driver here anymore, just the loop.</string>
+    <!-- tidbits_social_lvl11 (array items, in order) -->
+    <string name="tidbits_social_lvl11_0">If this were a cigarette, you\'d be a chain smoker.</string>
+    <string name="tidbits_social_lvl11_1">Swap the feed for cigarettes and you\'d be lighting the next off the last.</string>
+    <string name="tidbits_social_lvl11_2">At this rate, in cigarette terms, you never put it down.</string>
 
     <!-- ── ADULT levels ── -->
-    <string-array name="tidbits_adult_lvl0">
-        <item>This is a superstimulus your brain can\'t defend against.</item>
-        <item>Your reward system never evolved to meet anything this strong.</item>
-        <item>This exceeds every natural cue your brain was built for.</item>
-    </string-array>
-    <string-array name="tidbits_adult_lvl1">
-        <item>Novelty here is infinite; your reward system is not.</item>
-        <item>Endless new is exactly what the brain can\'t habituate to safely.</item>
-        <item>Unlimited novelty is the one input arousal can\'t switch off.</item>
-    </string-array>
-    <string-array name="tidbits_adult_lvl2">
-        <item>Every visit raises the bar for the next.</item>
-        <item>What works today will feel flat tomorrow.</item>
-        <item>Each session resets the baseline higher.</item>
-    </string-array>
-    <string-array name="tidbits_adult_lvl3">
-        <item>You\'re back sooner than last time. That\'s the pattern.</item>
-        <item>The gap between visits is shrinking. That\'s the tell.</item>
-        <item>Returning faster each time is how this progresses.</item>
-    </string-array>
-    <string-array name="tidbits_adult_lvl4">
-        <item>This is escalation — the same mechanism as tolerance.</item>
-        <item>You need more or newer to feel the same. That\'s tolerance.</item>
-        <item>The drift toward stronger material isn\'t random; it\'s tolerance.</item>
-    </string-array>
-    <string-array name="tidbits_adult_lvl5">
-        <item>It\'s rewiring arousal toward a screen.</item>
-        <item>Your arousal is being trained to a pixel pattern.</item>
-        <item>A screen is becoming the trigger your body answers to.</item>
-    </string-array>
-    <string-array name="tidbits_adult_lvl6">
-        <item>It desensitises you to a real partner.</item>
-        <item>A real person can\'t compete with infinite novelty, and that\'s the harm.</item>
-        <item>This dulls your response to an actual partner.</item>
-    </string-array>
-    <string-array name="tidbits_adult_lvl7">
-        <item>The urge gets louder; the payoff gets quieter.</item>
-        <item>You want it more and enjoy it less each time.</item>
-        <item>Rising craving, falling reward — the addiction signature.</item>
-    </string-array>
-    <string-array name="tidbits_adult_lvl8">
-        <item>This is compulsive use, by its own definition.</item>
-        <item>Continuing against your own intention is the definition of compulsive.</item>
-        <item>You\'ve told yourself to stop and you\'re here — that\'s compulsion.</item>
-    </string-array>
-    <string-array name="tidbits_adult_lvl9">
-        <item>PIED is documented in healthy young men — this is how.</item>
-        <item>Porn-induced ED shows up in young men with no other cause. This is the path.</item>
-        <item>The mechanism behind PIED is exactly this, repeated.</item>
-    </string-array>
-    <string-array name="tidbits_adult_lvl10">
-        <item>You\'ve stopped deciding. The craving decides.</item>
-        <item>The craving is in the driver\'s seat now.</item>
-        <item>There\'s no choice left in this, only the pull.</item>
-    </string-array>
-    <string-array name="tidbits_adult_lvl11">
-        <item>This is an addiction running you, not a habit.</item>
-        <item>Past a certain point it isn\'t a habit; it\'s addiction, and this is past it.</item>
-        <item>This isn\'t a preference anymore. It\'s an addiction steering you.</item>
-    </string-array>
-
-
-    <!-- ════════════════════════════════════════════
-         SOURCES
-         Index-aligned with the tidbit arrays above (and with the translated
-         arrays in values-nb, which are kept in the same order). Shown only in
-         Settings > "What we know about them". Citations are primary research
-         or first-party reports where one exists; entries that are design
-         analysis rather than a studied finding say so.
-         Not translated — citations keep their original form.
-         ════════════════════════════════════════════ -->
-
-    <string-array name="tidbits_general_sources" translatable="false">
-        <item>Loren Brichter (inventor of pull-to-refresh) on its slot-machine quality: interview in The Guardian, 2017. Tristan Harris, "How Technology is Hijacking Your Mind", 2016.</item>
-        <item>Aza Raskin, BBC interview, 2018.</item>
-        <item>Ferster and Skinner, Schedules of Reinforcement, 1957 — variable-ratio reinforcement.</item>
-        <item>Instagram product announcement of Suggested Posts, 2020 — shown "when you\'ve caught up". Design analysis.</item>
-        <item>Design analysis — no single controlled study. On engineered visual reward generally: B. J. Fogg, Persuasive Technology, 2003.</item>
-        <item>Holte and Ferraro, "True Colors: Grayscale setting reduces screen time in college students", The Social Science Journal, 2020.</item>
-        <item>Abrams and Christ, "Motion Onset Captures Attention", Psychological Science, 2003.</item>
-        <item>Machine-learned notification ranking documented in platform engineering publications (Meta, LinkedIn, Twitter, 2016–2020).</item>
-        <item>Zeigarnik effect: Zeigarnik, 1927. Application to app badges is design analysis.</item>
-        <item>Pielot and Rello, "Productive, Anxious, Lonely: 24 Hours Without Push Notifications", MobileHCI, 2017. Exact figures vary by study.</item>
-        <item>Meta annual reports (Form 10-K): about 97–98% of revenue is advertising.</item>
-        <item>Przybylski, Murayama, DeHaan and Gladwell, "Motivational, emotional, and behavioral correlates of fear of missing out", Computers in Human Behavior, 2013.</item>
-        <item>Social proof: Cialdini, Influence, 1984. The specific copywriting is standard growth-team A/B practice; design analysis.</item>
-        <item>Robinson and Berridge, incentive-sensitization theory of addiction, Brain Research Reviews, 1993.</item>
-        <item>Koob and Le Moal, "Drug addiction, dysregulation of reward, and allostasis", Neuropsychopharmacology, 2001.</item>
-        <item>Hebb, The Organization of Behavior, 1949.</item>
-        <item>Nestler, Barrot and Self, "ΔFosB: A sustained molecular switch for addiction", PNAS, 2001.</item>
-        <item>Schultz, Dayan and Montague, "A Neural Substrate of Prediction and Reward", Science, 1997.</item>
-        <item>Synthesis of dopamine research; accessible treatment in Lembke, Dopamine Nation, 2021.</item>
-        <item>Sescousse, Caldú, Segura and Dreher, "Processing of primary and secondary rewards: a meta-analysis", Neuroscience and Biobehavioral Reviews, 2013.</item>
-        <item>Delay-of-gratification research: Mischel et al.; Casey et al., "Behavioral and neural correlates of delay of gratification 40 years later", PNAS, 2011.</item>
-        <item>See funding and data-access disclosures in platform–academic collaborations, e.g. the Meta 2020 Election research partnership published in Science and Nature, 2023.</item>
-        <item>Parry et al., "A systematic review and meta-analysis of discrepancies between logged and self-reported digital media use", Nature Human Behaviour, 2021.</item>
-        <item>OECD median equivalised disposable income statistics.</item>
-        <item>Fardouly and Vartanian, "Social media and appearance concerns", Current Opinion in Psychology, 2016. Algorithmic selection for visual impact is design analysis.</item>
-        <item>Rathje, Van Bavel and van der Linden, "Out-group animosity drives engagement on social media", PNAS, 2021. Brady et al., "Emotion shapes the diffusion of moralized content", PNAS, 2017.</item>
-        <item>Bail, Breaking the Social Media Prism, 2021. Rathje et al., PNAS, 2021.</item>
-        <item>Bail, Breaking the Social Media Prism, 2021. Design analysis of engagement mechanics.</item>
-        <item>Ribeiro et al., "Auditing Radicalization Pathways on YouTube", ACM FAT*, 2020. Later audits dispute the strength of the effect; the literature is contested.</item>
-        <item>Chang, Aeschbach, Duffy and Czeisler, "Evening use of light-emitting eReaders negatively affects sleep, circadian timing, and next-morning alertness", PNAS, 2015.</item>
-        <item>Harrison and Horne, "The impact of sleep deprivation on decision making", Journal of Experimental Psychology: Applied, 2000. Muzur, Pace-Schott and Hobson, "The prefrontal cortex in sleep", Trends in Cognitive Sciences, 2002.</item>
-        <item>Accounts by early Facebook engineers (Rosenstein, Pearlman), reported in The Guardian, 2017.</item>
-        <item>Design analysis. On streaks as social obligation among teenagers, see press investigations (e.g. BBC, 2017).</item>
-        <item>Tronick, Als, Adamson, Wise and Brazelton, "The Infant\'s Response to Entrapment between Contradictory Messages in Face-to-Face Interaction", Journal of the American Academy of Child Psychiatry, 1978. The phone-as-still-face extension is supported by later replications (e.g. Myruski et al., "Digital disruption? Maternal mobile device use and infant social-emotional functioning", Developmental Science, 2018).</item>
-        <item>McDaniel and Radesky, "Technoference: Parent Distraction With Technology and Associations With Child Behavior Problems", Child Development, 2018. Notification timing optimisation: platform engineering publications (Meta, LinkedIn, Twitter, 2016–2020).</item>
-        <item>Reed, Hirsh-Pasek and Golinkoff, "Learning on Hold: Cell Phones Sidetrack Parent-Child Interactions", Developmental Psychology, 2017.</item>
-        <item>Serve and return: Center on the Developing Child, Harvard University. Caregiver absorption and harsher responses: Radesky et al., "Patterns of Mobile Device Use by Caregivers and Children During Meals in Fast Food Restaurants", Pediatrics, 2014.</item>
-        <item>Leong et al., "Speaker gaze increases information coupling between infant and adult brains", PNAS, 2017.</item>
-        <item>Design analysis of engagement-optimisation objectives.</item>
-    </string-array>
-
-    <string-array name="tidbits_social_sources" translatable="false">
-        <item>Loren Brichter (inventor of pull-to-refresh) on its slot-machine quality: interview in The Guardian, 2017. Tristan Harris, "How Technology is Hijacking Your Mind", 2016.</item>
-        <item>Aza Raskin, BBC interview, 2018.</item>
-        <item>Ferster and Skinner, Schedules of Reinforcement, 1957 — variable-ratio reinforcement.</item>
-        <item>Instagram product announcement of Suggested Posts, 2020 — shown "when you\'ve caught up". Design analysis.</item>
-        <item>Red and involuntary attention capture: Elliot and Maier, "Color Psychology", Annual Review of Psychology, 2014. "Tested and chosen deliberately" is an industry account (Harris, 2016).</item>
-        <item>Abrams and Christ, "Motion Onset Captures Attention", Psychological Science, 2003.</item>
-        <item>Meta and Snap annual reports (Form 10-K): advertising is about 98% of Meta\'s revenue.</item>
-        <item>Instagram hid like counts in tests from 2019; internal research on harm reported in "The Facebook Files", Wall Street Journal, 2021; counts later returned as an option.</item>
-        <item>Design analysis — scarcity and urgency mechanics (Cialdini, Influence, 1984).</item>
-        <item>Design analysis. On FOMO: Przybylski et al., Computers in Human Behavior, 2013.</item>
-        <item>Robinson and Berridge, incentive-sensitization theory of addiction, Brain Research Reviews, 1993.</item>
-        <item>Horvath et al., "Structural and functional correlates of smartphone addiction", Addictive Behaviors, 2020. Yuan et al., PLoS ONE, 2011. Correlational — causation is not established.</item>
-        <item>Hebb, The Organization of Behavior, 1949.</item>
-        <item>Schultz, Dayan and Montague, "A Neural Substrate of Prediction and Reward", Science, 1997.</item>
-        <item>Synthesis of dopamine research; accessible treatment in Lembke, Dopamine Nation, 2021.</item>
-        <item>NCD Risk Factor Collaboration, "A century of trends in adult human height", eLife, 2016; national anthropometric surveys.</item>
-        <item>Fardouly, Diedrichs, Vartanian and Halliwell, "Social comparisons on social media", Body Image, 2015.</item>
-        <item>Pope, Phillips and Olivardia, The Adonis Complex, 2000. Disclosure of pharmacological assistance in fitness content is rare; design analysis.</item>
-        <item>Machine-learned notification ranking documented in platform engineering publications (Meta, LinkedIn, Twitter, 2016–2020).</item>
-        <item>Zeigarnik effect: Zeigarnik, 1927. Application to app badges is design analysis.</item>
-        <item>Industry engagement-optimisation practice; on teen night-time use see "The Facebook Files", Wall Street Journal, 2021. Partly design analysis.</item>
-        <item>Harrison and Horne, "The impact of sleep deprivation on decision making", Journal of Experimental Psychology: Applied, 2000.</item>
-        <item>Not officially documented. Based on widely reported user experiments and reverse-engineering; treat as informed inference.</item>
-        <item>Accounts by early Facebook engineers (Rosenstein, Pearlman), reported in The Guardian, 2017.</item>
-        <item>Tronick, Als, Adamson, Wise and Brazelton, "The Infant\'s Response to Entrapment between Contradictory Messages in Face-to-Face Interaction", Journal of the American Academy of Child Psychiatry, 1978. The phone-as-still-face extension is supported by later replications (e.g. Myruski et al., Developmental Science, 2018).</item>
-        <item>McDaniel and Radesky, "Technoference: Parent Distraction With Technology and Associations With Child Behavior Problems", Child Development, 2018.</item>
-        <item>Reed, Hirsh-Pasek and Golinkoff, "Learning on Hold: Cell Phones Sidetrack Parent-Child Interactions", Developmental Psychology, 2017.</item>
-        <item>Design analysis of engagement-optimisation objectives.</item>
-    </string-array>
-
-    <string-array name="tidbits_adult_sources" translatable="false">
-        <item>Beach and Jordan, 1956 (original studies). Fiorino, Coury and Phillips, "Dynamic changes in nucleus accumbens dopamine efflux during the Coolidge effect in male rats", Journal of Neuroscience, 1997.</item>
-        <item>Supernormal stimuli: Tinbergen, The Study of Instinct, 1951. Barrett, Supernormal Stimuli, 2010.</item>
-        <item>Conceptual argument building on supernormal-stimulus theory (Barrett, 2010); not itself an empirical finding.</item>
-        <item>Pitchers et al., "Natural and drug rewards act on common neural plasticity mechanisms with ΔFosB as a key mediator", Journal of Neuroscience, 2013. Nestler et al., PNAS, 2001.</item>
-        <item>Park et al., "Is Internet Pornography Causing Sexual Dysfunctions? A Review with Clinical Reports", Behavioral Sciences, 2016. Causation is debated — see the counter-research entry below.</item>
-        <item>Kraus, Voon and Potenza, "Should compulsive sexual behavior be considered an addiction?", Addiction, 2016.</item>
-        <item>Hypofrontality in addiction: Volkow and Fowler, Cerebral Cortex, 2000; Volkow et al., PNAS, 2011.</item>
-        <item>WHO ICD-11 classifies compulsive sexual behaviour disorder as an impulse-control disorder, not an addiction (2019). Kraus, Voon and Potenza, Addiction, 2016.</item>
-        <item>Prause and Pfaus, "Viewing Sexual Stimuli Associated with Greater Sexual Responsiveness, Not Erectile Dysfunction", Sexual Medicine, 2015.</item>
-        <item>Lewczuk, Szmyd, Skorko and Gola, "Treatment seeking for problematic pornography use among women", Journal of Behavioral Addictions, 2017.</item>
-        <item>Content analyses of mainstream pornography, e.g. Vannier, Currie and O\'Sullivan, Journal of Sex Research, 2014.</item>
-        <item>Wright, Tokunaga, Kraus and Klann, "Pornography Consumption and Satisfaction: A Meta-Analysis", Human Communication Research, 2017.</item>
-    </string-array>
-
+    <!-- tidbits_adult_lvl0 (array items, in order) -->
+    <string name="tidbits_adult_lvl0_0">This is a superstimulus your brain can\'t defend against.</string>
+    <string name="tidbits_adult_lvl0_1">Your reward system never evolved to meet anything this strong.</string>
+    <string name="tidbits_adult_lvl0_2">This exceeds every natural cue your brain was built for.</string>
+    <!-- tidbits_adult_lvl1 (array items, in order) -->
+    <string name="tidbits_adult_lvl1_0">Novelty here is infinite; your reward system is not.</string>
+    <string name="tidbits_adult_lvl1_1">Endless new is exactly what the brain can\'t habituate to safely.</string>
+    <string name="tidbits_adult_lvl1_2">Unlimited novelty is the one input arousal can\'t switch off.</string>
+    <!-- tidbits_adult_lvl2 (array items, in order) -->
+    <string name="tidbits_adult_lvl2_0">Every visit raises the bar for the next.</string>
+    <string name="tidbits_adult_lvl2_1">What works today will feel flat tomorrow.</string>
+    <string name="tidbits_adult_lvl2_2">Each session resets the baseline higher.</string>
+    <!-- tidbits_adult_lvl3 (array items, in order) -->
+    <string name="tidbits_adult_lvl3_0">You\'re back sooner than last time. That\'s the pattern.</string>
+    <string name="tidbits_adult_lvl3_1">The gap between visits is shrinking. That\'s the tell.</string>
+    <string name="tidbits_adult_lvl3_2">Returning faster each time is how this progresses.</string>
+    <!-- tidbits_adult_lvl4 (array items, in order) -->
+    <string name="tidbits_adult_lvl4_0">This is escalation — the same mechanism as tolerance.</string>
+    <string name="tidbits_adult_lvl4_1">You need more or newer to feel the same. That\'s tolerance.</string>
+    <string name="tidbits_adult_lvl4_2">The drift toward stronger material isn\'t random; it\'s tolerance.</string>
+    <!-- tidbits_adult_lvl5 (array items, in order) -->
+    <string name="tidbits_adult_lvl5_0">It\'s rewiring arousal toward a screen.</string>
+    <string name="tidbits_adult_lvl5_1">Your arousal is being trained to a pixel pattern.</string>
+    <string name="tidbits_adult_lvl5_2">A screen is becoming the trigger your body answers to.</string>
+    <!-- tidbits_adult_lvl6 (array items, in order) -->
+    <string name="tidbits_adult_lvl6_0">It desensitises you to a real partner.</string>
+    <string name="tidbits_adult_lvl6_1">A real person can\'t compete with infinite novelty, and that\'s the harm.</string>
+    <string name="tidbits_adult_lvl6_2">This dulls your response to an actual partner.</string>
+    <!-- tidbits_adult_lvl7 (array items, in order) -->
+    <string name="tidbits_adult_lvl7_0">The urge gets louder; the payoff gets quieter.</string>
+    <string name="tidbits_adult_lvl7_1">You want it more and enjoy it less each time.</string>
+    <string name="tidbits_adult_lvl7_2">Rising craving, falling reward — the addiction signature.</string>
+    <!-- tidbits_adult_lvl8 (array items, in order) -->
+    <string name="tidbits_adult_lvl8_0">This is compulsive use, by its own definition.</string>
+    <string name="tidbits_adult_lvl8_1">Continuing against your own intention is the definition of compulsive.</string>
+    <string name="tidbits_adult_lvl8_2">You\'ve told yourself to stop and you\'re here — that\'s compulsion.</string>
+    <!-- tidbits_adult_lvl9 (array items, in order) -->
+    <string name="tidbits_adult_lvl9_0">PIED is documented in healthy young men — this is how.</string>
+    <string name="tidbits_adult_lvl9_1">Porn-induced ED shows up in young men with no other cause. This is the path.</string>
+    <string name="tidbits_adult_lvl9_2">The mechanism behind PIED is exactly this, repeated.</string>
+    <!-- tidbits_adult_lvl10 (array items, in order) -->
+    <string name="tidbits_adult_lvl10_0">You\'ve stopped deciding. The craving decides.</string>
+    <string name="tidbits_adult_lvl10_1">The craving is in the driver\'s seat now.</string>
+    <string name="tidbits_adult_lvl10_2">There\'s no choice left in this, only the pull.</string>
+    <!-- tidbits_adult_lvl11 (array items, in order) -->
+    <string name="tidbits_adult_lvl11_0">This is an addiction running you, not a habit.</string>
+    <string name="tidbits_adult_lvl11_1">Past a certain point it isn\'t a habit; it\'s addiction, and this is past it.</string>
+    <string name="tidbits_adult_lvl11_2">This isn\'t a preference anymore. It\'s an addiction steering you.</string>
 
     <!-- ════════════════════════════════════════════
          OFFLINE ACTIVITY PROMPTS
          ════════════════════════════════════════════ -->
 
-    <string-array name="offline_prompts_movement">
-        <item>Take a walk around the block.</item>
-        <item>Stand up and stretch for 30 seconds.</item>
-        <item>Do 10 slow squats.</item>
-        <item>Walk to the kitchen and drink a glass of water.</item>
-        <item>Step outside for 2 minutes. Just stand there.</item>
-        <item>Walk to a different room for no reason.</item>
-        <item>Balance on one leg while you count to 20. Switch.</item>
-        <item>Open the front door and check the weather with your body, not an app.</item>
-        <item>Roll your shoulders ten times. Slowly.</item>
-        <item>Walk up and down the stairs once, if you have stairs. Slowly is fine.</item>
-    </string-array>
+    <!-- offline_prompts_movement (array items, in order) -->
+    <string name="offline_prompts_movement_0">Take a walk around the block.</string>
+    <string name="offline_prompts_movement_1">Stand up and stretch for 30 seconds.</string>
+    <string name="offline_prompts_movement_2">Do 10 slow squats.</string>
+    <string name="offline_prompts_movement_3">Walk to the kitchen and drink a glass of water.</string>
+    <string name="offline_prompts_movement_4">Step outside for 2 minutes. Just stand there.</string>
+    <string name="offline_prompts_movement_5">Walk to a different room for no reason.</string>
+    <string name="offline_prompts_movement_6">Balance on one leg while you count to 20. Switch.</string>
+    <string name="offline_prompts_movement_7">Open the front door and check the weather with your body, not an app.</string>
+    <string name="offline_prompts_movement_8">Roll your shoulders ten times. Slowly.</string>
+    <string name="offline_prompts_movement_9">Walk up and down the stairs once, if you have stairs. Slowly is fine.</string>
 
-    <string-array name="offline_prompts_space">
-        <item>Tidy the coffee table.</item>
-        <item>Put one thing back where it belongs.</item>
-        <item>Throw away one piece of rubbish you\'ve been ignoring.</item>
-        <item>Make your bed (or straighten it).</item>
-        <item>Wipe the nearest surface.</item>
-        <item>Put your phone face-down on a different surface than where you usually leave it.</item>
-        <item>Hang up one item from the clothes chair.</item>
-        <item>Water one plant that looks like it needs it.</item>
-        <item>Straighten the shoes by the door.</item>
-        <item>Put away five things from the drying rack or dishwasher.</item>
-    </string-array>
+    <!-- offline_prompts_space (array items, in order) -->
+    <string name="offline_prompts_space_0">Tidy the coffee table.</string>
+    <string name="offline_prompts_space_1">Put one thing back where it belongs.</string>
+    <string name="offline_prompts_space_2">Throw away one piece of rubbish you\'ve been ignoring.</string>
+    <string name="offline_prompts_space_3">Make your bed (or straighten it).</string>
+    <string name="offline_prompts_space_4">Wipe the nearest surface.</string>
+    <string name="offline_prompts_space_5">Put your phone face-down on a different surface than where you usually leave it.</string>
+    <string name="offline_prompts_space_6">Hang up one item from the clothes chair.</string>
+    <string name="offline_prompts_space_7">Water one plant that looks like it needs it.</string>
+    <string name="offline_prompts_space_8">Straighten the shoes by the door.</string>
+    <string name="offline_prompts_space_9">Put away five things from the drying rack or dishwasher.</string>
 
-    <string-array name="offline_prompts_sensory">
-        <item>Look out the window. Name three things you can see.</item>
-        <item>Close your eyes and name five things you can hear right now.</item>
-        <item>Open a window and notice what the air smells like.</item>
-        <item>Make a cup of something hot and hold it with both hands.</item>
-        <item>Notice the temperature of the room. Is it comfortable?</item>
-        <item>Wash your hands slowly with warm water. Pay attention to it.</item>
-        <item>Eat a piece of fruit without doing anything else at the same time.</item>
-        <item>Step outside and take three slow breaths of outdoor air.</item>
-        <item>Find the softest thing within reach. Confirm by touch.</item>
-    </string-array>
+    <!-- offline_prompts_sensory (array items, in order) -->
+    <string name="offline_prompts_sensory_0">Look out the window. Name three things you can see.</string>
+    <string name="offline_prompts_sensory_1">Close your eyes and name five things you can hear right now.</string>
+    <string name="offline_prompts_sensory_2">Open a window and notice what the air smells like.</string>
+    <string name="offline_prompts_sensory_3">Make a cup of something hot and hold it with both hands.</string>
+    <string name="offline_prompts_sensory_4">Notice the temperature of the room. Is it comfortable?</string>
+    <string name="offline_prompts_sensory_5">Wash your hands slowly with warm water. Pay attention to it.</string>
+    <string name="offline_prompts_sensory_6">Eat a piece of fruit without doing anything else at the same time.</string>
+    <string name="offline_prompts_sensory_7">Step outside and take three slow breaths of outdoor air.</string>
+    <string name="offline_prompts_sensory_8">Find the softest thing within reach. Confirm by touch.</string>
 
-    <string-array name="offline_prompts_social">
-        <item>Think of one person you haven\'t talked to in a while. You don\'t have to contact them — just think of them.</item>
-        <item>Write one sentence by hand. Anything.</item>
-        <item>If someone else is nearby, say something to them that isn\'t about logistics.</item>
-        <item>If your child is in the room, watch what they\'re doing for one minute. Just watch.</item>
-        <item>If you have a pet, give it two minutes of full attention.</item>
-        <item>Recall the last good conversation you had. What made it good?</item>
-    </string-array>
+    <!-- offline_prompts_social (array items, in order) -->
+    <string name="offline_prompts_social_0">Think of one person you haven\'t talked to in a while. You don\'t have to contact them — just think of them.</string>
+    <string name="offline_prompts_social_1">Write one sentence by hand. Anything.</string>
+    <string name="offline_prompts_social_2">If someone else is nearby, say something to them that isn\'t about logistics.</string>
+    <string name="offline_prompts_social_3">If your child is in the room, watch what they\'re doing for one minute. Just watch.</string>
+    <string name="offline_prompts_social_4">If you have a pet, give it two minutes of full attention.</string>
+    <string name="offline_prompts_social_5">Recall the last good conversation you had. What made it good?</string>
 
-    <string-array name="offline_prompts_creative">
-        <item>Pick up a book — any book — and read one page.</item>
-        <item>Draw something badly. It doesn\'t matter what.</item>
-        <item>Hum or whistle something.</item>
-        <item>Rearrange one object on a shelf until it looks better to you.</item>
-        <item>Fold a piece of paper into something. Anything counts.</item>
-        <item>Stack three nearby objects into a small tower.</item>
-        <item>Recite a whole chorus from memory. Out loud or in your head.</item>
-        <item>Describe the room you\'re in, in one handwritten sentence.</item>
-    </string-array>
+    <!-- offline_prompts_creative (array items, in order) -->
+    <string name="offline_prompts_creative_0">Pick up a book — any book — and read one page.</string>
+    <string name="offline_prompts_creative_1">Draw something badly. It doesn\'t matter what.</string>
+    <string name="offline_prompts_creative_2">Hum or whistle something.</string>
+    <string name="offline_prompts_creative_3">Rearrange one object on a shelf until it looks better to you.</string>
+    <string name="offline_prompts_creative_4">Fold a piece of paper into something. Anything counts.</string>
+    <string name="offline_prompts_creative_5">Stack three nearby objects into a small tower.</string>
+    <string name="offline_prompts_creative_6">Recite a whole chorus from memory. Out loud or in your head.</string>
+    <string name="offline_prompts_creative_7">Describe the room you\'re in, in one handwritten sentence.</string>
 
 </resources>
