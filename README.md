@@ -23,6 +23,9 @@ Social media apps are engineered to pull you in without asking. Defang puts a sp
 
 </div>
 
+[![Oversettelsesstatus](https://hosted.weblate.org/widget/defang/open-graph.png)](https://hosted.weblate.org/engage/defang/)
+If you want to see Defang in your language, please help by translating. You don't need to know how to code, you only need the ability to read and the language you want to use Defang in
+
 ## Star History
 
 <a href="https://www.star-history.com/?repos=Scandiking%2FDefang&type=date&legend=top-left">
