@@ -24,7 +24,7 @@ Defang doesn't scold, cheer or coach. It states how the apps work and leaves the
 
 ## Hard rules
 
-- **Arrays: translate every item, in order.** Don't add, drop or reorder items. `tidbits_general`, `tidbits_social` and `tidbits_adult` are index-aligned with citation arrays that are *not* translated. Item 7 in your language must be the same fact as item 7 in English, or the Settings library shows the wrong source.
+- **Numbered strings are one fact each.** Awareness texts are keyed `tidbits_general_0`, `tidbits_general_1`, … Translate each key as the same fact as the English one; never move content between numbers. The tidbits are matched to untranslated citations by number, so `tidbits_general_7` in your language must be the same fact as in English, or the Settings library shows the wrong source. An untranslated key falls back to English.
 - **Placeholders stay intact.** `%1$s`, `%1$d`, `%2$02d` and `%%` must appear in the translation. You can reorder them (`%2$s … %1$s`).
 - **`\n` is a line break.** Keep paragraph breaks where English has them.
 - **Don't translate** "Defang", app names (Instagram, TikTok…) or URLs.
