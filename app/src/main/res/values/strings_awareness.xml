@@ -6,6 +6,15 @@
     No "learn more" links. No clickable URLs. Ever.
     Citations appear only in Settings > "What we know about them" — not here.
     See PRD §7.7 for writing discipline rules.
+
+    TRANSLATORS: read TRANSLATING.md first. In short —
+    - Keep the tone: flat, factual, blunt. No softening, no exclamation
+      marks, no "you should". The lines work by stating mechanism, not
+      by scolding or cheering.
+    - Translate every item of an array. Never add, drop or reorder items:
+      the tidbit arrays are index-aligned with untranslated citation
+      arrays, and the ladder levels (lvl0–lvl11) run mildest → harshest.
+    - Gate ladder lines stay one short sentence; they must fit the gate.
 -->
 <resources>
 
