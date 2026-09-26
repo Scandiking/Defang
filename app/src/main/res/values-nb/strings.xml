@@ -343,11 +343,7 @@
     <!-- Hjelp til å oversette (issue #30) -->
     <string name="settings_translate">Hjelp til å oversette Defang</string>
     <string name="settings_translate_desc">Oversettelser gjøres av frivillige på Weblate</string>
-    <string name="translate_body">Defang oversettes av frivillige på Weblate — ingen Git eller koding nødvendig. Velg et språk, eller legg til et nytt:
-
-hosted.weblate.org/engage/defang
-
-Åpne den i en nettleser, når du selv velger det. Bevissthetstekstene er kjernen i appen; en oversettelse som beholder direktheten betyr mer enn en rask en.</string>
+    <string name="translate_body">Defang oversettes av frivillige på Weblate — ingen Git eller koding nødvendig. Velg et språk, eller legg til et nytt:\n\nhosted.weblate.org/engage/defang\n\nÅpne den i en nettleser, når du selv velger det. Bevissthetstekstene er kjernen i appen; en oversettelse som beholder direktheten betyr mer enn en rask en.</string>
 
     <!-- Home screen usage panel -->
     <string name="settings_home_usage">Dagens bruk på hjemskjermen</string>

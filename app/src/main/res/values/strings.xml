@@ -354,11 +354,7 @@
     <string name="settings_translate">Help translate Defang</string>
     <string name="settings_translate_desc">Translations are crowdsourced on Weblate</string>
     <!-- Keep the URL unchanged. -->
-    <string name="translate_body">Defang is translated by volunteers on Weblate — no Git or coding needed. Pick a language, or add a new one:
-
-hosted.weblate.org/engage/defang
-
-Open it in a browser, when you choose to. The awareness texts are the heart of the app; a translation that keeps their bluntness matters more than a fast one.</string>
+    <string name="translate_body">Defang is translated by volunteers on Weblate — no Git or coding needed. Pick a language, or add a new one:\n\nhosted.weblate.org/engage/defang\n\nOpen it in a browser, when you choose to. The awareness texts are the heart of the app; a translation that keeps their bluntness matters more than a fast one.</string>
 
     <!-- Home screen usage panel -->
     <string name="settings_home_usage">Today\'s usage on home screen</string>
