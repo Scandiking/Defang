@@ -168,7 +168,7 @@ None of that is a problem Defang or any app on your phone can fix, and it's not 
 
 ## Translations
 
-[![Translation status](https://hosted.weblate.org/widget/defang/svg-badge.svg)](https://hosted.weblate.org/engage/defang/)
+[![Translation status](https://hosted.weblate.org/widget/defang/multi-auto.svg)](https://hosted.weblate.org/engage/defang/)
 
 Defang ships in English and Norwegian (Bokmål). Other languages are crowdsourced on [Weblate](https://hosted.weblate.org/engage/defang/) — no Git or coding needed. Read [TRANSLATING.md](TRANSLATING.md) before starting; the awareness texts are tone-sensitive.
 
