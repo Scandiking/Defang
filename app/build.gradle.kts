@@ -30,6 +30,11 @@ android {
         versionName = "0.1.19"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Languages that ship. Weblate may push new or partial values-*
+        // folders to main; they stay out of the APK (and out of Settings ▸
+        // App languages) until their code is added here.
+        resourceConfigurations += listOf("en", "nb")
     }
 
     signingConfigs {
