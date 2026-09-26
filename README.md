@@ -144,7 +144,7 @@ app/src/main/kotlin/com/defang/launcher/
 
 ### Planned / exploring
 
-- Weblate crowd translation for multi-language support. Currently only ships English and incomplete Norwegian.
+- More languages — see [Translations](#translations)
 - If you have ideas or experience shortcomings you'd like to see fixed, you can [create an `issue`](https://github.com/Scandiking/Defang/issues/new)
 
 ---
@@ -163,6 +163,14 @@ None of that is a problem Defang or any app on your phone can fix, and it's not 
 
 >[!IMPORTANT] 
 > Defang does not block apps outright. It does not _stop_ you from using apps like Facebook and Snapchat. That just makes you relapse. Instead, it puts back the one thing these apps spent billions removing: a single deliberate pause, enough to make the choice _conscious_ rather than automatic. This rewires your brain to use these apps deliberately, and then over time changes the habit of opening them the moment there's the smallest feeling of boredom. The friction is the feature.
+
+---
+
+## Translations
+
+[![Translation status](https://hosted.weblate.org/widget/defang/svg-badge.svg)](https://hosted.weblate.org/engage/defang/)
+
+Defang ships in English and Norwegian (Bokmål). Other languages are crowdsourced on [Weblate](https://hosted.weblate.org/engage/defang/) — no Git or coding needed. Read [TRANSLATING.md](TRANSLATING.md) before starting; the awareness texts are tone-sensitive.
 
 ---
 

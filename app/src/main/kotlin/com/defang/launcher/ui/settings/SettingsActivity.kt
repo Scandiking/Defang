@@ -419,6 +419,8 @@ private fun SettingsMenuScreen(
 
     val lockdownInfo = stringResource(R.string.lockdown_title) to
         stringResource(R.string.lockdown_body)
+    val translateInfo = stringResource(R.string.settings_translate) to
+        stringResource(R.string.translate_body)
     val grayscaleWhy = stringResource(R.string.settings_grayscale_why_title) to
         stringResource(R.string.settings_grayscale_why_body)
     val sanitizeWhy = stringResource(R.string.settings_sanitize_why_title) to
@@ -784,6 +786,14 @@ private fun SettingsMenuScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { whyDialog = lockdownInfo },
+            )
+            HorizontalDivider()
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_translate)) },
+                supportingContent = { Text(stringResource(R.string.settings_translate_desc)) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { whyDialog = translateInfo },
             )
             HorizontalDivider()
 

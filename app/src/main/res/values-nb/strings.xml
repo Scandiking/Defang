@@ -2,7 +2,6 @@
 <!-- Norwegian (Bokmål). Keep keys in sync with values/strings.xml. -->
 <resources>
     <!-- App -->
-    <string name="app_name">Defang</string>
 
     <!-- Accessibility service -->
     <string name="accessibility_service_label">Defang launcher</string>
@@ -99,7 +98,6 @@
     <string name="settings_appdrawer_scope">Juster bokstavindeksen så den ikke havner under et deksel, eller så den er lettere å treffe.</string>
     <string name="settings_letter_size">Bokstavstørrelse</string>
     <string name="settings_letter_offset">Avstand fra kanten</string>
-    <string name="unit_percent">%1$d%%</string>
     <string name="unit_dp">%1$d dp</string>
 
     <!-- Jobbprofil-apper -->
@@ -147,7 +145,15 @@
     <string name="launcher_search_hint">Søk etter apper…</string>
     <string name="launcher_settings">Innstillinger</string>
     <string name="app_menu_info">Appinfo</string>
+    <string name="app_menu_rename">Gi nytt navn</string>
     <string name="app_menu_uninstall">Avinstaller</string>
+    <string name="rename_dialog_title">Gi appen nytt navn</string>
+    <string name="rename_dialog_save">Lagre</string>
+    <string name="rename_dialog_cancel">Avbryt</string>
+    <string name="duplicate_name_title">To apper, ett navn</string>
+    <string name="duplicate_name_body">En annen app på telefonen heter også «%1$s». Gi denne et annet navn, så du kan skille dem fra hverandre i skuffen.</string>
+    <string name="duplicate_name_rename">Gi nytt navn</string>
+    <string name="duplicate_name_not_now">Ikke nå</string>
 
     <!-- Settings menu (Phase 2) -->
     <string name="settings_timing_title">Standardtider</string>
@@ -186,6 +192,8 @@
     <string name="home_mode_tidbit_desc">Bare dagens faktabit</string>
     <string name="home_mode_clock">Klokke og faktabit</string>
     <string name="home_mode_clock_desc">Klokke, dato og dagens faktabit</string>
+    <string name="home_mode_search_only">Kun søk</string>
+    <string name="home_mode_search_only_desc">Blank skjerm. Sveip opp for å søke etter og åpne apper.</string>
 
     <!-- Custom tasks -->
     <string name="settings_tasks_title">Dine egne oppgaver</string>
@@ -232,6 +240,7 @@
     <string name="settings_qr_none">Ingen kode registrert ennå</string>
     <string name="settings_qr_skip_wait_title">Hopp over nedtellingen</string>
     <string name="settings_qr_skip_wait_desc">Skanning åpner appen med en gang, uten å vente ut nedtellingen. Frisksjonen blir å nå koden, ikke ventetiden.</string>
+    <string name="settings_qr_math_combo_note">Kombinert med regnestykke-låsen — når du løser regnestykket, åpnes skanneren i stedet for appen, så nedtellingen beholdes alltid.</string>
     <string name="settings_qr_why_title">Hvorfor en kodeskanning?</string>
     <string name="settings_qr_why_body">Som en NFC-brikke gjør en QR- eller strekkode du må gå til det å åpne en overvåket app til en bevisst handling — men uten NFC-maskinvare eller brikke, bare en utskrevet kode. Merk at en kode kan fotograferes og gjenbrukes fra en skjerm, så den er svakere enn en fysisk brikke: plasser den et sted du faktisk må gå, ikke lagret på samme telefon.</string>
     <string name="qr_register_title">Skann koden for å registrere</string>
@@ -258,8 +267,18 @@
     <string name="settings_math_level_5">Nivå 5 · veldig vanskelig</string>
     <string name="settings_math_why_title">Hvorfor et regnestykke?</string>
     <string name="settings_math_why_body">Litt hoderegning tvinger deg til å stoppe og tenke — vanskeligere å gjøre halvsovende enn å dra, og det vekker hjernen i stedet for bare å fordrive tid. Sett vanskelighetsgraden til det som faktisk får deg til å nøle: mildt hvis tall ikke er din greie, brutalt hvis de er lette for deg.</string>
-    <string name="gate_math_question">%1$s = ?</string>
     <string name="gate_math_wrong">Ikke helt — prøv igjen</string>
+    <string name="settings_math_combo_note">Kombinert med NFC eller QR — når du løser dette, åpnes skanneren/leseren, ikke appen direkte.</string>
+    <string name="settings_adaptive_title">Tilpasset terskel</string>
+    <string name="settings_adaptive_desc">Øker ventetiden automatisk når du åpner en app igjen og igjen på kort tid, og trapper den ned igjen når du lar være. Av som standard — blir det noen gang for mye, slå det av her, eller nullstill det nedenfor.</string>
+    <string name="settings_adaptive_why_title">Hvorfor tilpasse terskelen?</string>
+    <string name="settings_adaptive_why_body">En fast ventetid behandler et raskt blikk og en tvangsmessig gjenåpning likt. Dette øker ventetiden spesifikt for det siste — å åpne samme app igjen kort tid etter at du forlot den — og lar den synke av seg selv når du slutter. Den legger bare til på toppen av den vanlige ventetiden din, trekker aldri fra.</string>
+    <string name="settings_adaptive_confirm_title">Før du slår dette på</string>
+    <string name="settings_adaptive_confirm_body">Dette legger ekstra ventetid oppå de andre innstillingene dine når du åpner en app mange ganger på kort tid. Det er ment for å avbryte tvangsmessig gjenåpning — ikke for å gjøre Defang uutholdelig å bruke. Hvis det noen gang blir for mye, kom tilbake hit og slå det av, eller trykk «Nullstill nå». Det er helt fornuftig å gjøre — målet er mindre sosiale medier, ikke en app du misliker og sletter.</string>
+    <string name="settings_adaptive_strength">Ekstra ventetid per gjentakelse</string>
+    <string name="settings_adaptive_reset">Nullstill nå</string>
+    <string name="settings_adaptive_reset_done">Alle porter er tilbake til vanlig ventetid</string>
+    <string name="gate_adaptive_note">+%1$d s — åpnet ofte i det siste</string>
 
     <!-- App tier search -->
     <string name="tier_search_hint">Søk etter app eller pakkenavn</string>
@@ -296,6 +315,23 @@
     <string name="usage_hours_minutes">%1$d timer og %2$d minutter</string>
     <string name="usage_minutes">%1$d minutter</string>
     <string name="usage_footnote">Målt fra Defangs egen øktlogg — kun økter gjennom porten. Alle data blir på denne enheten.</string>
+    <string name="usage_period_opens">%1$d åpninger i perioden</string>
+    <string name="usage_range_7d">7 dager</string>
+    <string name="usage_range_3mo">3 måneder</string>
+    <string name="usage_range_6mo">6 måneder</string>
+    <string name="usage_range_12mo">12 måneder</string>
+    <string name="usage_chart_line">Linje</string>
+    <string name="usage_chart_bar">Søyle</string>
+    <string name="usage_chart_smoothing">Jevn trend</string>
+    <string name="usage_justifications_title">Begrunnelser for forlengelse</string>
+    <string name="usage_justifications_desc">Det du sa da du ba om mer tid — se om det holdt vann.</string>
+    <string name="usage_justifications_empty">Ingen forlengelser brukt i denne perioden.</string>
+    <string name="usage_retention_title">Behold brukshistorikk</string>
+    <string name="usage_retention_desc">Hvor lenge Defang tar vare på øktloggen din. Styrer både trendvisningen over og hva en eksport inneholder.</string>
+    <string name="usage_retention_dont_track">Ikke spor</string>
+    <string name="usage_retention_indefinite">På ubestemt tid</string>
+    <string name="usage_export_csv">Eksporter som CSV</string>
+    <string name="usage_export_success">Bruksdata eksportert</string>
 
     <!-- Google install lockdown warning -->
     <string name="lockdown_title">Om installering av oppdateringer</string>
@@ -303,6 +339,15 @@
     <string name="lockdown_dismiss">Forstått</string>
     <string name="settings_lockdown">Googles installasjonslås</string>
     <string name="settings_lockdown_desc">Hva september 2026 betyr for oppdatering av denne appen</string>
+
+    <!-- Hjelp til å oversette (issue #30) -->
+    <string name="settings_translate">Hjelp til å oversette Defang</string>
+    <string name="settings_translate_desc">Oversettelser gjøres av frivillige på Weblate</string>
+    <string name="translate_body">Defang oversettes av frivillige på Weblate — ingen Git eller koding nødvendig. Velg et språk, eller legg til et nytt:
+
+hosted.weblate.org/engage/defang
+
+Åpne den i en nettleser, når du selv velger det. Bevissthetstekstene er kjernen i appen; en oversettelse som beholder direktheten betyr mer enn en rask en.</string>
 
     <!-- Home screen usage panel -->
     <string name="settings_home_usage">Dagens bruk på hjemskjermen</string>
@@ -313,4 +358,5 @@
     <string name="widget_usage_desc">Dagens tid i hver overvåkede app mot grensen din</string>
     <string name="widget_no_sessions">Ingen økter i dag.</string>
     <string name="widget_usage_value">%1$d/%2$d min</string>
+    <string name="minutes_short">%1$d min</string>
 </resources>

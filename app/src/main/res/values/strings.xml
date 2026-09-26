@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- App -->
-    <string name="app_name">Defang</string>
+    <string name="app_name" translatable="false">Defang</string>
 
     <!-- Accessibility service -->
     <string name="accessibility_service_label">Defang launcher</string>
@@ -94,7 +94,7 @@
     <string name="settings_appdrawer_scope">Adjust the letter index so it clears case bezels and cutouts, or so it\'s easier to hit.</string>
     <string name="settings_letter_size">Letter size</string>
     <string name="settings_letter_offset">Distance from edge</string>
-    <string name="unit_percent">%1$d%%</string>
+    <string name="unit_percent" translatable="false">%1$d%%</string>
     <string name="unit_dp">%1$d dp</string>
 
     <!-- Work profile apps -->
@@ -149,7 +149,7 @@
     <string name="app_menu_rename">Rename</string>
     <string name="app_menu_uninstall">Uninstall</string>
     <string name="rename_dialog_title">Rename app</string>
-    <string name="rename_dialog_source">%1$s · %2$s</string>
+    <string name="rename_dialog_source" translatable="false">%1$s · %2$s</string>
     <string name="rename_dialog_save">Save</string>
     <string name="rename_dialog_cancel">Cancel</string>
     <string name="duplicate_name_title">Two apps, one name</string>
@@ -269,7 +269,7 @@
     <string name="settings_math_level_5">Level 5 · very hard</string>
     <string name="settings_math_why_title">Why a math problem?</string>
     <string name="settings_math_why_body">A little arithmetic makes you stop and think — harder to do half-asleep than a slide, and it wakes the brain up rather than just passing time. Set the difficulty to whatever actually makes you pause: gentle if numbers aren\'t your thing, brutal if they come easily.</string>
-    <string name="gate_math_question">%1$s = ?</string>
+    <string name="gate_math_question" translatable="false">%1$s = ?</string>
     <string name="gate_math_wrong">Not quite — try again</string>
     <string name="settings_math_combo_note">Combined with NFC or QR — solving this opens the scanner/reader, not the app directly.</string>
 
@@ -350,6 +350,16 @@
     <string name="settings_lockdown">Google\'s install lockdown</string>
     <string name="settings_lockdown_desc">What September 2026 means for updating this app</string>
 
+    <!-- Help translate (issue #30) -->
+    <string name="settings_translate">Help translate Defang</string>
+    <string name="settings_translate_desc">Translations are crowdsourced on Weblate</string>
+    <!-- Keep the URL unchanged. -->
+    <string name="translate_body">Defang is translated by volunteers on Weblate — no Git or coding needed. Pick a language, or add a new one:
+
+hosted.weblate.org/engage/defang
+
+Open it in a browser, when you choose to. The awareness texts are the heart of the app; a translation that keeps their bluntness matters more than a fast one.</string>
+
     <!-- Home screen usage panel -->
     <string name="settings_home_usage">Today\'s usage on home screen</string>
     <string name="settings_home_usage_desc">Small bars under the clock — only shown on days with watched-app time</string>
@@ -362,5 +372,5 @@
 
     <!-- Misc -->
     <string name="minutes_short">%1$dm</string>
-    <string name="time_format_mm_ss">%1$d:%2$02d</string>
+    <string name="time_format_mm_ss" translatable="false">%1$d:%2$02d</string>
 </resources>

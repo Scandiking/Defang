@@ -80,6 +80,13 @@ android {
         compose = true
     }
 
+    // Emits a locale_config from the values-* folders so Android 13+ lists
+    // Defang under Settings ▸ App languages. Default locale is declared in
+    // res/resources.properties.
+    androidResources {
+        generateLocaleConfig = true
+    }
+
     // Google-encrypted dependency block (Play Console telemetry) — F-Droid
     // rejects APKs containing it, and we don't publish to Play anyway.
     dependenciesInfo {
