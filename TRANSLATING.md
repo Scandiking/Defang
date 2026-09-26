@@ -32,6 +32,6 @@ Defang doesn't scold, cheer or coach. It states how the apps work and leaves the
 
 ## Adding a new language
 
-On the Weblate project page, pick **Start new translation**. Once a language is reasonably complete (App fully, Awareness at least started), it's merged and shows up in Android 13+'s per-app language setting (Settings ▸ Apps ▸ Defang ▸ Language).
+On the Weblate project page, pick **Start new translation**. Translations are merged as they come in, but a language only ships once it's reasonably complete (App fully, Awareness at least started). Then it shows up in Android 13+'s per-app language setting (Settings ▸ Apps ▸ Defang ▸ Language).
 
 Questions or wording doubts: comment on the string in Weblate, or open an issue.
