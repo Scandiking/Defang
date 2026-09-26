@@ -1,0 +1,1 @@
+Overvåkede nettsider fungerer nå i Fulguris og flere Chromium-/Firefox-baserte nettlesere. Norsk oversettelse er komplett, Defang vises under Innstillinger > Appspråk på Android 13+, og Innstillinger har en lenke for å hjelpe med oversettelse på Weblate.

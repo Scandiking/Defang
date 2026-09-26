@@ -1,0 +1,1 @@
+Watched websites now work in Fulguris and more Chromium/Firefox-based browsers. Norwegian translation is complete, Defang appears under Settings > App languages on Android 13+, and Settings has a link to help translate on Weblate.
