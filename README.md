@@ -182,6 +182,9 @@ Defang ships in English and Norwegian (Bokmål). Other languages are crowdsource
 
 ## FAQ
 
+**Where are the settings?**  
+Open the app drawer and tap **Defang** in the list (or search "def"). No gear icon, by design.
+
 **Why not block watched apps outright?**  
 Blocking outright doesn't touch the underlying brain-loop.  
 In launchers that blocks the apps outright, once the craving peaks, the user switches back to their old launcher, and often binges to make up for the FOMO. The loop fires exactly as before, just delayed. "Neurons that fire together, wire together" (Löwel & Singer, 1992): every uninterrupted cue → app → reward pass reinforces the same wiring. Defang instead inserts a pause *inside* the loop, every time, so the association weakens with repetition. Delayed gratification substituting for instant gratification, until the habit itself changes rather than just its timing.
