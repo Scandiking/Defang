@@ -43,6 +43,14 @@ class DefangDatabaseMigrationTest {
         migrated.close()
     }
 
+    @Test
+    fun migrate8To9_addsFolders() {
+        helper.createDatabase(TEST_DB, 8).close()
+
+        val migrated = helper.runMigrationsAndValidate(TEST_DB, 9, true, AppModule.MIGRATION_8_9)
+        migrated.close()
+    }
+
     companion object {
         private const val TEST_DB = "migration-test"
     }

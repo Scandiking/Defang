@@ -168,6 +168,8 @@ class LauncherActivity : ComponentActivity() {
                     val hiddenPackages by viewModel.hiddenPackages.collectAsState()
                     val letterRailScale by viewModel.letterRailScale.collectAsState()
                     val letterRailXOffsetDp by viewModel.letterRailXOffsetDp.collectAsState()
+                    val foldersEnabled by viewModel.foldersEnabled.collectAsState()
+                    val folders by viewModel.folders.collectAsState()
                     LauncherScreen(
                         apps = viewModel.filteredApps(hiddenPackages),
                         query = state.query,
@@ -182,6 +184,13 @@ class LauncherActivity : ComponentActivity() {
                         searchOnOpen = homeMode == HomeScreenMode.SEARCH_ONLY,
                         letterRailScale = letterRailScale,
                         letterRailXOffsetDp = letterRailXOffsetDp,
+                        foldersEnabled = foldersEnabled,
+                        folders = folders,
+                        onMoveToFolder = viewModel::moveToFolder,
+                        onMoveToNewFolder = viewModel::moveToNewFolder,
+                        onRenameFolder = viewModel::renameFolder,
+                        onSetFolderIndicator = viewModel::setFolderIndicator,
+                        onDeleteFolder = viewModel::deleteFolder,
                     )
                 } else {
                     val homeUsage by viewModel.homeUsage.collectAsState()

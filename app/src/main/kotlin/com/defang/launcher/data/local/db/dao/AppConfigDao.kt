@@ -48,6 +48,9 @@ interface AppConfigDao {
     @Query("UPDATE app_config SET renamePromptDismissed = :dismissed WHERE packageName = :pkg")
     suspend fun setRenamePromptDismissed(pkg: String, dismissed: Boolean)
 
+    @Query("UPDATE app_config SET folderId = :folderId WHERE packageName = :pkg")
+    suspend fun setFolder(pkg: String, folderId: Long?)
+
     /** Apply new global defaults to every watched app at once. */
     @Query("""
         UPDATE app_config

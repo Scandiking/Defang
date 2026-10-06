@@ -3,7 +3,11 @@ package com.defang.launcher.ui.launcher
 import android.os.Process
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
@@ -47,6 +51,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.defang.launcher.R
+import com.defang.launcher.data.local.db.entity.AppFolderEntity
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,6 +70,13 @@ fun LauncherScreen(
     searchOnOpen: Boolean = false,
     letterRailScale: Float = 1f,
     letterRailXOffsetDp: Int = 4,
+    foldersEnabled: Boolean = false,
+    folders: List<AppFolderEntity> = emptyList(),
+    onMoveToFolder: (String, Long?) -> Unit = { _, _ -> },
+    onMoveToNewFolder: (String, String) -> Unit = { _, _ -> },
+    onRenameFolder: (Long, String) -> Unit = { _, _ -> },
+    onSetFolderIndicator: (Long, Boolean) -> Unit = { _, _ -> },
+    onDeleteFolder: (Long) -> Unit = {},
 ) {
     var searchActive by remember { mutableStateOf(searchOnOpen) }
 
@@ -111,6 +123,41 @@ fun LauncherScreen(
     // In search-only mode: show nothing until the user has typed at least one character.
     // Auto-open when the query narrows the list to exactly one app.
     val displayedApps = if (searchOnOpen && query.isEmpty()) emptyList() else tabApps
+
+    // Folders (issue #41, opt-in) only shape the browsed personal list — a
+    // search always spans every app, and search-only mode has no list to shape.
+    val useFolders = foldersEnabled && !searchOnOpen && !showingWorkTab && query.isBlank()
+    var openFolderId by remember { mutableStateOf<Long?>(null) }
+    val openFolder = if (useFolders) folders.firstOrNull { it.id == openFolderId } else null
+    BackHandler(enabled = openFolder != null && !searchActive) { openFolderId = null }
+    LaunchedEffect(openFolder?.id) { listState.scrollToItem(0) }
+
+    val entries: List<DrawerEntry> = remember(tabApps, folders, useFolders, openFolder) {
+        when {
+            !useFolders -> tabApps.map { DrawerEntry.App(it) }
+            openFolder != null -> tabApps
+                .filter { it.folderId == openFolder.id }
+                .map { DrawerEntry.App(it) }
+            else -> {
+                // An app pointing at a folder that no longer exists counts as top level
+                val folderIds = folders.map { it.id }.toSet()
+                (tabApps.filter { it.folderId !in folderIds }.map { DrawerEntry.App(it) } +
+                    folders.map { DrawerEntry.Folder(it) })
+                    .sortedBy { it.label.lowercase() }
+            }
+        }
+    }
+
+    // Personal apps only — work-profile apps share their config row with a
+    // same-package personal twin, so they can't carry their own folder.
+    var folderPickerFor by remember { mutableStateOf<AppInfo?>(null) }
+    val moveToFolderFor: (AppInfo) -> (() -> Unit)? = { app ->
+        if (foldersEnabled && app.userHandle == Process.myUserHandle()) {
+            { folderPickerFor = app }
+        } else {
+            null
+        }
+    }
     LaunchedEffect(displayedApps) {
         if (searchOnOpen && query.isNotEmpty() && displayedApps.size == 1) {
             onAppTap(displayedApps[0])
@@ -118,10 +165,10 @@ fun LauncherScreen(
     }
 
     // First list index for each initial letter, in list order ('#' for digits etc.)
-    val letterIndex = remember(tabApps) {
+    val letterIndex = remember(entries) {
         val map = LinkedHashMap<Char, Int>()
-        tabApps.forEachIndexed { i, app ->
-            val first = app.label.firstOrNull()?.uppercaseChar() ?: '#'
+        entries.forEachIndexed { i, entry ->
+            val first = entry.label.firstOrNull()?.uppercaseChar() ?: '#'
             val key = if (first.isLetter()) first else '#'
             if (key !in map) map[key] = i
         }
@@ -186,6 +233,7 @@ fun LauncherScreen(
                                 onUninstall = onUninstall,
                                 onRename = onRename,
                                 getInstallSource = getInstallSource,
+                                onMoveToFolder = moveToFolderFor(app),
                             )
                         }
                     }
@@ -206,18 +254,42 @@ fun LauncherScreen(
                     }
                 }
 
+                if (openFolder != null) {
+                    // Plain title, no chevron — tapping it (or back) returns to the list.
+                    // Smaller and dimmed so it reads as a label, not one more app.
+                    Text(
+                        text = openFolder.name,
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { openFolderId = null }
+                            .padding(horizontal = 24.dp, vertical = 14.dp),
+                    )
+                }
+
                 Box(modifier = Modifier.weight(1f)) {
                     LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
-                        items(tabApps) { app ->
-                            AppRow(
-                                app = app,
-                                canUninstall = app.packageName != ownPackageName,
-                                onTap = { onAppTap(app) },
-                                onAppInfo = onAppInfo,
-                                onUninstall = onUninstall,
-                                onRename = onRename,
-                                getInstallSource = getInstallSource,
-                            )
+                        items(entries) { entry ->
+                            when (entry) {
+                                is DrawerEntry.App -> AppRow(
+                                    app = entry.app,
+                                    canUninstall = entry.app.packageName != ownPackageName,
+                                    onTap = { onAppTap(entry.app) },
+                                    onAppInfo = onAppInfo,
+                                    onUninstall = onUninstall,
+                                    onRename = onRename,
+                                    getInstallSource = getInstallSource,
+                                    onMoveToFolder = moveToFolderFor(entry.app),
+                                )
+                                is DrawerEntry.Folder -> FolderRow(
+                                    folder = entry.folder,
+                                    onOpen = { openFolderId = entry.folder.id },
+                                    onRename = { onRenameFolder(entry.folder.id, it) },
+                                    onSetIndicator = { onSetFolderIndicator(entry.folder.id, it) },
+                                    onDelete = { onDeleteFolder(entry.folder.id) },
+                                )
+                            }
                         }
                     }
                     LetterRail(
@@ -231,6 +303,186 @@ fun LauncherScreen(
             }
         }
     }
+
+    folderPickerFor?.let { app ->
+        FolderPickerDialog(
+            folders = folders,
+            currentFolderId = app.folderId,
+            onPick = { folderId ->
+                onMoveToFolder(app.packageName, folderId)
+                folderPickerFor = null
+            },
+            onCreate = { name ->
+                onMoveToNewFolder(app.packageName, name)
+                folderPickerFor = null
+            },
+            onDismiss = { folderPickerFor = null },
+        )
+    }
+}
+
+/** One row of the browsed drawer list: an app, or (folders on) a folder. */
+private sealed interface DrawerEntry {
+    val label: String
+
+    data class App(val app: AppInfo) : DrawerEntry {
+        override val label: String get() = app.label
+    }
+
+    data class Folder(val folder: AppFolderEntity) : DrawerEntry {
+        override val label: String get() = folder.name
+    }
+}
+
+/**
+ * A folder row. Looks like an app row by default — the trailing arrow is a
+ * per-folder opt-in from the long-press menu, so a folder of feeds can stay
+ * as unremarkable as everything else while a folder of tools can be marked.
+ */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun FolderRow(
+    folder: AppFolderEntity,
+    onOpen: () -> Unit,
+    onRename: (String) -> Unit,
+    onSetIndicator: (Boolean) -> Unit,
+    onDelete: () -> Unit,
+) {
+    var menuOpen by remember { mutableStateOf(false) }
+    var renameDialogOpen by remember { mutableStateOf(false) }
+    Box {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .combinedClickable(
+                    onClick = onOpen,
+                    onLongClick = { menuOpen = true },
+                )
+                .padding(horizontal = 24.dp, vertical = 14.dp),
+        ) {
+            Text(
+                text = folder.name,
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+            if (folder.showIndicator) {
+                Text(
+                    text = stringResource(R.string.folder_indicator),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                    modifier = Modifier.padding(start = 8.dp),
+                )
+            }
+        }
+        DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.folder_menu_rename)) },
+                onClick = {
+                    menuOpen = false
+                    renameDialogOpen = true
+                },
+            )
+            DropdownMenuItem(
+                text = {
+                    Text(
+                        stringResource(
+                            if (folder.showIndicator) R.string.folder_menu_hide_arrow
+                            else R.string.folder_menu_show_arrow
+                        )
+                    )
+                },
+                onClick = {
+                    menuOpen = false
+                    onSetIndicator(!folder.showIndicator)
+                },
+            )
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.folder_menu_delete)) },
+                onClick = {
+                    menuOpen = false
+                    onDelete()
+                },
+            )
+        }
+    }
+    if (renameDialogOpen) {
+        var text by remember { mutableStateOf(folder.name) }
+        AlertDialog(
+            onDismissRequest = { renameDialogOpen = false },
+            title = { Text(stringResource(R.string.folder_rename_title)) },
+            text = {
+                OutlinedTextField(value = text, onValueChange = { text = it }, singleLine = true)
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onRename(text)
+                        renameDialogOpen = false
+                    },
+                    enabled = text.isNotBlank(),
+                ) {
+                    Text(stringResource(R.string.rename_dialog_save))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { renameDialogOpen = false }) {
+                    Text(stringResource(R.string.rename_dialog_cancel))
+                }
+            },
+        )
+    }
+}
+
+/** "Move to folder" from an app's long-press menu: pick one, go top level, or start a new one. */
+@Composable
+private fun FolderPickerDialog(
+    folders: List<AppFolderEntity>,
+    currentFolderId: Long?,
+    onPick: (Long?) -> Unit,
+    onCreate: (String) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var newName by remember { mutableStateOf("") }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.folder_picker_title)) },
+        text = {
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                val choices = listOf<Pair<Long?, String>>(
+                    null to stringResource(R.string.folder_picker_none)
+                ) + folders.map { it.id to it.name }
+                choices.forEach { (id, name) ->
+                    Text(
+                        text = name,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = if (id == currentFolderId) FontWeight.Bold else FontWeight.Normal,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onPick(id) }
+                            .padding(vertical = 12.dp),
+                    )
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                OutlinedTextField(
+                    value = newName,
+                    onValueChange = { newName = it },
+                    placeholder = { Text(stringResource(R.string.folder_picker_new_hint)) },
+                    singleLine = true,
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = { onCreate(newName) }, enabled = newName.isNotBlank()) {
+                Text(stringResource(R.string.folder_picker_create))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.rename_dialog_cancel))
+            }
+        },
+    )
 }
 
 /**
@@ -316,6 +568,8 @@ fun AppRow(
     onUninstall: (AppInfo) -> Unit,
     onRename: (String, String) -> Unit,
     getInstallSource: suspend (String) -> String,
+    /** Non-null only while folders are on and the app can carry one. */
+    onMoveToFolder: (() -> Unit)? = null,
 ) {
     var menuOpen by remember { mutableStateOf(false) }
     var renameDialogOpen by remember { mutableStateOf(false) }
@@ -347,6 +601,15 @@ fun AppRow(
                     renameDialogOpen = true
                 },
             )
+            if (onMoveToFolder != null) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.app_menu_move_to_folder)) },
+                    onClick = {
+                        menuOpen = false
+                        onMoveToFolder()
+                    },
+                )
+            }
             if (canUninstall) {
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.app_menu_uninstall)) },
