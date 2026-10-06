@@ -1,0 +1,1 @@
+Optional folders in the app drawer. Fixed an extra gap above the drawer's search bar. Onboarding and README now explain that settings open by tapping Defang in the app list.

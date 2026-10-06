@@ -1,0 +1,1 @@
+Valgfrie mapper i appskuffen. Fjernet et ekstra mellomrom over søkefeltet i appskuffen. Introduksjonen og README forklarer nå at innstillingene åpnes ved å trykke på Defang i applisten.
