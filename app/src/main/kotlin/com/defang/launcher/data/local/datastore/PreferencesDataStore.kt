@@ -127,6 +127,16 @@ class PreferencesDataStore @Inject constructor(
 
     suspend fun setHomeUsageEnabled(on: Boolean) = store.edit { it[KEY_HOME_USAGE] = on }
 
+    // ── Drawer folders (issue #41) ───────────────────────────────────────────
+    // Off by default: grouping apps can tidy a drawer, but a folder is also a
+    // place to stash feeds out of sight, so it's the user's call to turn on.
+    // Switching it off only flattens the drawer — folder memberships are kept.
+    private val KEY_FOLDERS_ENABLED = booleanPreferencesKey("folders_enabled")
+
+    val foldersEnabled: Flow<Boolean> = store.data.map { it[KEY_FOLDERS_ENABLED] ?: false }
+
+    suspend fun setFoldersEnabled(on: Boolean) = store.edit { it[KEY_FOLDERS_ENABLED] = on }
+
     // ── NFC unlock ────────────────────────────────────────────────────────────
     // A physical tag scan replaces the slide-to-open at the end of the gate:
     // the tag lives somewhere inconvenient, so opening a watched app costs a

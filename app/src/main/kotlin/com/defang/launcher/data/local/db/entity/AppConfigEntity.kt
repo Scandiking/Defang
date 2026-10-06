@@ -33,4 +33,7 @@ data class AppConfigEntity(
     /** Whether the one-time "two apps share this name" prompt has already
      *  been shown (and answered, either way) for this package. */
     val renamePromptDismissed: Boolean = false,
+    /** Drawer folder this app lives in ([AppFolderEntity.id]), null = top level.
+     *  Only honoured while folders are switched on in settings. */
+    val folderId: Long? = null,
 )

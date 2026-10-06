@@ -93,6 +93,14 @@ class GlobalSettingsViewModel @Inject constructor(
         viewModelScope.launch { prefs.setHomeUsageEnabled(on) }
     }
 
+    val foldersEnabled: StateFlow<Boolean> = prefs.foldersEnabled.stateIn(
+        viewModelScope, SharingStarted.Eagerly, false
+    )
+
+    fun setFoldersEnabled(on: Boolean) {
+        viewModelScope.launch { prefs.setFoldersEnabled(on) }
+    }
+
     val homeScreenMode: StateFlow<HomeScreenMode> = prefs.homeScreenMode.stateIn(
         viewModelScope, SharingStarted.Eagerly, HomeScreenMode.CLOCK_AND_TIDBIT
     )

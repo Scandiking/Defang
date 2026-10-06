@@ -104,6 +104,7 @@ class SettingsActivity : ComponentActivity() {
                         val batchWindow1 by globalVm.batchWindow1.collectAsStateWithLifecycle()
                         val batchWindow2 by globalVm.batchWindow2.collectAsStateWithLifecycle()
                         val homeUsageOn by globalVm.homeUsageEnabled.collectAsStateWithLifecycle()
+                        val foldersOn by globalVm.foldersEnabled.collectAsStateWithLifecycle()
                         val nfcEnabled by globalVm.nfcUnlockEnabled.collectAsStateWithLifecycle()
                         val nfcTagUid by globalVm.nfcTagUid.collectAsStateWithLifecycle()
                         val hasNfc = remember { NfcUnlock.hasHardware(this) }
@@ -120,6 +121,8 @@ class SettingsActivity : ComponentActivity() {
                             onHomeModeChange = globalVm::setHomeScreenMode,
                             homeUsageOn = homeUsageOn,
                             onHomeUsageChange = globalVm::setHomeUsageEnabled,
+                            foldersOn = foldersOn,
+                            onFoldersChange = globalVm::setFoldersEnabled,
                             hasNfc = hasNfc,
                             nfcEnabled = nfcEnabled,
                             onNfcEnabledChange = globalVm::setNfcUnlockEnabled,
@@ -291,6 +294,8 @@ private fun SettingsMenuScreen(
     onHomeModeChange: (HomeScreenMode) -> Unit,
     homeUsageOn: Boolean,
     onHomeUsageChange: (Boolean) -> Unit,
+    foldersOn: Boolean,
+    onFoldersChange: (Boolean) -> Unit,
     hasNfc: Boolean,
     nfcEnabled: Boolean,
     onNfcEnabledChange: (Boolean) -> Unit,
@@ -743,6 +748,15 @@ private fun SettingsMenuScreen(
                 supportingContent = { Text(stringResource(R.string.settings_home_usage_desc)) },
                 trailingContent = {
                     Switch(checked = homeUsageOn, onCheckedChange = onHomeUsageChange)
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
+            HorizontalDivider()
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_folders)) },
+                supportingContent = { Text(stringResource(R.string.settings_folders_desc)) },
+                trailingContent = {
+                    Switch(checked = foldersOn, onCheckedChange = onFoldersChange)
                 },
                 modifier = Modifier.fillMaxWidth(),
             )

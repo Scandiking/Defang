@@ -34,6 +34,9 @@ class AppConfigRepository @Inject constructor(
     suspend fun setRenamePromptDismissed(packageName: String, dismissed: Boolean) =
         dao.setRenamePromptDismissed(packageName, dismissed)
 
+    suspend fun setFolder(packageName: String, folderId: Long?) =
+        dao.setFolder(packageName, folderId)
+
     suspend fun setCooldown(packageName: String, endsAtEpoch: Long) =
         dao.setCooldown(packageName, endsAtEpoch)
 

@@ -12,8 +12,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.defang.launcher.data.local.datastore.PreferencesDataStore
 import com.defang.launcher.data.repository.AppConfigRepository
+import com.defang.launcher.data.repository.AppFolderRepository
 import com.defang.launcher.data.repository.SessionRepository
 import com.defang.launcher.data.local.db.entity.AppConfigEntity
+import com.defang.launcher.data.local.db.entity.AppFolderEntity
 import com.defang.launcher.domain.model.AppTier
 import com.defang.launcher.domain.model.ContentTrack
 import com.defang.launcher.domain.model.HomeScreenMode
@@ -42,6 +44,9 @@ data class AppInfo(
     val customLabel: String? = null,
     /** Personal profile unless this app came from loadWorkProfileApps(). */
     val userHandle: android.os.UserHandle = Process.myUserHandle(),
+    /** Drawer folder ([AppFolderEntity.id]) — always null for work-profile apps,
+     *  which share package-name-keyed configs with their personal twin. */
+    val folderId: Long? = null,
 )
 
 /** One row of the optional home screen usage panel. */
@@ -67,6 +72,7 @@ class LauncherViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val prefs: PreferencesDataStore,
     private val appConfigRepo: AppConfigRepository,
+    private val folderRepo: AppFolderRepository,
     private val sessionRepo: SessionRepository,
     private val tidbitSelector: TidbitSelector,
 ) : ViewModel() {
@@ -159,8 +165,14 @@ class LauncherViewModel @Inject constructor(
         // LauncherActivity routes a tap on our own package to SettingsActivity.
         val apps = (installedApps + workApps + AppInfo(context.packageName, "Defang"))
             .map { app ->
-                val custom = configs[app.packageName]?.customLabel?.trim()?.takeIf { it.isNotEmpty() }
-                if (custom != null) app.copy(label = custom, customLabel = custom) else app
+                val config = configs[app.packageName]
+                val custom = config?.customLabel?.trim()?.takeIf { it.isNotEmpty() }
+                val folderId = config?.folderId.takeIf { app.userHandle == Process.myUserHandle() }
+                app.copy(
+                    label = custom ?: app.label,
+                    customLabel = custom,
+                    folderId = folderId,
+                )
             }
             .sortedBy { it.label.lowercase() }
 
@@ -284,6 +296,57 @@ class LauncherViewModel @Inject constructor(
         } catch (e: PackageManager.NameNotFoundException) {
             ""
         }
+    }
+
+    // ── Drawer folders (issue #41, opt-in) ───────────────────────────────────
+
+    val foldersEnabled: StateFlow<Boolean> = prefs.foldersEnabled.stateIn(
+        viewModelScope, SharingStarted.Eagerly, false
+    )
+
+    val folders: StateFlow<List<AppFolderEntity>> = folderRepo.observeAll()
+        .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
+    /** Moves an app into [folderId], or back to the top level when null. */
+    fun moveToFolder(packageName: String, folderId: Long?) {
+        viewModelScope.launch {
+            appConfigRepo.setFolder(packageName, folderId)
+            reloadAppsKeepingPrompt()
+        }
+    }
+
+    /** "Create and move" from the folder picker — a folder is born with its first app. */
+    fun moveToNewFolder(packageName: String, folderName: String) {
+        val name = folderName.trim()
+        if (name.isEmpty()) return
+        viewModelScope.launch {
+            val id = folderRepo.create(name)
+            appConfigRepo.setFolder(packageName, id)
+            reloadAppsKeepingPrompt()
+        }
+    }
+
+    fun renameFolder(id: Long, newName: String) {
+        val name = newName.trim()
+        if (name.isEmpty()) return
+        viewModelScope.launch { folderRepo.rename(id, name) }
+    }
+
+    fun setFolderIndicator(id: Long, show: Boolean) {
+        viewModelScope.launch { folderRepo.setShowIndicator(id, show) }
+    }
+
+    /** Its apps drop back to the top level; nothing is uninstalled or hidden. */
+    fun deleteFolder(id: Long) {
+        viewModelScope.launch {
+            folderRepo.delete(id)
+            reloadAppsKeepingPrompt()
+        }
+    }
+
+    private suspend fun reloadAppsKeepingPrompt() {
+        val (apps, _) = reloadApps()
+        _uiState.value = _uiState.value.copy(apps = apps)
     }
 
     fun onQueryChange(q: String) {

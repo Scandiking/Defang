@@ -148,6 +148,17 @@
     <string name="app_menu_info">App info</string>
     <string name="app_menu_rename">Rename</string>
     <string name="app_menu_uninstall">Uninstall</string>
+    <string name="app_menu_move_to_folder">Move to folder</string>
+    <string name="folder_menu_rename">Rename folder</string>
+    <string name="folder_menu_show_arrow">Show arrow</string>
+    <string name="folder_menu_hide_arrow">Hide arrow</string>
+    <string name="folder_menu_delete">Delete folder</string>
+    <string name="folder_picker_title">Move to folder</string>
+    <string name="folder_picker_none">No folder</string>
+    <string name="folder_picker_new_hint">New folder name</string>
+    <string name="folder_picker_create">Create and move</string>
+    <string name="folder_rename_title">Rename folder</string>
+    <string name="folder_indicator" translatable="false">›</string>
     <string name="rename_dialog_title">Rename app</string>
     <string name="rename_dialog_source" translatable="false">%1$s · %2$s</string>
     <string name="rename_dialog_save">Save</string>
@@ -359,6 +370,8 @@
     <!-- Home screen usage panel -->
     <string name="settings_home_usage">Today\'s usage on home screen</string>
     <string name="settings_home_usage_desc">Small bars under the clock — only shown on days with watched-app time</string>
+    <string name="settings_folders">Folders in app list</string>
+    <string name="settings_folders_desc">Group apps into folders from the long-press menu. Turning this off flattens the list but keeps your folders.</string>
 
     <!-- Usage widget -->
     <string name="widget_usage_label">Defang — today</string>

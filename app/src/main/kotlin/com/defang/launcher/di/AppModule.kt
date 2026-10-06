@@ -7,6 +7,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.defang.launcher.data.local.db.DefangDatabase
 import com.defang.launcher.data.local.db.dao.AdaptiveGateStateDao
 import com.defang.launcher.data.local.db.dao.AppConfigDao
+import com.defang.launcher.data.local.db.dao.AppFolderDao
 import com.defang.launcher.data.local.db.dao.SessionDao
 import com.defang.launcher.data.local.db.dao.SessionExtensionDao
 import com.defang.launcher.data.local.db.dao.WatchedUrlDao
@@ -136,13 +137,31 @@ object AppModule {
         }
     }
 
+    // v9: opt-in drawer folders (issue #41) — a folder table plus each app's
+    // folder pointer. No foreign key: deleting a folder releases its apps in
+    // AppFolderDao.delete, and pruning an uninstalled app needs no cascade.
+    internal val MIGRATION_8_9 = object : Migration(8, 9) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS app_folder (
+                    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL,
+                    showIndicator INTEGER NOT NULL DEFAULT 0
+                )
+                """.trimIndent()
+            )
+            db.execSQL("ALTER TABLE app_config ADD COLUMN folderId INTEGER DEFAULT NULL")
+        }
+    }
+
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): DefangDatabase =
         Room.databaseBuilder(context, DefangDatabase::class.java, "defang.db")
             .addMigrations(
                 MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6,
-                MIGRATION_6_7, MIGRATION_7_8,
+                MIGRATION_6_7, MIGRATION_7_8, MIGRATION_8_9,
             )
             .fallbackToDestructiveMigration()
             .build()
@@ -163,4 +182,7 @@ object AppModule {
     @Provides
     fun provideAdaptiveGateStateDao(db: DefangDatabase): AdaptiveGateStateDao =
         db.adaptiveGateStateDao()
+
+    @Provides
+    fun provideAppFolderDao(db: DefangDatabase): AppFolderDao = db.appFolderDao()
 }
