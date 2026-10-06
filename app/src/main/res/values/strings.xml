@@ -31,7 +31,7 @@
 
     <!-- Screen 5 — Setup -->
     <string name="onboarding_5_heading">Let\'s set it up. Two minutes.</string>
-    <string name="onboarding_5_body">Pick which apps get the speed bump. Set how long you want to spend in them before the timer kicks in. Choose when you want notifications from those apps to arrive.\n\nYou can change everything later. The defaults are reasonable starting points, not recommendations.\n\nIf you\'ve set a Bedtime or Do Not Disturb schedule on your phone, this app will automatically increase friction during those hours.</string>
+    <string name="onboarding_5_body">Pick which apps get the speed bump. Set how long you want to spend in them before the timer kicks in. Choose when you want notifications from those apps to arrive.\n\nYou can change everything later: tap Defang in your app list to open settings. The defaults are reasonable starting points, not recommendations.\n\nIf you\'ve set a Bedtime or Do Not Disturb schedule on your phone, this app will automatically increase friction during those hours.</string>
 
     <!-- ── Intent gate overlay ── -->
     <string name="gate_question">What are you opening this for?</string>

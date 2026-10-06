@@ -6,6 +6,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -219,6 +220,9 @@ fun LauncherScreen(
                     active = searchActive,
                     onActiveChange = { searchActive = it },
                     placeholder = { Text(stringResource(R.string.launcher_search_hint)) },
+                    // Scaffold padding already clears the status bar; the default
+                    // SearchBar insets would add it a second time.
+                    windowInsets = WindowInsets(0),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 8.dp),
