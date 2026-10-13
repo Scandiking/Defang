@@ -1,0 +1,1 @@
+Personal lines (opt-in): the gate, end card and cooldown can quote your own usage numbers. Swipe left/right on home to open chosen apps. Math unlock levels 6 and 7. Fixed stale sessions after a force-stop or crash.
