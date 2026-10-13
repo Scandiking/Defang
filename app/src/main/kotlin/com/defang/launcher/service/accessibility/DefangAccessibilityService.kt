@@ -22,6 +22,7 @@ import com.defang.launcher.domain.model.ContentTrack
 import com.defang.launcher.domain.model.WatchedUrl
 import com.defang.launcher.domain.model.toDomain
 import com.defang.launcher.domain.usecase.GetDailyExtensionStatusUseCase
+import com.defang.launcher.domain.usecase.GetPersonalUsageUseCase
 import com.defang.launcher.domain.usecase.GetTodayOpenCountUseCase
 import com.defang.launcher.domain.usecase.RecordSessionUseCase
 import com.defang.launcher.domain.usecase.SelectContentTrackUseCase
@@ -75,6 +76,7 @@ class DefangAccessibilityService : AccessibilityService() {
     @Inject lateinit var appConfigRepo: AppConfigRepository
     @Inject lateinit var recordSession: RecordSessionUseCase
     @Inject lateinit var getTodayOpenCount: GetTodayOpenCountUseCase
+    @Inject lateinit var getPersonalUsage: GetPersonalUsageUseCase
     @Inject lateinit var getDailyExtensionStatus: GetDailyExtensionStatusUseCase
     @Inject lateinit var selectContentTrack: SelectContentTrackUseCase
     @Inject lateinit var tidbitSelector: TidbitSelector
@@ -645,6 +647,7 @@ class DefangAccessibilityService : AccessibilityService() {
             } else 0
 
             val opensToday = getTodayOpenCount.count()
+            val personalLine = personalTidbit(pkg, pattern, config.appLabel)
             currentGateOverlay = IntentGateOverlay(
                 context = this@DefangAccessibilityService,
                 contentTrack = contentTrack,
@@ -653,6 +656,7 @@ class DefangAccessibilityService : AccessibilityService() {
                 delaySeconds = config.gateDelaySeconds + adaptiveBonusSeconds,
                 adaptiveBonusSeconds = adaptiveBonusSeconds,
                 opensToday = opensToday,
+                personalLine = personalLine,
                 nfcMode = nfcMode,
                 qrMode = qrAfterCountdown,
                 mathMode = mathMode,
@@ -991,7 +995,8 @@ class DefangAccessibilityService : AccessibilityService() {
             appLabel = config.appLabel,
             sessionDurationMs = durationMs,
             intentDeclared = null,
-            tidbit = tidbitSelector.next(contentTrack),
+            tidbit = personalTidbit(pkg, pattern, config.appLabel)
+                ?: tidbitSelector.next(contentTrack),
             offlinePrompt = offlinePromptSelector.next(),
             extensionAvailable = extensionAvailable,
             onRequestExtension = { reason ->
@@ -1045,6 +1050,19 @@ class DefangAccessibilityService : AccessibilityService() {
         overlayManager.showHud(currentTimerOverlay!!.view)
     }
 
+    /**
+     * A line from the user's own numbers for this app/site (see
+     * [TidbitSelector.personal]), or null — always when the setting is off,
+     * most of the time otherwise — to show the usual tidbit. Sites are named by their watched-URL label, not "Browser".
+     */
+    private suspend fun personalTidbit(pkg: String, pattern: String?, fallbackLabel: String): String? {
+        if (!prefs.personalTidbitsEnabled.first()) return null
+        val label = pattern?.let { p ->
+            watchedUrlRepo.observeAll().first().firstOrNull { it.pattern == p }?.label
+        } ?: fallbackLabel
+        return tidbitSelector.personal(label, getPersonalUsage.forKey(pkg, pattern))
+    }
+
     private suspend fun onSessionExpiredNoExtension(
         pkg: String,
         pattern: String?,
@@ -1064,7 +1082,8 @@ class DefangAccessibilityService : AccessibilityService() {
             appLabel = config.appLabel,
             sessionDurationMs = durationMs,
             intentDeclared = null,
-            tidbit = tidbitSelector.next(contentTrack),
+            tidbit = personalTidbit(pkg, pattern, config.appLabel)
+                ?: tidbitSelector.next(contentTrack),
             offlinePrompt = offlinePromptSelector.next(),
             extensionAvailable = false,
             onRequestExtension = {},
@@ -1208,7 +1227,7 @@ class DefangAccessibilityService : AccessibilityService() {
                 context = this@DefangAccessibilityService,
                 appLabel = label,
                 cooldownEndsAt = cooldownEndsAt,
-                tidbit = tidbitSelector.next(track),
+                tidbit = personalTidbit(pkg, pattern, label) ?: tidbitSelector.next(track),
                 onGoHome = {
                     currentCooldownOverlay?.cancel()
                     currentCooldownOverlay = null

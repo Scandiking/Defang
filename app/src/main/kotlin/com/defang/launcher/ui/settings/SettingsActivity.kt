@@ -119,6 +119,7 @@ class SettingsActivity : ComponentActivity() {
                         val mathEnabled by globalVm.mathUnlockEnabled.collectAsStateWithLifecycle()
                         val mathDifficulty by globalVm.mathDifficulty.collectAsStateWithLifecycle()
                         val adaptiveEnabled by globalVm.adaptiveGateEnabled.collectAsStateWithLifecycle()
+                        val personalOn by globalVm.personalTidbitsEnabled.collectAsStateWithLifecycle()
                         val adaptiveStrength by globalVm.adaptiveGateStrength.collectAsStateWithLifecycle()
                         SettingsMenuScreen(
                             homeMode = homeMode,
@@ -161,6 +162,8 @@ class SettingsActivity : ComponentActivity() {
                             mathDifficulty = mathDifficulty,
                             onMathDifficultyChange = globalVm::setMathDifficulty,
                             adaptiveEnabled = adaptiveEnabled,
+                            personalOn = personalOn,
+                            onPersonalChange = globalVm::setPersonalTidbitsEnabled,
                             onAdaptiveEnabledChange = globalVm::setAdaptiveGateEnabled,
                             adaptiveStrength = adaptiveStrength,
                             onAdaptiveStrengthChange = globalVm::setAdaptiveGateStrength,
@@ -329,6 +332,8 @@ private fun SettingsMenuScreen(
     mathDifficulty: Int,
     onMathDifficultyChange: (Int) -> Unit,
     adaptiveEnabled: Boolean,
+    personalOn: Boolean,
+    onPersonalChange: (Boolean) -> Unit,
     onAdaptiveEnabledChange: (Boolean) -> Unit,
     adaptiveStrength: Int,
     onAdaptiveStrengthChange: (Int) -> Unit,
@@ -712,6 +717,15 @@ private fun SettingsMenuScreen(
                     )
                 }
             }
+            HorizontalDivider()
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_personal_title)) },
+                supportingContent = { Text(stringResource(R.string.settings_personal_desc)) },
+                trailingContent = {
+                    Switch(checked = personalOn, onCheckedChange = onPersonalChange)
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
             HorizontalDivider()
 
             // Adaptive gate threshold (issue #16) — opt-in, off by default.

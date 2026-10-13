@@ -149,11 +149,11 @@ app/src/main/kotlin/com/defang/launcher/
 - Home-screen usage widget — today's time per watched app vs its limit, tap-through to the weekly report
 - Math unlock up to level 7 — three-digit numbers, division and operator precedence
 - Swipe shortcuts — swipe left/right on home to open an app you pick, with no on-screen hint
+- Personal lines (opt-in) — the gate, end card and cooldown sometimes state your own numbers: "_This_ is what you spend 43 minutes a day on?", computed on-device from `Room` data
 
 ### Planned / exploring
 
 - Random check-ins: "Is this useful to you?", "Shouldn't you be doing the dishes?", etc.
-- More direct and "personal attack" tidbits, for example "_This_ is what you waste $n$ minutes a day on?" utilizing `Room` data (local data saved on your device, that I do not see)
 - More languages — see [Translations](#translations)
 - If you have ideas or experience shortcomings you'd like to see fixed, you can [create an `issue`](https://github.com/Scandiking/Defang/issues/new)
 

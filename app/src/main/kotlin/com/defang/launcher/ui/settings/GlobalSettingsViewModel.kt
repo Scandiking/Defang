@@ -270,6 +270,14 @@ class GlobalSettingsViewModel @Inject constructor(
     }
 
     // ── Adaptive gate threshold (issue #16) ───────────────────────────────────
+    val personalTidbitsEnabled: StateFlow<Boolean> = prefs.personalTidbitsEnabled.stateIn(
+        viewModelScope, SharingStarted.Eagerly, false
+    )
+
+    fun setPersonalTidbitsEnabled(on: Boolean) {
+        viewModelScope.launch { prefs.setPersonalTidbitsEnabled(on) }
+    }
+
     val adaptiveGateEnabled: StateFlow<Boolean> = prefs.adaptiveGateEnabled.stateIn(
         viewModelScope, SharingStarted.Eagerly, false
     )

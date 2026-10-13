@@ -395,4 +395,15 @@
     <string name="offline_prompts_creative_6">Recite a whole chorus from memory. Out loud or in your head.</string>
     <string name="offline_prompts_creative_7">Describe the room you\'re in, in one handwritten sentence.</string>
 
+    <!-- ════════ PERSONAL LINES ════════
+         Built from the user's own session history, on-device only.
+         %1$s = app or site name, %2$d = the number. Keep them blunt about
+         the habit, never insulting the person. One short sentence each;
+         they must fit the gate. -->
+    <string name="personal_daily_average">This is what you spend %2$d minutes a day on?</string>
+    <string name="personal_today">%2$d minutes in %1$s already today.</string>
+    <string name="personal_opens_today">%2$d times into %1$s today. Was every one your choice?</string>
+    <string name="personal_week">%2$d minutes in %1$s these last 7 days. What else could that have been?</string>
+    <string name="personal_year">At this pace, %1$s takes %2$d hours of your year.</string>
+
 </resources>

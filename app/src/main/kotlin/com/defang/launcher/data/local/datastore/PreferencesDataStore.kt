@@ -214,6 +214,16 @@ class PreferencesDataStore @Inject constructor(
     }
 
     // ── Adaptive gate threshold (issue #16) ───────────────────────────────────
+    // ── Personal lines ───────────────────────────────────────────────────────
+    // Opt-in: gate/end card/cooldown sometimes state the user's own numbers
+    // ("This is what you spend 43 minutes a day on?"). Off by default — blunt
+    // about the habit by design, which not everyone wants.
+    private val KEY_PERSONAL_TIDBITS = booleanPreferencesKey("personal_tidbits_enabled")
+
+    val personalTidbitsEnabled: Flow<Boolean> = store.data.map { it[KEY_PERSONAL_TIDBITS] ?: false }
+
+    suspend fun setPersonalTidbitsEnabled(on: Boolean) = store.edit { it[KEY_PERSONAL_TIDBITS] = on }
+
     // Opt-in: reopening the same watched app/site frequently raises its gate
     // delay automatically, decaying back down as reopening slows. Off by
     // default. adaptiveGateStrength is the extra seconds added per escalation

@@ -58,6 +58,9 @@ class IntentGateOverlay(
     // feature is off or this gate hasn't escalated.
     private val adaptiveBonusSeconds: Int = 0,
     private val opensToday: Int,
+    // A line built from the user's own numbers (TidbitSelector.personal), shown
+    // in place of the level warning when present. Null most of the time.
+    private val personalLine: String? = null,
     // When true, the unlock is a physical NFC-tag scan handled by the service:
     // this overlay shows only the tidbit + countdown, and the service dismisses
     // it and hands off to NfcUnlockActivity once the countdown ends. No slide is
@@ -113,7 +116,7 @@ class IntentGateOverlay(
         // harsher). It does NOT change while the gate is up.
         val level = addictionLevel(opensToday)
         tvTidbit = TextView(context).apply {
-            text = tidbitSelector.lineForLevel(contentTrack, level)
+            text = personalLine ?: tidbitSelector.lineForLevel(contentTrack, level)
             textSize = 22f
             setTextColor(Color.rgb(210, 210, 210))
             gravity = Gravity.CENTER

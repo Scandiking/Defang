@@ -3,10 +3,12 @@ package com.defang.launcher.util
 import android.content.Context
 import com.defang.launcher.R
 import com.defang.launcher.domain.model.ContentTrack
+import com.defang.launcher.domain.model.PersonalUsage
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.random.Random
 
 /**
  * Selects awareness tidbits pseudo-randomly with same-day no-repeat.
@@ -71,6 +73,29 @@ class TidbitSelector @Inject constructor(
         return if (variants.isEmpty()) "" else variants.random()
     }
 
+    /**
+     * Sometimes (1 in [PERSONAL_ODDS]) a personal line built from the user's
+     * own numbers for [appLabel], instead of a library tidbit — often enough to
+     * land, rare enough not to become wallpaper. Null when the roll misses or
+     * the numbers don't back any line up; callers fall back to their usual text.
+     */
+    fun personal(
+        appLabel: String,
+        usage: PersonalUsage,
+        random: Random = Random.Default,
+    ): String? {
+        if (random.nextInt(PERSONAL_ODDS) != 0) return null
+        val line = PersonalTidbits.candidates(usage).randomOrNull(random) ?: return null
+        val resId = when (line.kind) {
+            PersonalLine.Kind.DAILY_AVERAGE -> R.string.personal_daily_average
+            PersonalLine.Kind.TODAY -> R.string.personal_today
+            PersonalLine.Kind.OPENS_TODAY -> R.string.personal_opens_today
+            PersonalLine.Kind.WEEK -> R.string.personal_week
+            PersonalLine.Kind.YEAR -> R.string.personal_year
+        }
+        return context.getString(resId, appLabel, line.value)
+    }
+
     private fun libraryFor(track: ContentTrack): Array<String> {
         val resId = when (track) {
             ContentTrack.GENERAL -> R.array.tidbits_general
@@ -88,6 +113,8 @@ class TidbitSelector @Inject constructor(
     }
 
     private companion object {
+        const val PERSONAL_ODDS = 3
+
         val GENERAL_LEVELS = intArrayOf(
             R.array.tidbits_general_lvl0, R.array.tidbits_general_lvl1,
             R.array.tidbits_general_lvl2, R.array.tidbits_general_lvl3,

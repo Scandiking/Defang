@@ -289,6 +289,8 @@
     <!-- Adaptive gate threshold (issue #16) -->
     <string name="settings_adaptive_title">Adaptive threshold</string>
     <string name="settings_adaptive_desc">Raises the wait automatically when you keep reopening an app in a short window, and eases it back off when you don\'t. Off by default — if it ever becomes too much, turn it off here, or reset it below.</string>
+    <string name="settings_personal_title">Personal lines</string>
+    <string name="settings_personal_desc">Sometimes show your own numbers instead of a tidbit, bluntly: \"This is what you spend 43 minutes a day on?\" Computed on this device only.</string>
     <string name="settings_adaptive_why_title">Why adapt the threshold?</string>
     <string name="settings_adaptive_why_body">A fixed wait treats a single glance and a compulsive reopen the same. This raises the wait specifically for the second kind — reopening the same app again soon after leaving it — and lets it fall back down on its own once you stop. It only ever adds on top of your normal delay, never takes away from it.</string>
     <string name="settings_adaptive_confirm_title">Before you turn this on</string>
