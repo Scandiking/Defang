@@ -1239,7 +1239,9 @@ private fun mathDifficultyLabel(level: Int): String = stringResource(
         2 -> R.string.settings_math_level_2
         3 -> R.string.settings_math_level_3
         4 -> R.string.settings_math_level_4
-        else -> R.string.settings_math_level_5
+        5 -> R.string.settings_math_level_5
+        6 -> R.string.settings_math_level_6
+        else -> R.string.settings_math_level_7
     }
 )
 

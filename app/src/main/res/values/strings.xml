@@ -278,6 +278,8 @@
     <string name="settings_math_level_3">Level 3 · medium</string>
     <string name="settings_math_level_4">Level 4 · hard</string>
     <string name="settings_math_level_5">Level 5 · very hard</string>
+    <string name="settings_math_level_6">Level 6 · expert</string>
+    <string name="settings_math_level_7">Level 7 · extreme</string>
     <string name="settings_math_why_title">Why a math problem?</string>
     <string name="settings_math_why_body">A little arithmetic makes you stop and think — harder to do half-asleep than a slide, and it wakes the brain up rather than just passing time. Set the difficulty to whatever actually makes you pause: gentle if numbers aren\'t your thing, brutal if they come easily.</string>
     <string name="gate_math_question" translatable="false">%1$s = ?</string>

@@ -265,6 +265,8 @@
     <string name="settings_math_level_3">Nivå 3 · middels</string>
     <string name="settings_math_level_4">Nivå 4 · vanskelig</string>
     <string name="settings_math_level_5">Nivå 5 · veldig vanskelig</string>
+    <string name="settings_math_level_6">Nivå 6 · ekspert</string>
+    <string name="settings_math_level_7">Nivå 7 · ekstrem</string>
     <string name="settings_math_why_title">Hvorfor et regnestykke?</string>
     <string name="settings_math_why_body">Litt hoderegning tvinger deg til å stoppe og tenke — vanskeligere å gjøre halvsovende enn å dra, og det vekker hjernen i stedet for bare å fordrive tid. Sett vanskelighetsgraden til det som faktisk får deg til å nøle: mildt hvis tall ikke er din greie, brutalt hvis de er lette for deg.</string>
     <string name="gate_math_wrong">Ikke helt — prøv igjen</string>
