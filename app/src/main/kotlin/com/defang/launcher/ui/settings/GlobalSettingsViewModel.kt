@@ -1,6 +1,8 @@
 package com.defang.launcher.ui.settings
 
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.pm.LauncherApps
 import android.os.Process
 import android.os.UserManager
@@ -16,11 +18,15 @@ import com.defang.launcher.util.MathProblemGenerator
 import com.defang.launcher.util.GrayscaleController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -120,6 +126,56 @@ class GlobalSettingsViewModel @Inject constructor(
     fun removeCustomTask(task: String) {
         viewModelScope.launch { prefs.removeCustomTask(task) }
     }
+
+    // ── Home swipe shortcuts ─────────────────────────────────────────────────
+    /** App label for each swipe slot (the user's rename, if any), or null
+     *  when off or the app is gone. */
+    val swipeLeftLabel: StateFlow<String?> = prefs.swipeLeftPackage
+        .map { pkg -> pkg?.let { appLabel(it) } }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+    val swipeRightLabel: StateFlow<String?> = prefs.swipeRightPackage
+        .map { pkg -> pkg?.let { appLabel(it) } }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    fun setSwipeLeftPackage(pkg: String?) {
+        viewModelScope.launch { prefs.setSwipeLeftPackage(pkg) }
+    }
+
+    fun setSwipeRightPackage(pkg: String?) {
+        viewModelScope.launch { prefs.setSwipeRightPackage(pkg) }
+    }
+
+    /** Launchable apps in this profile as (packageName, label), sorted by
+     *  label. Uses the drawer's custom names, so two same-named apps the user
+     *  told apart there (e.g. two "Messages") stay distinguishable here. */
+    suspend fun launchableApps(): List<Pair<String, String>> = withContext(Dispatchers.IO) {
+        val pm = context.packageManager
+        val custom = customLabels()
+        val intent = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER)
+        pm.queryIntentActivities(intent, 0)
+            .map { ri ->
+                val pkg = ri.activityInfo.packageName
+                pkg to (custom[pkg] ?: ri.loadLabel(pm).toString())
+            }
+            .filter { it.first != context.packageName }
+            .distinctBy { it.first }
+            .sortedBy { it.second.lowercase() }
+    }
+
+    private suspend fun appLabel(pkg: String): String? {
+        customLabels()[pkg]?.let { return it }
+        return try {
+            val pm = context.packageManager
+            pm.getApplicationLabel(pm.getApplicationInfo(pkg, 0)).toString()
+        } catch (e: PackageManager.NameNotFoundException) {
+            null
+        }
+    }
+
+    private suspend fun customLabels(): Map<String, String> =
+        appConfigRepo.observeAll().first().mapNotNull { cfg ->
+            cfg.customLabel?.trim()?.takeIf { it.isNotEmpty() }?.let { cfg.packageName to it }
+        }.toMap()
 
     // ── NFC tag unlock ────────────────────────────────────────────────────────
     val nfcUnlockEnabled: StateFlow<Boolean> = prefs.nfcUnlockEnabled.stateIn(

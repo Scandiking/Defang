@@ -194,6 +194,8 @@ class LauncherActivity : ComponentActivity() {
                     )
                 } else {
                     val homeUsage by viewModel.homeUsage.collectAsState()
+                    val swipeLeftPkg by viewModel.swipeLeftPackage.collectAsState()
+                    val swipeRightPkg by viewModel.swipeRightPackage.collectAsState()
                     HomeScreen(
                         tidbit = state.homeTidbit,
                         mode = homeMode,
@@ -210,6 +212,8 @@ class LauncherActivity : ComponentActivity() {
                             viewModel.refresh()
                             showDrawer = true
                         },
+                        onSwipeLeft = { swipeLeftPkg?.let(::launchPackage) },
+                        onSwipeRight = { swipeRightPkg?.let(::launchPackage) },
                     )
                 }
             }
@@ -271,6 +275,14 @@ class LauncherActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(packageChangeReceiver)
+    }
+
+    /** Swipe shortcut target. Silently a no-op if the app was uninstalled;
+     *  watched apps still go through the gate like any other launch. */
+    private fun launchPackage(pkg: String) {
+        val intent = packageManager.getLaunchIntentForPackage(pkg) ?: return
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 
     private fun launchApp(app: AppInfo) {

@@ -4,6 +4,7 @@ import android.text.format.DateFormat
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,6 +49,8 @@ fun HomeScreen(
     usage: List<HomeUsageRow>,
     onUsageTap: () -> Unit,
     onAppsTap: () -> Unit,
+    onSwipeLeft: () -> Unit,
+    onSwipeRight: () -> Unit,
 ) {
     // Home has no back stack to pop — without this, back press falls through
     // to the default finish(), which drops Defang off the task and exposes
@@ -74,6 +77,11 @@ fun HomeScreen(
     var dragTotal by remember { mutableFloatStateOf(0f) }
     val swipeThresholdPx = with(LocalDensity.current) { 72.dp.toPx() }
 
+    // Sideways swipe shortcuts (issue #47). Nothing on screen hints at them;
+    // an unset side is a no-op. Fires once per gesture.
+    var hDragTotal by remember { mutableFloatStateOf(0f) }
+    var hFired by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -89,6 +97,23 @@ fun HomeScreen(
                         if (dragTotal < -swipeThresholdPx) {
                             onAppsTap()
                             dragTotal = 0f
+                        }
+                    },
+                )
+            }
+            .pointerInput(Unit) {
+                detectHorizontalDragGestures(
+                    onDragStart  = { hDragTotal = 0f; hFired = false },
+                    onDragEnd    = { hDragTotal = 0f },
+                    onDragCancel = { hDragTotal = 0f },
+                    onHorizontalDrag = { _, delta ->
+                        hDragTotal += delta
+                        if (!hFired && hDragTotal < -swipeThresholdPx) {
+                            hFired = true
+                            onSwipeLeft()
+                        } else if (!hFired && hDragTotal > swipeThresholdPx) {
+                            hFired = true
+                            onSwipeRight()
                         }
                     },
                 )

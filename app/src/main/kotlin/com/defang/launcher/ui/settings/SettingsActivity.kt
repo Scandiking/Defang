@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -43,6 +44,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -105,6 +107,8 @@ class SettingsActivity : ComponentActivity() {
                         val batchWindow2 by globalVm.batchWindow2.collectAsStateWithLifecycle()
                         val homeUsageOn by globalVm.homeUsageEnabled.collectAsStateWithLifecycle()
                         val foldersOn by globalVm.foldersEnabled.collectAsStateWithLifecycle()
+                        val swipeLeftLabel by globalVm.swipeLeftLabel.collectAsStateWithLifecycle()
+                        val swipeRightLabel by globalVm.swipeRightLabel.collectAsStateWithLifecycle()
                         val nfcEnabled by globalVm.nfcUnlockEnabled.collectAsStateWithLifecycle()
                         val nfcTagUid by globalVm.nfcTagUid.collectAsStateWithLifecycle()
                         val hasNfc = remember { NfcUnlock.hasHardware(this) }
@@ -123,6 +127,11 @@ class SettingsActivity : ComponentActivity() {
                             onHomeUsageChange = globalVm::setHomeUsageEnabled,
                             foldersOn = foldersOn,
                             onFoldersChange = globalVm::setFoldersEnabled,
+                            swipeLeftLabel = swipeLeftLabel,
+                            swipeRightLabel = swipeRightLabel,
+                            onSwipeLeftChange = globalVm::setSwipeLeftPackage,
+                            onSwipeRightChange = globalVm::setSwipeRightPackage,
+                            loadSwipeApps = globalVm::launchableApps,
                             hasNfc = hasNfc,
                             nfcEnabled = nfcEnabled,
                             onNfcEnabledChange = globalVm::setNfcUnlockEnabled,
@@ -296,6 +305,11 @@ private fun SettingsMenuScreen(
     onHomeUsageChange: (Boolean) -> Unit,
     foldersOn: Boolean,
     onFoldersChange: (Boolean) -> Unit,
+    swipeLeftLabel: String?,
+    swipeRightLabel: String?,
+    onSwipeLeftChange: (String?) -> Unit,
+    onSwipeRightChange: (String?) -> Unit,
+    loadSwipeApps: suspend () -> List<Pair<String, String>>,
     hasNfc: Boolean,
     nfcEnabled: Boolean,
     onNfcEnabledChange: (Boolean) -> Unit,
@@ -344,6 +358,22 @@ private fun SettingsMenuScreen(
     var whyDialog by remember { mutableStateOf<Pair<String, String>?>(null) }
     var showHomeModeDialog by remember { mutableStateOf(false) }
     var showAdaptiveConfirm by remember { mutableStateOf(false) }
+    // Which swipe slot's app picker is open: true = left, false = right
+    var swipePickerLeft by remember { mutableStateOf<Boolean?>(null) }
+
+    swipePickerLeft?.let { left ->
+        SwipeAppPickerDialog(
+            title = stringResource(
+                if (left) R.string.settings_swipe_left else R.string.settings_swipe_right
+            ),
+            loadApps = loadSwipeApps,
+            onPick = { pkg ->
+                if (left) onSwipeLeftChange(pkg) else onSwipeRightChange(pkg)
+                swipePickerLeft = null
+            },
+            onDismiss = { swipePickerLeft = null },
+        )
+    }
 
     if (showAdaptiveConfirm) {
         AlertDialog(
@@ -759,6 +789,26 @@ private fun SettingsMenuScreen(
                     Switch(checked = foldersOn, onCheckedChange = onFoldersChange)
                 },
                 modifier = Modifier.fillMaxWidth(),
+            )
+            HorizontalDivider()
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_swipe_left)) },
+                supportingContent = {
+                    Text(swipeLeftLabel ?: stringResource(R.string.settings_swipe_off))
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { swipePickerLeft = true },
+            )
+            HorizontalDivider()
+            ListItem(
+                headlineContent = { Text(stringResource(R.string.settings_swipe_right)) },
+                supportingContent = {
+                    Text(swipeRightLabel ?: stringResource(R.string.settings_swipe_off))
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { swipePickerLeft = false },
             )
             HorizontalDivider()
             ListItem(
@@ -1290,6 +1340,50 @@ private fun BatchWindowRow(
                     true,
                 ).show()
             },
+    )
+}
+
+/** Picks the app a home swipe opens; "Off" (null) clears the slot. */
+@Composable
+private fun SwipeAppPickerDialog(
+    title: String,
+    loadApps: suspend () -> List<Pair<String, String>>,
+    onPick: (String?) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val apps by produceState(initialValue = emptyList<Pair<String, String>>()) {
+        value = loadApps()
+    }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(title) },
+        text = {
+            LazyColumn(modifier = Modifier.heightIn(max = 420.dp)) {
+                item {
+                    Text(
+                        stringResource(R.string.settings_swipe_off),
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onPick(null) }
+                            .padding(vertical = 12.dp),
+                    )
+                }
+                items(apps, key = { it.first }) { (pkg, label) ->
+                    Text(
+                        label,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onPick(pkg) }
+                            .padding(vertical = 12.dp),
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) }
+        },
     )
 }
 

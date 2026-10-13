@@ -84,6 +84,13 @@ class LauncherViewModel @Inject constructor(
         viewModelScope, SharingStarted.Eagerly, HomeScreenMode.CLOCK_AND_TIDBIT
     )
 
+    val swipeLeftPackage: StateFlow<String?> = prefs.swipeLeftPackage.stateIn(
+        viewModelScope, SharingStarted.Eagerly, null
+    )
+    val swipeRightPackage: StateFlow<String?> = prefs.swipeRightPackage.stateIn(
+        viewModelScope, SharingStarted.Eagerly, null
+    )
+
     val letterRailScale: StateFlow<Float> = prefs.letterRailScale.stateIn(
         viewModelScope, SharingStarted.Eagerly, 1f
     )

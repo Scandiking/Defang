@@ -147,13 +147,13 @@ app/src/main/kotlin/com/defang/launcher/
 - Adjustable app drawer letter index size and x-offset
 - Notification batching — watched-app notifications are cancelled and counted, then delivered as a calm summary instantly or at configured windows
 - Home-screen usage widget — today's time per watched app vs its limit, tap-through to the weekly report
+- Math unlock up to level 7 — three-digit numbers, division and operator precedence
+- Swipe shortcuts — swipe left/right on home to open an app you pick, with no on-screen hint
 
 ### Planned / exploring
 
-- Harder math unlock problems
 - Random check-ins: "Is this useful to you?", "Shouldn't you be doing the dishes?", etc.
 - More direct and "personal attack" tidbits, for example "_This_ is what you waste $n$ minutes a day on?" utilizing `Room` data (local data saved on your device, that I do not see)
-- Swipe-based shortcuts on home-screen
 - More languages — see [Translations](#translations)
 - If you have ideas or experience shortcomings you'd like to see fixed, you can [create an `issue`](https://github.com/Scandiking/Defang/issues/new)
 
