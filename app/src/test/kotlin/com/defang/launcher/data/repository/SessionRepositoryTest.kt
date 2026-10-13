@@ -76,6 +76,28 @@ class SessionRepositoryTest {
     }
 
     @Test
+    fun `getOpenSessions returns every open session, newest first`() = runTest {
+        val repository = repo(RetentionLevel.INDEFINITE)
+        sessionDao.insert(SessionEntity(packageName = "a", startTime = 100L, intentDeclared = null))
+        sessionDao.insert(SessionEntity(packageName = "b", startTime = 300L, intentDeclared = null))
+        sessionDao.insert(SessionEntity(packageName = "c", startTime = 200L, endTime = 250L, intentDeclared = null))
+
+        val open = repository.getOpenSessions()
+
+        assertEquals(listOf("b", "a"), open.map { it.packageName })
+    }
+
+    @Test
+    fun `endSession uses an explicit endTime when given`() = runTest {
+        val repository = repo(RetentionLevel.INDEFINITE)
+        val id = repository.startSession("com.example.app", null)
+
+        repository.endSession(id, endTime = 12_345L)
+
+        assertEquals(12_345L, sessionDao.rows.single().endTime)
+    }
+
+    @Test
     fun `startExtension links the new session back to the extended one`() = runTest {
         val repository = repo(RetentionLevel.INDEFINITE)
         val extendedId = repository.startSession("com.example.app", null)

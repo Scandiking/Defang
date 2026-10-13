@@ -306,15 +306,20 @@ class DefangAccessibilityService : AccessibilityService() {
      * with less latency) by the accessibility-event and usage-stats paths.
      */
     private fun checkEvasiveAppWindows() {
+        val topPkg = focusedAppPackage() ?: return
+        if (topPkg == packageName || topPkg !in EVASIVE_WINDOW_ONLY_PACKAGES) return
+        Log.d(TAG, "windowsPoll pkg=$topPkg")
+        serviceScope.launch { handleForegroundChange(topPkg, null) }
+    }
+
+    /** Package of the focused app window in the OS's live window list, or null
+     *  when none is focused (or window retrieval isn't available yet). */
+    private fun focusedAppPackage(): String? {
         val windowList = windows
         try {
-            val topPkg = windowList
+            return windowList
                 .firstOrNull { it.isFocused && it.type == AccessibilityWindowInfo.TYPE_APPLICATION }
                 ?.root?.packageName?.toString()
-                ?: return
-            if (topPkg == packageName || topPkg !in EVASIVE_WINDOW_ONLY_PACKAGES) return
-            Log.d(TAG, "windowsPoll pkg=$topPkg")
-            serviceScope.launch { handleForegroundChange(topPkg, null) }
         } finally {
             windowList.forEach { it.recycle() }
         }
@@ -829,6 +834,10 @@ class DefangAccessibilityService : AccessibilityService() {
         cooldownMinutes: Int,
         contentTrack: ContentTrack,
     ) {
+        // A→B faster than the end debounce (quick NFC/QR unlock, browser
+        // target) leaves A's pending end skipping because B is now current —
+        // close A here or its row stays open forever (issue #44).
+        currentSessionId?.let { recordSession.end(it, extensionUsedThisSession) }
         val sessionId = recordSession.start(pkg, intentDeclared, pattern)
         currentSessionId = sessionId
         currentWatchedPackage = pkg
@@ -878,12 +887,70 @@ class DefangAccessibilityService : AccessibilityService() {
      * onServiceConnected(); a no-op when there's nothing to recover (including
      * when retention is DONT_TRACK, since no row was ever written for such a
      * session — recovery has nothing to read).
+     *
+     * An open row alone doesn't mean the user is still in that app (issue
+     * #44): the live focused window decides, see [SessionRecovery]. Older open
+     * rows are leaks and are closed at their limit.
      */
     private suspend fun recoverOpenSession() {
-        val open = recordSession.getOpenSession() ?: return
+        val openSessions = recordSession.getOpenSessions()
+        val open = openSessions.firstOrNull() ?: return
+        val now = System.currentTimeMillis()
+
+        openSessions.drop(1).forEach { orphan ->
+            val (orphanConfig, _) = recoveryConfig(orphan.packageName, orphan.watchedPattern)
+            val endTime = SessionRecovery.cappedEnd(
+                orphan.startTime, orphanConfig.sessionLimitMinutes * 60_000L, now,
+            )
+            Log.d(TAG, "closing leaked session id=${orphan.id} pkg=${orphan.packageName}")
+            recordSession.end(orphan.id, orphan.extensionUsed, endTime)
+        }
+
         val pkg = open.packageName
         val pattern = open.watchedPattern
+        val (effectiveConfig, contentTrack) = recoveryConfig(pkg, pattern)
+        val limitMs = effectiveConfig.sessionLimitMinutes * 60_000L
+        // Unknown focus (null) counts as not in front: the worst case is one
+        // fresh gate, never a bogus end card.
+        val inFront = focusedAppPackage() == pkg
 
+        when (val action = SessionRecovery.decide(open.startTime, limitMs, now, inFront)) {
+            is RecoveryAction.Close -> {
+                Log.d(TAG, "closing stale open session pkg=$pkg (not in front)")
+                recordSession.end(open.id, open.extensionUsed, action.endTime)
+            }
+            RecoveryAction.ExpireNow -> {
+                // The limit already elapsed while the service was down — go
+                // straight to the normal expiry flow instead of resuming a HUD
+                // with negative/zero time on it. The end card shows at most
+                // the limit, not however long the service was gone.
+                currentSessionId = open.id
+                currentWatchedPackage = pkg
+                currentWatchedPattern = pattern
+                sessionStartMs = maxOf(open.startTime, now - limitMs)
+                extensionUsedThisSession = open.extensionUsed
+                onSessionExpired(pkg, pattern, open.id, effectiveConfig.cooldownMinutes, contentTrack)
+            }
+            is RecoveryAction.Resume -> {
+                Log.d(TAG, "recovered open session pkg=$pkg pattern=$pattern remainingMs=${action.remainingMs}")
+                currentSessionId = open.id
+                currentWatchedPackage = pkg
+                currentWatchedPattern = pattern
+                sessionStartMs = open.startTime
+                extensionUsedThisSession = open.extensionUsed
+                grayscale.enable()
+                attachTimerOverlay(
+                    pkg, pattern, open.id,
+                    remainingMs = action.remainingMs,
+                    effectiveConfig.cooldownMinutes, contentTrack,
+                )
+            }
+        }
+    }
+
+    /** Session config and content track for a recovered row, matching what
+     *  the gate would have applied when it was opened. */
+    private suspend fun recoveryConfig(pkg: String, pattern: String?): Pair<AppConfig, ContentTrack> {
         val contentTrack = if (pattern == null) {
             selectContentTrack.forPackage(pkg)
         } else {
@@ -897,35 +964,7 @@ class DefangAccessibilityService : AccessibilityService() {
         val effectiveConfig = if (contentTrack == ContentTrack.ADULT) {
             config.copy(sessionLimitMinutes = ADULT_SESSION_LIMIT_MINUTES)
         } else config
-
-        val remaining = effectiveConfig.sessionLimitMinutes * 60_000L -
-            (System.currentTimeMillis() - open.startTime)
-
-        if (remaining <= 0L) {
-            // The limit already elapsed while the service was down — go
-            // straight to the normal expiry flow instead of resuming a HUD
-            // with negative/zero time on it.
-            currentSessionId = open.id
-            currentWatchedPackage = pkg
-            currentWatchedPattern = pattern
-            sessionStartMs = open.startTime
-            extensionUsedThisSession = open.extensionUsed
-            onSessionExpired(pkg, pattern, open.id, effectiveConfig.cooldownMinutes, contentTrack)
-            return
-        }
-
-        Log.d(TAG, "recovered open session pkg=$pkg pattern=$pattern remainingMs=$remaining")
-        currentSessionId = open.id
-        currentWatchedPackage = pkg
-        currentWatchedPattern = pattern
-        sessionStartMs = open.startTime
-        extensionUsedThisSession = open.extensionUsed
-        grayscale.enable()
-        attachTimerOverlay(
-            pkg, pattern, open.id,
-            remainingMs = remaining,
-            effectiveConfig.cooldownMinutes, contentTrack,
-        )
+        return effectiveConfig to contentTrack
     }
 
     private suspend fun onSessionExpired(

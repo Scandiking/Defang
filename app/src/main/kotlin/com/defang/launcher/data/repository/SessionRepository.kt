@@ -63,11 +63,15 @@ class SessionRepository @Inject constructor(
         return newSessionId
     }
 
-    suspend fun endSession(sessionId: Long, extensionUsed: Boolean = false) {
+    suspend fun endSession(
+        sessionId: Long,
+        extensionUsed: Boolean = false,
+        endTime: Long = System.currentTimeMillis(),
+    ) {
         val existing = dao.getById(sessionId) ?: return
         dao.update(
             existing.copy(
-                endTime = System.currentTimeMillis(),
+                endTime = endTime,
                 extensionUsed = extensionUsed,
             )
         )
@@ -75,6 +79,9 @@ class SessionRepository @Inject constructor(
 
     /** The most recent session left open by an unexpected process death, if any. */
     suspend fun getOpenSession(): SessionEntity? = dao.getOpenSession()
+
+    /** Every session with no endTime, newest first. */
+    suspend fun getOpenSessions(): List<SessionEntity> = dao.getOpenSessions()
 
     suspend fun markExtensionUsed(sessionId: Long) {
         val existing = dao.getById(sessionId) ?: return
