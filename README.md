@@ -150,6 +150,10 @@ app/src/main/kotlin/com/defang/launcher/
 
 ### Planned / exploring
 
+- Harder math unlock problems
+- Random check-ins: "Is this useful to you?", "Shouldn't you be doing the dishes?", etc.
+- More direct and "personal attack" tidbits, for example "_This_ is what you waste $n$ minutes a day on?" utilizing `Room` data (local data saved on your device, that I do not see)
+- Swipe-based shortcuts on home-screen
 - More languages — see [Translations](#translations)
 - If you have ideas or experience shortcomings you'd like to see fixed, you can [create an `issue`](https://github.com/Scandiking/Defang/issues/new)
 
