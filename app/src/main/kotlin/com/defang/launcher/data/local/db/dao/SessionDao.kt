@@ -28,6 +28,11 @@ interface SessionDao {
     @Query("SELECT * FROM sessions WHERE endTime = 0 ORDER BY startTime DESC LIMIT 1")
     suspend fun getOpenSession(): SessionEntity?
 
+    /** Every session with no endTime, newest first — the newest is the one to
+     *  recover, any older ones are leaked rows to close (issue #44). */
+    @Query("SELECT * FROM sessions WHERE endTime = 0 ORDER BY startTime DESC")
+    suspend fun getOpenSessions(): List<SessionEntity>
+
     @Query("SELECT * FROM sessions WHERE packageName = :pkg ORDER BY startTime DESC LIMIT :limit")
     fun observeForApp(pkg: String, limit: Int = 50): Flow<List<SessionEntity>>
 

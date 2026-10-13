@@ -21,9 +21,15 @@ class RecordSessionUseCase @Inject constructor(
     ): Long = repo.startExtension(packageName, extendedSessionId, reason, pattern)
 
     /** Closes the session, optionally marking that the extension was used. */
-    suspend fun end(sessionId: Long, extensionUsed: Boolean = false) =
-        repo.endSession(sessionId, extensionUsed)
+    suspend fun end(
+        sessionId: Long,
+        extensionUsed: Boolean = false,
+        endTime: Long = System.currentTimeMillis(),
+    ) = repo.endSession(sessionId, extensionUsed, endTime)
 
     /** The most recent session left open by an unexpected process death, if any. */
     suspend fun getOpenSession(): SessionEntity? = repo.getOpenSession()
+
+    /** Every session with no endTime, newest first. */
+    suspend fun getOpenSessions(): List<SessionEntity> = repo.getOpenSessions()
 }
