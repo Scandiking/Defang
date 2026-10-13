@@ -308,4 +308,11 @@
     <string name="offline_prompts_creative_6">Fremfør et helt refreng etter hukommelsen. Høyt eller inni deg.</string>
     <string name="offline_prompts_creative_7">Beskriv rommet du er i, i én håndskrevet setning.</string>
 
+    <!-- ════════ PERSONLIGE LINJER ════════ -->
+    <string name="personal_daily_average">Er det dette du bruker %2$d minutter om dagen på?</string>
+    <string name="personal_today">%2$d minutter i %1$s allerede i dag.</string>
+    <string name="personal_opens_today">%2$d ganger inn i %1$s i dag. Var hver eneste en ditt valg?</string>
+    <string name="personal_week">%2$d minutter i %1$s de siste 7 dagene. Hva annet kunne det blitt?</string>
+    <string name="personal_year">I dette tempoet tar %1$s %2$d timer av året ditt.</string>
+
 </resources>

@@ -360,4 +360,6 @@
     <string name="settings_swipe_left">Sveip til venstre på hjem åpner</string>
     <string name="settings_swipe_right">Sveip til høyre på hjem åpner</string>
     <string name="settings_swipe_off">Av</string>
+    <string name="settings_personal_title">Personlige linjer</string>
+    <string name="settings_personal_desc">Vis av og til dine egne tall i stedet for et faktum, rett ut: «Er det dette du bruker 43 minutter om dagen på?» Regnes ut kun på denne enheten.</string>
 </resources>
