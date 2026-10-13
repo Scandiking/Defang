@@ -137,6 +137,23 @@ class PreferencesDataStore @Inject constructor(
 
     suspend fun setFoldersEnabled(on: Boolean) = store.edit { it[KEY_FOLDERS_ENABLED] = on }
 
+    // ── Home swipe shortcuts (issue #47) ─────────────────────────────────────
+    // Swiping left/right on home opens a user-picked app. Off (null) by
+    // default, and deliberately never drawn on screen — a visible shortcut is
+    // a cue, a remembered gesture isn't. Watched apps still hit the gate.
+    private val KEY_SWIPE_LEFT_PKG  = stringPreferencesKey("swipe_left_package")
+    private val KEY_SWIPE_RIGHT_PKG = stringPreferencesKey("swipe_right_package")
+
+    val swipeLeftPackage: Flow<String?>  = store.data.map { it[KEY_SWIPE_LEFT_PKG] }
+    val swipeRightPackage: Flow<String?> = store.data.map { it[KEY_SWIPE_RIGHT_PKG] }
+
+    suspend fun setSwipeLeftPackage(pkg: String?) = store.edit {
+        if (pkg == null) it.remove(KEY_SWIPE_LEFT_PKG) else it[KEY_SWIPE_LEFT_PKG] = pkg
+    }
+    suspend fun setSwipeRightPackage(pkg: String?) = store.edit {
+        if (pkg == null) it.remove(KEY_SWIPE_RIGHT_PKG) else it[KEY_SWIPE_RIGHT_PKG] = pkg
+    }
+
     // ── NFC unlock ────────────────────────────────────────────────────────────
     // A physical tag scan replaces the slide-to-open at the end of the gate:
     // the tag lives somewhere inconvenient, so opening a watched app costs a

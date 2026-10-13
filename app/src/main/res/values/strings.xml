@@ -374,6 +374,9 @@
     <string name="settings_home_usage_desc">Small bars under the clock — only shown on days with watched-app time</string>
     <string name="settings_folders">Folders in app list</string>
     <string name="settings_folders_desc">Group apps into folders from the long-press menu. Turning this off flattens the list but keeps your folders.</string>
+    <string name="settings_swipe_left">Swipe left on home opens</string>
+    <string name="settings_swipe_right">Swipe right on home opens</string>
+    <string name="settings_swipe_off">Off</string>
 
     <!-- Usage widget -->
     <string name="widget_usage_label">Defang — today</string>
