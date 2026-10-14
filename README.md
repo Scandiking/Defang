@@ -231,7 +231,8 @@ It's a play on [FAANG](https://en.wikipedia.org/wiki/Big_Tech#Acronyms), the tec
 </picture>
 
 # Defang
-/div>
+
+</div>
 
 ## License
 
