@@ -223,6 +223,16 @@ The keyguard is a protected system surface owned by `SystemUI`; no public API le
 **Why is it called Defang?**
 It's a play on [FAANG](https://en.wikipedia.org/wiki/Big_Tech#Acronyms), the tech giants that built their business on harvesting your attention. They've had their fangs in you for years. Defang uses the same behavioral mechanics they do, but for _your_ benefit instead of theirs. Bit by bit, the fangs come out. You're being de-FAANG-ed.
 
+<div align="center">
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/Defang_logo.png">
+  <img src="assets/Defang_logo_dark.png" width="72" alt="Defang logo — a fang shaped like the letter F">
+</picture>
+
+# Defang
+/div>
+
 ## License
 
 GPLv3
