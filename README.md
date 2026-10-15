@@ -155,6 +155,7 @@ app/src/main/kotlin/com/defang/launcher/
 │   ├── onboarding/                 # 5-screen first-run flow (what it is/isn't, the loop, small tasks, setup)
 │   ├── settings/
 │   │   ├── apptier/                # Per-app tier and limits
+│   │   ├── awareness/              # Awareness library — every tidbit with its source, plus offline tasks
 │   │   ├── sites/                  # Watched browser domains/paths
 │   │   ├── usage/                  # Weekly report, long-range trends, CSV export
 │   │   └── workprofile/            # Work profile apps
