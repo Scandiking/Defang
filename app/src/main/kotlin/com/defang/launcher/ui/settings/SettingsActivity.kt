@@ -7,9 +7,7 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,7 +24,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -63,6 +60,7 @@ import com.defang.launcher.util.MathProblemGenerator
 import kotlin.math.roundToInt
 import com.defang.launcher.ui.onboarding.OnboardingActivity
 import com.defang.launcher.ui.settings.apptier.AppTierScreen
+import com.defang.launcher.ui.settings.awareness.AwarenessLibraryScreen
 import com.defang.launcher.ui.theme.DefangTheme
 import com.defang.launcher.util.AccessibilityServiceHelper
 import com.defang.launcher.util.NotificationListenerHelper
@@ -1094,95 +1092,6 @@ private fun AppTierSettingsScreen(onBack: () -> Unit) {
                 .padding(padding),
         ) {
             AppTierScreen()
-        }
-    }
-}
-
-// ── Awareness library ─────────────────────────────────────────────────────────
-
-// One library entry: the tidbit and, for the awareness tracks, its citation.
-private data class LibraryEntry(val text: String, val source: String?)
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun AwarenessLibraryScreen(onBack: () -> Unit) {
-    val resources = androidx.compose.ui.platform.LocalContext.current.resources
-    val sections = remember {
-        fun track(tidbitsRes: Int, sourcesRes: Int): List<LibraryEntry> {
-            val tidbits = resources.getStringArray(tidbitsRes)
-            val sources = resources.getStringArray(sourcesRes)
-            return tidbits.mapIndexed { i, text ->
-                LibraryEntry(text, sources.getOrNull(i))
-            }
-        }
-        listOf(
-            R.string.library_track_general to
-                track(R.array.tidbits_general, R.array.tidbits_general_sources),
-            R.string.library_track_social to
-                track(R.array.tidbits_social, R.array.tidbits_social_sources),
-            R.string.library_track_adult to
-                track(R.array.tidbits_adult, R.array.tidbits_adult_sources),
-            R.string.library_tasks_header to arrayOf(
-                R.array.offline_prompts_movement,
-                R.array.offline_prompts_space,
-                R.array.offline_prompts_sensory,
-                R.array.offline_prompts_social,
-                R.array.offline_prompts_creative,
-            ).flatMap { arrayRes ->
-                resources.getStringArray(arrayRes).map { LibraryEntry(it, source = null) }
-            },
-        )
-    }
-
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.settings_awareness_library)) },
-                navigationIcon = { BackIcon(onBack) },
-            )
-        },
-        containerColor = MaterialTheme.colorScheme.background,
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(bottom = 24.dp),
-        ) {
-            sections.forEach { (headerRes, entries) ->
-                item {
-                    Text(
-                        text = stringResource(headerRes),
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(
-                            start = 16.dp, end = 16.dp, top = 16.dp
-                        ),
-                    )
-                }
-                items(entries) { entry ->
-                    Card(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                    ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Text(
-                                text = entry.text,
-                                style = MaterialTheme.typography.bodyMedium,
-                            )
-                            entry.source?.let { source ->
-                                Text(
-                                    text = source,
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f),
-                                    modifier = Modifier.padding(top = 8.dp),
-                                )
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 }
