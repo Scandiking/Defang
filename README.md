@@ -112,17 +112,56 @@ Some of you will use third-part clients or apps not in defaults. All defaults ca
 ## Project structure
 
 ```txt
+Defang/
+├── app/
+│   ├── schemas/                              # Exported Room schemas (one JSON per DB version) — used by migration tests
+│   └── src/
+│       ├── main/
+│       │   ├── kotlin/com/defang/launcher/   # see below
+│       │   └── res/
+│       │       ├── values/                   # Default (English) strings, tidbit/awareness arrays, theme
+│       │       ├── values-de|fr|nb/          # Translations, synced from Weblate
+│       │       └── xml/                      # Accessibility service + widget config
+│       └── test/                             # JVM/Robolectric tests (migrations, session recovery, usage report, …)
+├── assets/                                   # Logo, README screenshots, Blender renders
+├── docs/fdroid/                              # F-Droid build metadata
+├── fastlane/metadata/                        # Store listing text and images (read by F-Droid)
+└── .github/workflows/ci.yml                  # Build + unit/migration tests on every PR
+```
+
+```txt
 app/src/main/kotlin/com/defang/launcher/
-├── data/                   # Room entities, DAOs, DataStore, repositories
-├── domain/                 # Models, use cases
+├── DefangApplication.kt
+├── data/
+│   ├── local/
+│   │   ├── datastore/              # PreferencesDataStore — global settings and toggles
+│   │   └── db/                     # DefangDatabase, migrations
+│   │       ├── dao/                # Sessions, extensions, app config, folders, watched URLs, adaptive gate
+│   │       └── entity/             # Room entities for the above
+│   └── repository/                 # Repositories wrapping DAOs + DataStore
+├── di/                             # Hilt modules (AppModule, ServiceModule)
+├── domain/
+│   ├── model/                      # AppConfig, AppTier, Session, WatchedUrl, RetentionLevel, …
+│   └── usecase/                    # Open counts, extension status, personal usage, DnD check, content track
 ├── service/
-│   ├── accessibility/      # DefangAccessibilityService — core event loop
-│   └── overlay/            # IntentGateOverlay, SessionTimerOverlay, EndCardOverlay
+│   ├── BootReceiver.kt             # Reschedules notification batch windows after reboot
+│   ├── accessibility/              # DefangAccessibilityService — core event loop; SessionRecovery for stale sessions
+│   ├── overlay/                    # OverlayManager + IntentGate, SessionTimer, EndCard, Cooldown overlays
+│   ├── nfc/                        # NFC tag unlock
+│   ├── qr/                         # QR/barcode unlock
+│   └── notification/               # Notification listener, batching windows, summary delivery
 ├── ui/
-│   ├── launcher/           # Home screen / app drawer
-│   ├── onboarding/         # 5-screen first-run flow
-│   └── settings/           # App tier config
-└── util/                   # TidbitSelector, OfflinePromptSelector
+│   ├── launcher/                   # Home screen, app drawer, folders, swipe shortcuts
+│   ├── onboarding/                 # 5-screen first-run flow (what it is/isn't, the loop, small tasks, setup)
+│   ├── settings/
+│   │   ├── apptier/                # Per-app tier and limits
+│   │   ├── sites/                  # Watched browser domains/paths
+│   │   ├── usage/                  # Weekly report, long-range trends, CSV export
+│   │   └── workprofile/            # Work profile apps
+│   ├── theme/                      # Compose colours, typography, theme
+│   └── widget/                     # Home-screen usage widget
+└── util/                           # Tidbit/prompt selection, personal tidbits, math problems,
+                                    # browser URL extraction, grayscale, usage stats helpers
 ```
 
 ---
