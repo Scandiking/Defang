@@ -226,8 +226,8 @@ Defang ships in English and Norwegian (Bokmål). Other languages are crowdsource
 
 ## FAQ
 
-**Where are the settings?**  
-Open the app drawer and tap **Defang** in the list (or search "def"). No gear icon, by design.
+**Why is it called Defang?**
+It's a play on [FAANG](https://en.wikipedia.org/wiki/Big_Tech#Acronyms), the tech giants that built their business on harvesting your attention. They've had their fangs in you for years. Defang uses the same behavioral mechanics they do, but for _your_ benefit instead of theirs. Bit by bit, the fangs come out. You're being de-FAANG-ed.
 
 **Why not block watched apps outright?**  
 Blocking outright doesn't touch the underlying brain-loop.  
@@ -260,8 +260,11 @@ The keyguard is a protected system surface owned by `SystemUI`; no public API le
 > [!TIP]  
 > You can get most of the way there yourself: in your lock screen settings, remove all widgets/shortcuts and set an all-black wallpaper. Combined with Defang's grayscale, that's as close to a blank lock screen as the OS permits any app, first- or third-party, to get you.
 
-**Why is it called Defang?**
-It's a play on [FAANG](https://en.wikipedia.org/wiki/Big_Tech#Acronyms), the tech giants that built their business on harvesting your attention. They've had their fangs in you for years. Defang uses the same behavioral mechanics they do, but for _your_ benefit instead of theirs. Bit by bit, the fangs come out. You're being de-FAANG-ed.
+**Where are the settings?**  
+Open the app drawer and tap **Defang** in the list (or search "def"). No gear icon, by design.
+
+**Who maintains this project? Will it be abandoned when the developer hops onto the next passion project?**
+I, Scandiking, maintain this project. I have no plans to abandon it. I personally need Defang, especially considering I live in Bumfuck, Nowhere, Norway and social media has been my goto pastime since there is not much to do around here, so it is very useful to me personally. Helps free up time for applying for jobs.
 
 <div align="center">
 
