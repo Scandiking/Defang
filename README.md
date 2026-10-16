@@ -77,11 +77,23 @@ Screens follow your system theme — shown here in light and dark (switch global
 
 | Intent gate | Onboarding | Watched apps |
 |:---:|:---:|:---:|
-| <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/intent_gate_dark.png"><img src="assets/Screenshots/intent_gate.png" width="480" alt="Intent gate overlay with countdown and slide-to-open"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/onboarding_dark.png"><img src="assets/Screenshots/onboarding.png" width="480" alt="Onboarding — first-run flow"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/watched_apps_dark.png"><img src="assets/Screenshots/watched_apps.png" width="480" alt="Watched apps picker"></picture> |
+| <img src="assets/Screenshots/intent_gate.png" width="480" alt="Intent gate overlay with a straight slide-to-open track"> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/onboarding_dark.png"><img src="assets/Screenshots/onboarding.png" width="480" alt="Onboarding — first-run flow"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/watched_apps_dark.png"><img src="assets/Screenshots/watched_apps.png" width="480" alt="Watched apps picker"></picture> |
 
 | Timings | Tidbit library | Cue loop |
 |:---:|:---:|:---:|
 | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/timer_adjustment_dark.png"><img src="assets/Screenshots/timer_adjustment.png" width="480" alt="Gate delay, session limit, and cool-down sliders"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/tidbit_library_dark.png"><img src="assets/Screenshots/tidbit_library.png" width="480" alt="Library of tidbits on attention engineering"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/cue_loop_dark.png"><img src="assets/Screenshots/cue_loop.png" width="480" alt="Cue loop — the open-gate-cooldown cycle"></picture> |
+
+| Home — empty | Home — tidbit only | Home — clock and tidbit |
+|:---:|:---:|:---:|
+| <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/home_empty_dark.png"><img src="assets/Screenshots/home_empty.png" width="480" alt="Empty home screen"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/home_tidbit_dark.png"><img src="assets/Screenshots/home_tidbit.png" width="480" alt="Home screen with only the tidbit of the day"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/home_clock_dark.png"><img src="assets/Screenshots/home_clock.png" width="480" alt="Home screen with clock, date, and tidbit"></picture> |
+
+| Math unlock + personal line | Cool-down | App drawer |
+|:---:|:---:|:---:|
+| <img src="assets/Screenshots/gate_math_personal.png" width="480" alt="Math problem unlock with a personal line: This is what you spend 47 minutes a day on?"> | <img src="assets/Screenshots/cooldown.png" width="480" alt="Cool-down screen counting down until the app is available again"> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/drawer_dark.png"><img src="assets/Screenshots/drawer.png" width="480" alt="Alphabetical app drawer with search and letter index"></picture> |
+
+| Settings | Unlock settings |
+|:---:|:---:|
+| <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/settings_dark.png"><img src="assets/Screenshots/settings.png" width="480" alt="Settings overview"></picture> | <picture><source media="(prefers-color-scheme: dark)" srcset="assets/Screenshots/settings_unlock_dark.png"><img src="assets/Screenshots/settings_unlock.png" width="480" alt="Math problem unlock, difficulty, and personal lines settings"></picture> |
 
 ---
 
