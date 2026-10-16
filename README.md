@@ -261,10 +261,10 @@ The keyguard is a protected system surface owned by `SystemUI`; no public API le
 > You can get most of the way there yourself: in your lock screen settings, remove all widgets/shortcuts and set an all-black wallpaper. Combined with Defang's grayscale, that's as close to a blank lock screen as the OS permits any app, first- or third-party, to get you.
 
 **Where are the settings?**  
-Open the app drawer and tap **Defang** in the list (or search "def"). No gear icon, by design.
+Open the app drawer and tap **Defang** in the list (or search "def"). No gear icon, by design. You can rename the apps by pressing and holding it, if it is named something else than what you tend to search for. 
 
-**Who maintains this project? Will it be abandoned when the developer hops onto the next passion project?**
-I, Scandiking, maintain this project. I have no plans to abandon it. I personally need Defang, especially considering I live in Bumfuck, Nowhere, Norway and social media has been my goto pastime since there is not much to do around here, so it is very useful to me personally. Helps free up time for applying for jobs.
+**Who maintains this project? Will it be abandoned when the developer hops onto the next passion project?**  
+I, Scandiking, maintain this project. I have no plans to abandon it. I personally need Defang, especially considering I live in Bumfuck, Nowhere, Norway and social media has been my goto pastime since there is not much to do around here, so it is very useful to me personally. Helps free up time for applying for jobs. And also: Defang helps me free up time to work with Defang!
 
 <div align="center">
 
