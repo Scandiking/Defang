@@ -57,4 +57,9 @@
     <string name="settings_sites_title">Siti web monitorati</string>
     <string name="settings_sites_desc">Recinta specifici siti nel browser</string>
     <string name="sites_desc">I siti che aggiungi sono recintati quando aperti nel browser. Siti con contenuti per adulti hanno una restrizione da un minuto; tutti gli altri ricevono durata di sessione e timeout standard.</string>
+    <string name="settings_letter_size">Dimensione delle lettere</string>
+    <string name="settings_letter_offset">Distanza dal bordo</string>
+    <string name="unit_dp">%1$d dp</string>
+    <string name="settings_workprofile_title">App del profilo di lavoro</string>
+    <string name="settings_workprofile_desc">Mostra e apre le app del tuo profilo di lavoro Android</string>
 </resources>
