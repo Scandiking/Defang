@@ -345,12 +345,12 @@
     <string name="usage_export_csv">Eksporter som CSV</string>
     <string name="usage_export_success">Bruksdata eksportert</string>
 
-    <!-- Google install lockdown warning -->
+    <!-- Keep Android Open: Google developer verification notice -->
     <string name="lockdown_title">Om installering av oppdateringer</string>
-    <string name="lockdown_body">Fra september 2026 blokkerer Google installering av apper fra utviklere som ikke har registrert seg hos Google, betalt et gebyr og levert legitimasjon. Defangs utvikler kommer ikke til å gjøre det — kravet er samme type kontroll som denne appen finnes for å dytte tilbake mot.\n\nHva det betyr for deg: denne installerte kopien fortsetter å virke, upåvirket. Fremtidige oppdateringer krever enten F-Droid, eller Googles flertrinns «avanserte flyt» (utviklermodus pluss 24 timers ventetid). Den flyten går gjennom Google Play Services, og Google kan stramme den inn når som helst.\n\nMer på keepandroidopen.org — i en nettleser, når du selv velger det.</string>
+    <string name="lockdown_body">Google krever nå at apputviklere registrerer seg hos Google, betaler et gebyr og leverer legitimasjon før appene deres kan installeres. Defangs utvikler kommer ikke til å gjøre det — kravet er samme type kontroll som denne appen finnes for å dytte tilbake mot.\n\nStatus (oktober 2026): siden 30. september håndheves kravet i Brasil, Indonesia, Singapore og Thailand, og bare for apper fra sju deltakende butikker (Google Play, Galaxy Store, Xiaomi, OPPO, vivo, HONOR og Palm). Direkte APK-installering, F-Droid og ADB er ikke omfattet ennå. Google planlegger global utrulling i 2027, uten fast dato.\n\nHva det betyr for deg: denne installerte kopien fortsetter å virke, upåvirket. Oppdateringer fra F-Droid eller en direkte APK virker som før, foreløpig. Når den globale utrullingen når deg, krever oppdateringer Googles «avanserte flyt»: slå på utvikleralternativer, start på nytt, vent 24 timer én gang, og tillat så uverifiserte apper i 7 dager eller på ubestemt tid. Den flyten går gjennom Google Play Services, og Google kan endre den når som helst.\n\nMer på keepandroidopen.org — i en nettleser, når du selv velger det.</string>
     <string name="lockdown_dismiss">Forstått</string>
-    <string name="settings_lockdown">Googles installasjonslås</string>
-    <string name="settings_lockdown_desc">Hva september 2026 betyr for oppdatering av denne appen</string>
+    <string name="settings_lockdown">Keep Android Open</string>
+    <string name="settings_lockdown_desc">Googles utviklerverifisering — hva det betyr for oppdateringer</string>
 
     <!-- Hjelp til å oversette (issue #30) -->
     <string name="settings_translate">Hjelp til å oversette Defang</string>

@@ -24,6 +24,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.defang.launcher.R
@@ -154,8 +156,11 @@ class LauncherActivity : ComponentActivity() {
                             )
                         },
                         text = {
+                            // Long text: scroll so it never clips on small screens
                             androidx.compose.material3.Text(
-                                stringResource(R.string.lockdown_body)
+                                stringResource(R.string.lockdown_body),
+                                modifier = androidx.compose.ui.Modifier
+                                    .verticalScroll(rememberScrollState()),
                             )
                         },
                         confirmButton = {

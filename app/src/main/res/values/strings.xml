@@ -368,12 +368,12 @@
     <string name="usage_export_csv">Export as CSV</string>
     <string name="usage_export_success">Usage data exported</string>
 
-    <!-- Google install lockdown warning -->
+    <!-- Keep Android Open: Google developer verification notice -->
     <string name="lockdown_title">About installing updates</string>
-    <string name="lockdown_body">From September 2026, Google blocks installing apps from developers who have not registered with Google, paid a fee, and handed over government ID. Defang\'s developer will not do that — the requirement is the same class of control this app exists to push back against.\n\nWhat it means for you: this installed copy keeps working, unaffected. Installing future updates will require either F-Droid, or Google\'s multi-step \"advanced flow\" (Developer Mode plus a 24-hour waiting period). That flow runs through Google Play Services and Google can tighten it at any time.\n\nMore at keepandroidopen.org — in a browser, when you choose to.</string>
+    <string name="lockdown_body">Google now requires app developers to register with Google, pay a fee and hand over government ID before their apps can be installed. Defang\'s developer will not do that — the requirement is the same class of control this app exists to push back against.\n\nWhere it stands (October 2026): since 30 September, it is enforced in Brazil, Indonesia, Singapore and Thailand, and only for apps from seven participating stores (Google Play, Galaxy Store, Xiaomi, OPPO, vivo, HONOR and Palm). Direct APK installs, F-Droid and ADB are not covered yet. Google plans a global rollout in 2027, with no fixed date.\n\nWhat it means for you: this installed copy keeps working, unaffected. Updates from F-Droid or a direct APK work as before, for now. Once the global rollout reaches you, installing updates will need Google\'s \"advanced flow\": turn on Developer Options, restart, wait 24 hours once, then allow unverified apps for 7 days or indefinitely. That flow runs through Google Play Services, and Google can change it at any time.\n\nMore at keepandroidopen.org — in a browser, when you choose to.</string>
     <string name="lockdown_dismiss">Understood</string>
-    <string name="settings_lockdown">Google\'s install lockdown</string>
-    <string name="settings_lockdown_desc">What September 2026 means for updating this app</string>
+    <string name="settings_lockdown">Keep Android Open</string>
+    <string name="settings_lockdown_desc">Google\'s developer verification — what it means for updates</string>
 
     <!-- Help translate (issue #30) -->
     <string name="settings_translate">Help translate Defang</string>

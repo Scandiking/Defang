@@ -108,9 +108,11 @@ class LauncherViewModel @Inject constructor(
                 apps = apps,
                 needsOnboarding = !onboardingDone,
                 homeTidbit = tidbitSelector.daily(ContentTrack.GENERAL),
-                // One-time heads-up about Google's install lockdown — after
-                // onboarding so it isn't the first thing a new user sees
-                showLockdownWarning = onboardingDone && !prefs.isLockdownWarned.first(),
+                // Heads-up about Google's developer verification, shown once per
+                // text version — after onboarding so it isn't the first thing a
+                // new user sees
+                showLockdownWarning = onboardingDone &&
+                    prefs.lockdownWarnedVersion.first() < prefs.LOCKDOWN_TEXT_VERSION,
                 // Same reasoning — don't compete with onboarding for attention
                 renamePrompt = if (onboardingDone) renamePrompt else null,
             )

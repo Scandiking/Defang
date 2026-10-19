@@ -506,7 +506,7 @@ private fun SettingsMenuScreen(
         AlertDialog(
             onDismissRequest = { whyDialog = null },
             title = { Text(title) },
-            text = { Text(body) },
+            text = { Text(body, modifier = Modifier.verticalScroll(rememberScrollState())) },
             confirmButton = {
                 TextButton(onClick = { whyDialog = null }) {
                     Text(stringResource(R.string.action_ok))
