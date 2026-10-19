@@ -1,6 +1,7 @@
 package com.defang.launcher.service.notification
 
 import android.app.Notification
+import android.content.ComponentName
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
 import com.defang.launcher.data.local.datastore.PreferencesDataStore
@@ -10,10 +11,12 @@ import com.defang.launcher.domain.model.AppTier
 import com.defang.launcher.service.accessibility.DefangAccessibilityService
 import com.defang.launcher.util.ContactNameCache
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -31,7 +34,8 @@ import javax.inject.Inject
  * Never intercepted:
  *  - ongoing / foreground-service notifications (media playback, uploads)
  *  - call-category notifications (incoming calls via messenger apps)
- *  - notifications whose title matches an address-book contact
+ *  - person-to-person messages whose title matches an address-book contact
+ *    (when the contact bypass setting is on)
  *  - anything from non-watched apps
  *
  * Counts are persisted in DataStore so batch mode survives process death.
@@ -50,7 +54,11 @@ class DefangNotificationListenerService : NotificationListenerService() {
     @Volatile private var watchedPackages: Set<String> =
         DefangAccessibilityService.DEFAULT_WATCHED_PACKAGES
     @Volatile private var sanitizeEnabled = true
-    @Volatile private var batchingActive = false
+    @Volatile private var contactBypassEnabled = true
+
+    /** Completes once settings and the watched list have loaded. Until then
+     *  posts are ignored; the connect-time sweep picks them up afterwards. */
+    private val ready = CompletableDeferred<Unit>()
 
     private val appLabels = mutableMapOf<String, String>()
 
@@ -59,37 +67,68 @@ class DefangNotificationListenerService : NotificationListenerService() {
         summaryPoster.ensureChannel()
         contactNames.refreshIfStale()
         serviceScope.launch {
-            appConfigRepo.observeAll().collect { all ->
-                watchedPackages = computeWatchedPackages(
-                    all,
-                    DefangAccessibilityService.DEFAULT_WATCHED_PACKAGES,
-                )
-                all.filter { it.tier == AppTier.WATCHED.dbValue }
-                    .forEach { appLabels[it.packageName] = it.appLabel }
-            }
+            sanitizeEnabled = prefs.notificationSanitizeEnabled.first()
+            contactBypassEnabled = prefs.notificationContactBypass.first()
+            applyConfigs(appConfigRepo.observeAll().first())
+            ready.complete(Unit)
+        }
+        serviceScope.launch {
+            appConfigRepo.observeAll().collect { applyConfigs(it) }
         }
         serviceScope.launch {
             prefs.notificationSanitizeEnabled.collect { sanitizeEnabled = it }
         }
         serviceScope.launch {
-            prefs.batchWindow1.collect { w1 ->
-                batchingActive = w1 >= 0 || prefs.batchWindow2.first() >= 0
-            }
+            prefs.notificationContactBypass.collect { contactBypassEnabled = it }
         }
+    }
+
+    private fun applyConfigs(all: List<AppConfigEntity>) {
+        watchedPackages = computeWatchedPackages(
+            all,
+            DefangAccessibilityService.DEFAULT_WATCHED_PACKAGES,
+        )
+        all.filter { it.tier == AppTier.WATCHED.dbValue }
+            .forEach { appLabels[it.packageName] = it.appLabel }
+    }
+
+    override fun onListenerConnected() {
+        super.onListenerConnected()
+        isConnected = true
+        // Clean up whatever piled up in the shade while we weren't bound
+        // (fresh grant, reinstall, process restart).
         serviceScope.launch {
-            prefs.batchWindow2.collect { w2 ->
-                batchingActive = w2 >= 0 || prefs.batchWindow1.first() >= 0
+            ready.await()
+            val active = try {
+                activeNotifications
+            } catch (_: SecurityException) {
+                null // unbound again in the meantime
             }
+            active?.forEach { onNotificationPosted(it) }
+        }
+    }
+
+    override fun onListenerDisconnected() {
+        super.onListenerDisconnected()
+        isConnected = false
+        // The system unbinds us under memory pressure or after an update and
+        // doesn't always come back on its own — ask for a rebind. Throws if
+        // the user just revoked access, which is fine.
+        try {
+            requestRebind(ComponentName(this, DefangNotificationListenerService::class.java))
+        } catch (_: RuntimeException) {
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        isConnected = false
         serviceScope.cancel()
     }
 
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
         val posted = sbn ?: return
+        if (!ready.isCompleted) return
         if (!sanitizeEnabled) return
         if (posted.packageName == packageName) return // our own summaries
         if (posted.packageName !in watchedPackages) return
@@ -103,9 +142,13 @@ class DefangNotificationListenerService : NotificationListenerService() {
         if (notification.flags and protectedFlags != 0) return
         if (notification.category == Notification.CATEGORY_CALL) return
 
-        // Contact bypass: DMs from real people arrive untouched
-        val title = notification.extras.getCharSequence(Notification.EXTRA_TITLE)
-        if (contactNames.isContact(title)) return
+        // Contact bypass: DMs from people in the address book arrive untouched.
+        // Only for person-to-person messages — app titles like "Snapchat" or
+        // story/streak nags never match a contact by accident.
+        if (contactBypassEnabled && isPersonMessage(notification)) {
+            val title = notification.extras.getCharSequence(Notification.EXTRA_TITLE)
+            if (contactNames.isContact(title)) return
+        }
 
         cancelNotification(posted.key)
 
@@ -114,8 +157,10 @@ class DefangNotificationListenerService : NotificationListenerService() {
 
         serviceScope.launch {
             val count = incrementCount(posted.packageName)
-            // Batch mode: stay silent now; BatchDeliveryReceiver posts at the window
-            if (!batchingActive) {
+            // Batch mode: stay silent now; BatchDeliveryReceiver posts at the window.
+            // Read fresh from DataStore so a notification arriving right after
+            // the service starts isn't treated as instant mode.
+            if (!isBatchingActive()) {
                 summaryPoster.postSummary(posted.packageName, count)
             }
         }
@@ -130,6 +175,10 @@ class DefangNotificationListenerService : NotificationListenerService() {
             serviceScope.launch { clearCount(pkg) }
         }
     }
+
+    private suspend fun isBatchingActive(): Boolean =
+        combine(prefs.batchWindow1, prefs.batchWindow2) { w1, w2 -> w1 >= 0 || w2 >= 0 }
+            .first()
 
     private suspend fun incrementCount(pkg: String): Int = countsMutex.withLock {
         val counts = prefs.suppressedCounts.first().toMutableMap()
@@ -147,6 +196,21 @@ class DefangNotificationListenerService : NotificationListenerService() {
     }
 
     companion object {
+        /** True while the system has us bound. The Settings row reads this. */
+        @Volatile
+        var isConnected: Boolean = false
+            private set
+
+        /**
+         * A message from one person to another: the MESSAGE category or a
+         * MessagingStyle notification. Used to scope the contact bypass.
+         */
+        internal fun isPersonMessage(notification: Notification): Boolean {
+            if (notification.category == Notification.CATEGORY_MESSAGE) return true
+            val template = notification.extras?.getString(Notification.EXTRA_TEMPLATE)
+            return template == Notification.MessagingStyle::class.java.name
+        }
+
         /**
          * Merges DB-configured watched packages with the hardcoded default
          * list. A default is only used as a fallback for packages with no

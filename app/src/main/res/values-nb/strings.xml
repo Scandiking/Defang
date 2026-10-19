@@ -176,6 +176,12 @@
     <string name="settings_sanitize_why_body">Varsler er plattformenes sterkeste verktøy for å dra deg tilbake: rød merkevarefarge, lyd, vibrasjon og hastverksspråk («X venter på deg») — ofte masseutsendelser forkledd som personlige meldinger. Defang bytter dem ut med én grå, stille oppsummering per app, uten forhåndsvisning av innholdet. Du får vite at noe venter — uten agnet. Å trykke på varselet åpner appen gjennom hovedinngangen, ikke dyplenken varselet ville sendt deg til.</string>
     <string name="settings_notification_access">Varseltilgang</string>
     <string name="settings_notification_access_desc">Kreves for nøytrale varsler. Gi Defang tilgang til varsler</string>
+    <string name="settings_sanitize_inactive">Ikke aktiv: Varseltilgangen mangler eller kjører ikke. Se «Varseltilgang» nedenfor.</string>
+    <string name="settings_notification_access_running">Gitt og kjører. Trykk for å åpne systemsiden.</string>
+    <string name="settings_notification_access_not_running">Gitt, men kjører ikke. Trykk for å starte den på nytt.</string>
+    <string name="settings_contact_bypass">Slipp gjennom kontakter</string>
+    <string name="settings_contact_bypass_desc">Meldinger fra folk i kontaktene dine kommer som vanlig</string>
+    <string name="settings_contact_bypass_no_permission">Trenger tilgang til kontakter. Trykk for å gi tilgang.</string>
     <string name="settings_why">Hvorfor?</string>
 
     <!-- Awareness library page -->

@@ -1,52 +1,72 @@
 package com.defang.launcher.util
 
-import android.Manifest
+import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
+import android.service.notification.NotificationListenerService
 import com.defang.launcher.service.notification.DefangNotificationListenerService
 
 /**
- * Same strategy as [AccessibilityServiceHelper], but for notification access:
- * silently self-enable via WRITE_SECURE_SETTINGS when the adb grant is present,
- * otherwise open the system screen — directly on our app's detail page where
- * the platform supports it (API 30+).
+ * Notification access for [DefangNotificationListenerService].
+ *
+ * Unlike the accessibility service, there is no silent self-enable: the
+ * notification manager keeps its own list of approved listeners and ignores
+ * writes to the `enabled_notification_listeners` Secure setting (verified on
+ * a Galaxy S22 / Android 16). Writing it anyway looked like success, so the
+ * Settings row never opened the system screen and the feature silently did
+ * nothing (#62). The user has to grant it on the system screen.
  */
 object NotificationListenerHelper {
-
-    private const val ENABLED_LISTENERS = "enabled_notification_listeners"
 
     private fun component(context: Context): ComponentName =
         ComponentName(context, DefangNotificationListenerService::class.java)
 
+    /** Asks the notification manager itself, not the Secure-settings mirror. */
     fun isEnabled(context: Context): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+            return context.getSystemService(NotificationManager::class.java)
+                .isNotificationListenerAccessGranted(component(context))
+        }
+        // API 26 has no direct query; the mirror is accurate when the user
+        // granted access on the system screen.
         val enabled = Settings.Secure.getString(
-            context.contentResolver, ENABLED_LISTENERS
+            context.contentResolver, "enabled_notification_listeners"
         ) ?: return false
         val flat = component(context).flattenToString()
         return enabled.split(':').any { it.equals(flat, ignoreCase = true) }
     }
 
-    fun tryEnableSelf(context: Context): Boolean {
-        val granted = context.checkSelfPermission(
-            Manifest.permission.WRITE_SECURE_SETTINGS
-        ) == PackageManager.PERMISSION_GRANTED
-        if (!granted) return false
-        if (isEnabled(context)) return true
+    /** Where notification access stands, for the Settings row. */
+    enum class Status { RUNNING, NOT_RUNNING, NOT_GRANTED }
 
-        return try {
-            val resolver = context.contentResolver
-            val flat = component(context).flattenToString()
-            val current = Settings.Secure.getString(resolver, ENABLED_LISTENERS).orEmpty()
-            val updated = if (current.isBlank()) flat else "$current:$flat"
-            Settings.Secure.putString(resolver, ENABLED_LISTENERS, updated)
-            true
-        } catch (_: SecurityException) {
-            false
+    fun status(context: Context): Status = when {
+        !isEnabled(context) -> Status.NOT_GRANTED
+        DefangNotificationListenerService.isConnected -> Status.RUNNING
+        else -> Status.NOT_RUNNING
+    }
+
+    /**
+     * Granted doesn't mean bound: after an update or under memory pressure
+     * the system can leave the listener unbound. Ask for a rebind.
+     */
+    fun requestRebind(context: Context) {
+        try {
+            NotificationListenerService.requestRebind(component(context))
+        } catch (_: RuntimeException) {
+            // Not granted, or the system refused. Settings shows the status.
         }
+    }
+
+    /**
+     * Background check on app start and launcher resume: never opens a
+     * screen. Rebinds when access is granted but the listener isn't running.
+     */
+    fun ensureRunningSilently(context: Context) {
+        if (DefangNotificationListenerService.isConnected) return
+        if (isEnabled(context)) requestRebind(context)
     }
 
     fun openNotificationAccessSettings(context: Context) {
@@ -62,10 +82,17 @@ object NotificationListenerHelper {
         context.startActivity(intent)
     }
 
-    /** Self-enable when permitted, otherwise open the system screen. */
+    /**
+     * The user asked for it (Settings tap or switch): rebind if granted but
+     * not running, otherwise open the system screen. Returns true if no user
+     * action is needed.
+     */
     fun ensureEnabled(context: Context): Boolean {
-        if (isEnabled(context)) return true
-        if (tryEnableSelf(context)) return true
+        if (DefangNotificationListenerService.isConnected) return true
+        if (isEnabled(context)) {
+            requestRebind(context)
+            return true
+        }
         openNotificationAccessSettings(context)
         return false
     }

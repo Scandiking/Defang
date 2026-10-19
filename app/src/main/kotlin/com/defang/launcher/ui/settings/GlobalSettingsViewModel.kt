@@ -69,6 +69,15 @@ class GlobalSettingsViewModel @Inject constructor(
         viewModelScope.launch { prefs.setNotificationSanitizeEnabled(on) }
     }
 
+    val notificationContactBypass: StateFlow<Boolean> =
+        prefs.notificationContactBypass.stateIn(
+            viewModelScope, SharingStarted.Eagerly, true
+        )
+
+    fun setNotificationContactBypass(on: Boolean) {
+        viewModelScope.launch { prefs.setNotificationContactBypass(on) }
+    }
+
     // Delivery windows in minutes-since-midnight; -1 = window off.
     val batchWindow1: StateFlow<Int> = prefs.batchWindow1.stateIn(
         viewModelScope, SharingStarted.Eagerly, -1
