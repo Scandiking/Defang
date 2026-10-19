@@ -30,6 +30,7 @@ data class PersonalUsage(
             pattern: String?,
             now: Long,
             dayStart: Long,
+            capMs: (SessionEntity) -> Long = { Long.MAX_VALUE },
         ): PersonalUsage {
             val mine = sessions.filter {
                 if (pattern != null) it.watchedPattern == pattern
@@ -37,7 +38,7 @@ data class PersonalUsage(
             }
             fun minutes(rows: List<SessionEntity>) = (rows
                 .filter { it.endTime > it.startTime }
-                .sumOf { it.endTime - it.startTime } / 60_000L).toInt()
+                .sumOf { SessionDuration.countedMs(it, now, capMs(it)) } / 60_000L).toInt()
 
             val today = mine.filter { it.startTime >= dayStart }
             val weekMinutes = minutes(mine)

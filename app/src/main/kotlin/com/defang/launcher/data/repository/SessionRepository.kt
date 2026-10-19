@@ -6,6 +6,7 @@ import com.defang.launcher.data.local.db.dao.SessionExtensionDao
 import com.defang.launcher.data.local.db.entity.SessionEntity
 import com.defang.launcher.data.local.db.entity.SessionExtensionEntity
 import com.defang.launcher.domain.model.RetentionLevel
+import com.defang.launcher.domain.model.SessionDuration
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
@@ -67,14 +68,23 @@ class SessionRepository @Inject constructor(
         sessionId: Long,
         extensionUsed: Boolean = false,
         endTime: Long = System.currentTimeMillis(),
+        pausedMs: Long? = null,
     ) {
         val existing = dao.getById(sessionId) ?: return
         dao.update(
             existing.copy(
                 endTime = endTime,
                 extensionUsed = extensionUsed,
+                pausedMs = pausedMs ?: existing.pausedMs,
             )
         )
+    }
+
+    /** Persists the paused total of a still-open session, so recovery after
+     *  process death doesn't count paused time as use. */
+    suspend fun setPausedMs(sessionId: Long, pausedMs: Long) {
+        val existing = dao.getById(sessionId) ?: return
+        dao.update(existing.copy(pausedMs = pausedMs))
     }
 
     /** The most recent session left open by an unexpected process death, if any. */
@@ -124,10 +134,11 @@ class SessionRepository @Inject constructor(
 
     /** All session history as CSV, one row per session, with any extension
      *  reason (current or legacy) joined in. */
-    suspend fun exportCsv(): String {
+    suspend fun exportCsv(capMs: (SessionEntity) -> Long): String {
         val sessions = dao.getAll()
+        val now = System.currentTimeMillis()
         val reasonsBySessionId = extensionDao.getAll().associateBy { it.newSessionId }
-        val header = "startTime,endTime,packageName,durationMinutes,intentDeclared,extensionUsed,extensionReason"
+        val header = "startTime,endTime,packageName,durationMinutes,pausedMinutes,countedMinutes,intentDeclared,extensionUsed,extensionReason"
         val rows = sessions.joinToString("\n") { s ->
             val reason = reasonsBySessionId[s.id]?.reason
                 ?: s.intentDeclared?.takeIf { it.startsWith("Extension: ") }?.removePrefix("Extension: ")
@@ -136,6 +147,8 @@ class SessionRepository @Inject constructor(
                 s.endTime.toString(),
                 s.packageName,
                 ((s.endTime - s.startTime).coerceAtLeast(0) / 60_000).toString(),
+                (s.pausedMs / 60_000).toString(),
+                (SessionDuration.countedMs(s, now, capMs(s)) / 60_000).toString(),
                 s.intentDeclared.orEmpty(),
                 s.extensionUsed.toString(),
                 reason.orEmpty(),

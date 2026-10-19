@@ -214,11 +214,11 @@ class SessionRepositoryTest {
             reason = "one more minute", timestamp = 60_000L,
         )
 
-        val csv = repository.exportCsv()
+        val csv = repository.exportCsv { Long.MAX_VALUE }
         val lines = csv.lines()
 
-        assertEquals("startTime,endTime,packageName,durationMinutes,intentDeclared,extensionUsed,extensionReason", lines[0])
-        assertEquals("0,60000,com.example.app,1,check messages,true,one more minute", lines[1])
+        assertEquals("startTime,endTime,packageName,durationMinutes,pausedMinutes,countedMinutes,intentDeclared,extensionUsed,extensionReason", lines[0])
+        assertEquals("0,60000,com.example.app,1,0,1,check messages,true,one more minute", lines[1])
     }
 
     @Test
@@ -229,7 +229,7 @@ class SessionRepositoryTest {
             intentDeclared = "Extension: legacy reason",
         )
 
-        val csv = repository.exportCsv()
+        val csv = repository.exportCsv { Long.MAX_VALUE }
         val row = csv.lines()[1]
 
         assertTrue(row.endsWith("legacy reason"))
@@ -243,7 +243,7 @@ class SessionRepositoryTest {
             intentDeclared = "reason, with \"quotes\"\nand a newline",
         )
 
-        val csv = repository.exportCsv()
+        val csv = repository.exportCsv { Long.MAX_VALUE }
 
         // The comma/newline-containing field must be quoted, with embedded quotes doubled.
         // (csv.lines() is not used here since the field legitimately embeds a raw newline.)
@@ -258,7 +258,7 @@ class SessionRepositoryTest {
             intentDeclared = "plain text",
         )
 
-        val csv = repository.exportCsv()
+        val csv = repository.exportCsv { Long.MAX_VALUE }
 
         assertTrue(csv.lines()[1].contains(",plain text,"))
     }

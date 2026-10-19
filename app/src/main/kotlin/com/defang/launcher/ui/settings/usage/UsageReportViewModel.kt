@@ -18,6 +18,8 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.TextStyle
 import java.util.Locale
+import com.defang.launcher.domain.model.SessionDuration
+import com.defang.launcher.domain.usecase.SessionCapResolver
 import javax.inject.Inject
 
 enum class ChartType { LINE, BAR }
@@ -44,6 +46,7 @@ class UsageReportViewModel @Inject constructor(
     private val sessionRepo: SessionRepository,
     private val appConfigRepo: AppConfigRepository,
     private val prefs: PreferencesDataStore,
+    private val capResolver: SessionCapResolver,
 ) : ViewModel() {
 
     data class AppUsage(
@@ -114,7 +117,7 @@ class UsageReportViewModel @Inject constructor(
         }
     }
 
-    suspend fun exportCsv(): String = sessionRepo.exportCsv()
+    suspend fun exportCsv(): String = sessionRepo.exportCsv(capResolver.load())
 
     private suspend fun reload() {
         _report.value = buildReport(_range.value)
@@ -138,16 +141,16 @@ class UsageReportViewModel @Inject constructor(
         val prevPeriodStart = periodStart(range, offsetPeriods = 1, zone)
         val now = System.currentTimeMillis()
 
+        // Counted time per row: open rows run to now, stale never-closed rows
+        // are dropped, paused time is left out and each row is capped at its
+        // limit (issue #60). Stored as endTime so the buckets below just sum.
+        val counted = capResolver.counter(now)
         val sessions = sessionRepo.getSessionsSince(prevPeriodStart)
             .mapNotNull { s ->
-                val end = when {
-                    s.endTime > s.startTime -> s.endTime
-                    // Still-open session: count it as running until now, but drop
-                    // stale never-closed rows (service killed before endSession)
-                    now - s.startTime < STALE_OPEN_SESSION_MS -> now
-                    else -> return@mapNotNull null
+                if (s.endTime == 0L && now - s.startTime >= SessionDuration.STALE_OPEN_SESSION_MS) {
+                    return@mapNotNull null
                 }
-                s.copy(endTime = end)
+                s.copy(endTime = s.startTime + counted(s), pausedMs = 0L)
             }
 
         val current = sessions.filter { it.startTime >= periodStart }
@@ -237,8 +240,4 @@ class UsageReportViewModel @Inject constructor(
 
     private fun SessionEntity.durationMs(): Long = endTime - startTime
 
-    companion object {
-        /** Open sessions older than this are treated as unclosed garbage. */
-        const val STALE_OPEN_SESSION_MS = 24 * 60 * 60_000L
-    }
 }

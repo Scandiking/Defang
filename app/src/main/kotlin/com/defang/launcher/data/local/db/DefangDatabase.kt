@@ -24,7 +24,7 @@ import com.defang.launcher.data.local.db.entity.WatchedUrlEntity
         AdaptiveGateStateEntity::class,
         AppFolderEntity::class,
     ],
-    version = 9,
+    version = 10,
     exportSchema = true,
 )
 abstract class DefangDatabase : RoomDatabase() {

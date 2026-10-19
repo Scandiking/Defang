@@ -7,6 +7,8 @@ import com.defang.launcher.data.repository.FakeSessionDao
 import com.defang.launcher.data.repository.FakeSessionExtensionDao
 import com.defang.launcher.data.repository.SessionRepository
 import com.defang.launcher.domain.model.RetentionLevel
+import com.defang.launcher.domain.model.SessionDuration
+import com.defang.launcher.domain.usecase.SessionCapResolver
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
@@ -40,9 +42,13 @@ class UsageReportViewModelTest {
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
         every { prefs.retentionLevel } returns flowOf(RetentionLevel.INDEFINITE)
+        every { prefs.sessionLimitMinutes } returns flowOf(15)
         coEvery { appConfigRepo.getConfig(any()) } returns null
+        every { appConfigRepo.observeAll() } returns flowOf(emptyList())
         sessionRepo = SessionRepository(sessionDao, extensionDao, prefs)
-        viewModel = UsageReportViewModel(sessionRepo, appConfigRepo, prefs)
+        viewModel = UsageReportViewModel(
+            sessionRepo, appConfigRepo, prefs, SessionCapResolver(appConfigRepo, prefs),
+        )
     }
 
     @After
@@ -142,13 +148,13 @@ class UsageReportViewModelTest {
         // 10 days ago: inside the previous 7-day period, not the current one.
         sessionDao.rows += SessionEntity(
             id = 3, packageName = "com.a", startTime = millisAt(today.minusDays(10)),
-            endTime = millisAt(today.minusDays(10)) + 40 * 60_000,
+            endTime = millisAt(today.minusDays(10)) + 12 * 60_000,
         )
 
         val report = viewModel.buildReport(ReportRange.LAST_7_DAYS)
 
         assertEquals(20L, report.totalMinutes) // 15 + 5, current period only
-        assertEquals(40L, report.totalMinutesPrevPeriod)
+        assertEquals(12L, report.totalMinutesPrevPeriod)
         assertEquals(2, report.totalOpens)
         assertEquals(listOf("com.a", "com.b"), report.perApp.map { it.packageName }) // sorted by minutes desc
         assertEquals(15L, report.perApp[0].minutes)
@@ -159,13 +165,33 @@ class UsageReportViewModelTest {
     fun `buildReport keeps a recently-opened still-open session, running until now`() = runTest {
         val now = System.currentTimeMillis()
         sessionDao.rows += SessionEntity(
-            id = 1, packageName = "com.a", startTime = now - 60 * 60_000, endTime = 0L,
+            id = 1, packageName = "com.a", startTime = now - 10 * 60_000, endTime = 0L,
         )
 
         val report = viewModel.buildReport(ReportRange.LAST_7_DAYS)
 
         assertEquals(1, report.totalOpens)
-        assertEquals(60L, report.totalMinutes)
+        assertEquals(10L, report.totalMinutes)
+    }
+
+    @Test
+    fun `buildReport caps a row left open for hours at the limit and leaves out paused time`() = runTest {
+        val today = LocalDate.now(zone)
+        // Pre-#60 leak: Snapchat row ran 8 h behind a locked screen
+        sessionDao.rows += SessionEntity(
+            id = 1, packageName = "com.a", startTime = millisAt(today),
+            endTime = millisAt(today) + 8 * 60 * 60_000,
+        )
+        // 14 min row, 6 min of it paused → 8 min
+        sessionDao.rows += SessionEntity(
+            id = 2, packageName = "com.b", startTime = millisAt(today, hour = 1),
+            endTime = millisAt(today, hour = 1) + 14 * 60_000, pausedMs = 6 * 60_000,
+        )
+
+        val report = viewModel.buildReport(ReportRange.LAST_7_DAYS)
+
+        assertEquals(16L, report.perApp.single { it.packageName == "com.a" }.minutes) // 15 + 1 slack
+        assertEquals(8L, report.perApp.single { it.packageName == "com.b" }.minutes)
     }
 
     @Test
@@ -173,7 +199,7 @@ class UsageReportViewModelTest {
         val now = System.currentTimeMillis()
         sessionDao.rows += SessionEntity(
             id = 1, packageName = "com.a",
-            startTime = now - (UsageReportViewModel.STALE_OPEN_SESSION_MS + 60_000), endTime = 0L,
+            startTime = now - (SessionDuration.STALE_OPEN_SESSION_MS + 60_000), endTime = 0L,
         )
 
         val report = viewModel.buildReport(ReportRange.LAST_7_DAYS)

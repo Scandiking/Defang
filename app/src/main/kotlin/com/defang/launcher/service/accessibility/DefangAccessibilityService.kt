@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
+import android.os.PowerManager
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityWindowInfo
@@ -34,6 +35,7 @@ import com.defang.launcher.service.nfc.NfcUnlockActivity
 import com.defang.launcher.service.qr.QrUnlock
 import com.defang.launcher.service.qr.QrUnlockActivity
 import com.defang.launcher.domain.model.QrScanMode
+import com.defang.launcher.domain.model.SessionDuration
 import com.defang.launcher.service.overlay.OverlayManager
 import com.defang.launcher.service.overlay.SessionTimerOverlay
 import com.defang.launcher.ui.widget.UsageWidgetProvider
@@ -105,6 +107,19 @@ class DefangAccessibilityService : AccessibilityService() {
     private var currentEndCard: EndCardOverlay? = null
     private var currentCooldownOverlay: CooldownOverlay? = null
     private var extensionUsedThisSession = false
+
+    // Session pause (issue #60). Screen-off, Home and leaving an evasive app
+    // pause the session instead of counting it as use. Coming back within
+    // PAUSE_GRACE_MS resumes without a new gate; otherwise the session ends at
+    // the moment it was paused. pausedTotalMs is the closed pause time of the
+    // current row (persisted on each resume); the open pause starts at pausedAtMs.
+    private var pausedAtMs: Long? = null
+    private var pausedTotalMs: Long = 0L
+    private var pauseExpiryJob: Job? = null
+
+    // Set when the limit ran out and the end card is up: time spent behind the
+    // end card isn't use, so the row ends here, not when "Go home" is tapped.
+    private var sessionExpiredAtMs: Long? = null
 
     // Packages currently showing the intent gate (prevents re-trigger on internal windows)
     private val pendingGate = mutableSetOf<String>()
@@ -205,10 +220,22 @@ class DefangAccessibilityService : AccessibilityService() {
     private val screenReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             when (intent?.action) {
-                Intent.ACTION_SCREEN_OFF -> serviceScope.launch { grayscale.enable() }
+                Intent.ACTION_SCREEN_OFF -> serviceScope.launch {
+                    grayscale.enable()
+                    pauseSession("screen off")
+                }
                 Intent.ACTION_USER_PRESENT -> serviceScope.launch {
-                    if (currentWatchedPackage == null && pendingGate.isEmpty()) {
+                    val focused = focusedAppPackage()
+                    if (pausedAtMs != null && focused == currentWatchedPackage) {
+                        // Unlocked straight back into the watched app
+                        resumeSession()
+                    } else if (currentWatchedPackage == null && pendingGate.isEmpty()) {
                         grayscale.disable()
+                        // Unlocked into a watched app after its paused session
+                        // expired: no window event fires for it, so gate it here.
+                        if (focused != null && focused != packageName && !isTransientOverlay(focused)) {
+                            handleForegroundChange(focused, null)
+                        }
                     }
                 }
             }
@@ -309,6 +336,19 @@ class DefangAccessibilityService : AccessibilityService() {
      */
     private fun checkEvasiveAppWindows() {
         val topPkg = focusedAppPackage() ?: return
+        val current = currentWatchedPackage
+        if (current in EVASIVE_WINDOW_ONLY_PACKAGES && topPkg != current && !isTransientOverlay(topPkg)) {
+            // The evasive app lost focus. It sends no events of its own, so
+            // without this its session ran until some other app sent one —
+            // hours, or overnight (issue #60).
+            if (topPkg == packageName) {
+                serviceScope.launch { pauseSession("evasive app left for launcher") }
+            } else if (pendingEndJob == null && pausedAtMs == null && current != null) {
+                Log.d(TAG, "windowsPoll $current lost focus to $topPkg")
+                scheduleSessionEnd(current)
+            }
+            return
+        }
         if (topPkg == packageName || topPkg !in EVASIVE_WINDOW_ONLY_PACKAGES) return
         Log.d(TAG, "windowsPoll pkg=$topPkg")
         serviceScope.launch { handleForegroundChange(topPkg, null) }
@@ -361,7 +401,9 @@ class DefangAccessibilityService : AccessibilityService() {
                     // task switcher, which never fires a normal foreground-change
                     // event for anything else — reliably shows up here regardless
                     // of what (if anything) becomes foreground next.
-                    if (pkg == currentWatchedPackage) {
+                    // Paused (screen off, Home): the pause owns the ending, so a
+                    // return within the grace resumes instead of re-gating.
+                    if (pkg == currentWatchedPackage && pausedAtMs == null) {
                         Log.d(TAG, "usageStatsPoll backgrounded pkg=$pkg (debouncing end)")
                         scheduleSessionEnd(pkg)
                     }
@@ -386,11 +428,14 @@ class DefangAccessibilityService : AccessibilityService() {
         if (pkg == packageName) {
             // Ignore our own overlay windows — but when the *launcher activity*
             // comes to the foreground (user pressed home mid-session), lift
-            // grayscale. The session itself keeps running.
+            // grayscale and pause the session (issue #60).
             if (event.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED &&
                 event.className?.toString()?.endsWith(".LauncherActivity") == true
             ) {
-                serviceScope.launch { grayscale.disable() }
+                serviceScope.launch {
+                    pauseSession("home")
+                    grayscale.disable()
+                }
             }
             return
         }
@@ -450,6 +495,9 @@ class DefangAccessibilityService : AccessibilityService() {
 
     private suspend fun handleForegroundChange(pkg: String, browserUrl: String?) {
         Log.d(TAG, "fgChange pkg=$pkg watched=$currentWatchedPackage pending=$pendingGate")
+        // Lock screen / biometrics windows fire at screen-off. While paused and
+        // locked they are not the user leaving the app; unlock decides.
+        if (pausedAtMs != null && !isScreenUsable()) return
         // Navigating away from whatever we were watching — debounce the
         // teardown rather than ending immediately. A share sheet, camera/media
         // picker, permission dialog, etc. surfacing mid-session delivers a real
@@ -490,8 +538,9 @@ class DefangAccessibilityService : AccessibilityService() {
             // The app is back in front, so cancel any pending debounced teardown
             // from a separate-task excursion (Instagram reels, DM content).
             cancelPendingSessionEnd()
+            if (pausedAtMs != null) resumeSession()
             // Re-apply grayscale in case the launcher lifted it.
-            grayscale.enable()
+            else grayscale.enable()
             return
         }
 
@@ -547,6 +596,7 @@ class DefangAccessibilityService : AccessibilityService() {
             // Same watched target still in front — keep the session and cancel any
             // debounced teardown from browser task churn.
             cancelPendingSessionEnd()
+            if (pausedAtMs != null) resumeSession()
             return
         }
         if (System.currentTimeMillis() < (gateSuppressedUntilMs[watchKey] ?: 0L)) {
@@ -841,7 +891,10 @@ class DefangAccessibilityService : AccessibilityService() {
         // A→B faster than the end debounce (quick NFC/QR unlock, browser
         // target) leaves A's pending end skipping because B is now current —
         // close A here or its row stays open forever (issue #44).
-        currentSessionId?.let { recordSession.end(it, extensionUsedThisSession) }
+        currentSessionId?.let {
+            recordSession.end(it, extensionUsedThisSession, sessionEndTime(), pausedMsAtEnd())
+        }
+        clearPauseState()
         val sessionId = recordSession.start(pkg, intentDeclared, pattern)
         currentSessionId = sessionId
         currentWatchedPackage = pkg
@@ -904,7 +957,7 @@ class DefangAccessibilityService : AccessibilityService() {
         openSessions.drop(1).forEach { orphan ->
             val (orphanConfig, _) = recoveryConfig(orphan.packageName, orphan.watchedPattern)
             val endTime = SessionRecovery.cappedEnd(
-                orphan.startTime, orphanConfig.sessionLimitMinutes * 60_000L, now,
+                orphan.startTime, orphanConfig.sessionLimitMinutes * 60_000L, now, orphan.pausedMs,
             )
             Log.d(TAG, "closing leaked session id=${orphan.id} pkg=${orphan.packageName}")
             recordSession.end(orphan.id, orphan.extensionUsed, endTime)
@@ -918,7 +971,7 @@ class DefangAccessibilityService : AccessibilityService() {
         // fresh gate, never a bogus end card.
         val inFront = focusedAppPackage() == pkg
 
-        when (val action = SessionRecovery.decide(open.startTime, limitMs, now, inFront)) {
+        when (val action = SessionRecovery.decide(open.startTime, limitMs, now, inFront, open.pausedMs)) {
             is RecoveryAction.Close -> {
                 Log.d(TAG, "closing stale open session pkg=$pkg (not in front)")
                 recordSession.end(open.id, open.extensionUsed, action.endTime)
@@ -931,9 +984,13 @@ class DefangAccessibilityService : AccessibilityService() {
                 currentSessionId = open.id
                 currentWatchedPackage = pkg
                 currentWatchedPattern = pattern
-                sessionStartMs = maxOf(open.startTime, now - limitMs)
+                sessionStartMs = open.startTime
+                pausedTotalMs = open.pausedMs
                 extensionUsedThisSession = open.extensionUsed
-                onSessionExpired(pkg, pattern, open.id, effectiveConfig.cooldownMinutes, contentTrack)
+                onSessionExpired(
+                    pkg, pattern, open.id, effectiveConfig.cooldownMinutes, contentTrack,
+                    expiredAtMs = SessionRecovery.cappedEnd(open.startTime, limitMs, now, open.pausedMs),
+                )
             }
             is RecoveryAction.Resume -> {
                 Log.d(TAG, "recovered open session pkg=$pkg pattern=$pattern remainingMs=${action.remainingMs}")
@@ -941,6 +998,7 @@ class DefangAccessibilityService : AccessibilityService() {
                 currentWatchedPackage = pkg
                 currentWatchedPattern = pattern
                 sessionStartMs = open.startTime
+                pausedTotalMs = open.pausedMs
                 extensionUsedThisSession = open.extensionUsed
                 grayscale.enable()
                 attachTimerOverlay(
@@ -977,12 +1035,14 @@ class DefangAccessibilityService : AccessibilityService() {
         sessionId: Long,
         cooldownMinutes: Int,
         contentTrack: ContentTrack,
+        expiredAtMs: Long = System.currentTimeMillis(),
     ) {
         currentTimerOverlay?.cancel()
         overlayManager.dismissHud()
         grayscale.disable() // end card and home screen render in color
 
-        val durationMs = System.currentTimeMillis() - sessionStartMs
+        sessionExpiredAtMs = expiredAtMs
+        val durationMs = expiredAtMs - sessionStartMs - pausedTotalMs
         val config = resolveConfig(pkg) ?: defaultBrowserConfig(pkg)
         // No "more time" for the adult track — a 10-minute extension on a
         // 1-minute session would defeat the short leash entirely
@@ -1028,7 +1088,8 @@ class DefangAccessibilityService : AccessibilityService() {
         reason: String,
     ) {
         extensionUsedThisSession = true
-        recordSession.end(sessionId, extensionUsed = true)
+        recordSession.end(sessionId, extensionUsed = true, sessionEndTime(), pausedMsAtEnd())
+        clearPauseState()
 
         val newSessionId = recordSession.startExtension(pkg, sessionId, reason, pattern)
         currentSessionId = newSessionId
@@ -1040,7 +1101,7 @@ class DefangAccessibilityService : AccessibilityService() {
 
         currentTimerOverlay = SessionTimerOverlay(
             context = this,
-            sessionLimitMs = 10 * 60_000L,
+            sessionLimitMs = EXTENSION_MS,
             onSessionExpired = {
                 serviceScope.launch {
                     onSessionExpiredNoExtension(pkg, pattern, newSessionId, cooldownMinutes, contentTrack)
@@ -1073,7 +1134,9 @@ class DefangAccessibilityService : AccessibilityService() {
         currentTimerOverlay?.cancel()
         overlayManager.dismissHud()
         grayscale.disable()
-        val durationMs = System.currentTimeMillis() - sessionStartMs
+        val expiredAtMs = System.currentTimeMillis()
+        sessionExpiredAtMs = expiredAtMs
+        val durationMs = expiredAtMs - sessionStartMs - pausedTotalMs
         val config = resolveConfig(pkg) ?: defaultBrowserConfig(pkg)
         offlinePromptSelector.resetSession()
 
@@ -1182,9 +1245,10 @@ class DefangAccessibilityService : AccessibilityService() {
         cancelPendingSessionEnd()
         grayscale.disable()
         currentSessionId?.let { id ->
-            recordSession.end(id, extensionUsedThisSession)
+            recordSession.end(id, extensionUsedThisSession, sessionEndTime(), pausedMsAtEnd())
             UsageWidgetProvider.requestRefresh(this)
         }
+        clearPauseState()
         currentSessionId = null
         currentWatchedPackage = null
         currentWatchedPattern = null
@@ -1197,6 +1261,62 @@ class DefangAccessibilityService : AccessibilityService() {
         currentCooldownOverlay?.cancel()
         currentCooldownOverlay = null
         overlayManager.dismissAll()
+    }
+
+    // ── Session pause (issue #60) ─────────────────────────────────────────────
+
+    /** Where the current row ends: the pause moment if paused (the pause
+     *  wasn't use), the expiry if the end card is up, else now. */
+    private fun sessionEndTime(): Long =
+        pausedAtMs ?: sessionExpiredAtMs ?: System.currentTimeMillis()
+
+    /** Closed pause time to store on the row. An open pause needs no entry:
+     *  the row ends at [pausedAtMs]. */
+    private fun pausedMsAtEnd(): Long = pausedTotalMs
+
+    private fun clearPauseState() {
+        pauseExpiryJob?.cancel()
+        pauseExpiryJob = null
+        pausedAtMs = null
+        pausedTotalMs = 0L
+        sessionExpiredAtMs = null
+    }
+
+    /** Screen on and unlocked — the user can actually see the app. */
+    private fun isScreenUsable(): Boolean {
+        val power = getSystemService(POWER_SERVICE) as? PowerManager
+        return power?.isInteractive != false && !grayscale.isDeviceLocked()
+    }
+
+    private fun pauseSession(reason: String) {
+        if (currentWatchedPackage == null || currentSessionId == null) return
+        // Behind the end card the row already stopped at the expiry
+        if (pausedAtMs != null || sessionExpiredAtMs != null) return
+        Log.d(TAG, "pause session pkg=$currentWatchedPackage ($reason)")
+        pausedAtMs = System.currentTimeMillis()
+        cancelPendingSessionEnd()
+        currentTimerOverlay?.pause()
+        pauseExpiryJob?.cancel()
+        pauseExpiryJob = serviceScope.launch {
+            delay(PAUSE_GRACE_MS)
+            pauseExpiryJob = null
+            Log.d(TAG, "pause grace expired pkg=$currentWatchedPackage, ending at pause")
+            endCurrentSession()
+        }
+    }
+
+    private suspend fun resumeSession() {
+        val pausedAt = pausedAtMs ?: return
+        // The window poll still sees the app focused behind the lock screen
+        if (!isScreenUsable()) return
+        pauseExpiryJob?.cancel()
+        pauseExpiryJob = null
+        pausedTotalMs += System.currentTimeMillis() - pausedAt
+        pausedAtMs = null
+        Log.d(TAG, "resume session pkg=$currentWatchedPackage pausedTotalMs=$pausedTotalMs")
+        currentSessionId?.let { recordSession.setPausedMs(it, pausedTotalMs) }
+        currentTimerOverlay?.resume()
+        grayscale.enable()
     }
 
     /**
@@ -1328,6 +1448,13 @@ class DefangAccessibilityService : AccessibilityService() {
 
         /** Hard session limit for adult content, overriding configured defaults. */
         const val ADULT_SESSION_LIMIT_MINUTES = 1
+
+        /** Length of the one daily "more time" extension. */
+        const val EXTENSION_MS = SessionDuration.EXTENSION_MS
+
+        /** How long a paused session (screen off, Home) can wait for the user
+         *  to come back before it ends, at the pause moment (issue #60). */
+        const val PAUSE_GRACE_MS = 5 * 60_000L
 
         /**
          * Adaptive gate threshold (issue #16) tuning. Reopening a gate within
