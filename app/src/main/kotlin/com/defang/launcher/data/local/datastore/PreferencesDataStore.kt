@@ -103,6 +103,16 @@ class PreferencesDataStore @Inject constructor(
     suspend fun setNotificationSanitizeEnabled(on: Boolean) =
         store.edit { it[KEY_NOTIF_SANITIZE] = on }
 
+    // Let messages from address-book contacts through untouched. On by default
+    // (PRD: "notifications from contacts are never batched").
+    private val KEY_NOTIF_CONTACT_BYPASS = booleanPreferencesKey("notification_contact_bypass")
+
+    val notificationContactBypass: Flow<Boolean> =
+        store.data.map { it[KEY_NOTIF_CONTACT_BYPASS] ?: true }
+
+    suspend fun setNotificationContactBypass(on: Boolean) =
+        store.edit { it[KEY_NOTIF_CONTACT_BYPASS] = on }
+
     // ── Notification batching ─────────────────────────────────────────────────
     // Delivery windows in minutes-since-midnight; -1 = window disabled.
     // Batching is active iff at least one window is set.

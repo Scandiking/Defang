@@ -12,12 +12,16 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Registers daily repeating alarms for the notification delivery windows.
- * Inexact by design — a batched summary arriving a few minutes late is fine,
- * and exact alarms need an extra permission on API 31+.
+ * Schedules the alarms for the notification delivery windows.
  *
- * Called whenever a window setting changes, and from BootReceiver (alarms do
- * not survive reboots).
+ * Each window is a one-shot alarm with a short explicit delivery window,
+ * re-armed for the next day by [BatchDeliveryReceiver] when it fires. A daily
+ * `setRepeating` alarm is inexact with a window of 75 % of the interval, so a
+ * 12:00 window could fire as late as 06:00 the next day. Exact alarms need an
+ * extra permission on API 31+, and ten minutes late is fine.
+ *
+ * Called whenever a window setting changes, when a window fires, on app start,
+ * and from BootReceiver (alarms do not survive reboots).
  */
 @Singleton
 class BatchWindowScheduler @Inject constructor(
@@ -38,21 +42,10 @@ class BatchWindowScheduler @Inject constructor(
             alarmManager.cancel(pi)
             return
         }
-
-        val trigger = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, minutesOfDay / 60)
-            set(Calendar.MINUTE, minutesOfDay % 60)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-            if (timeInMillis <= System.currentTimeMillis()) {
-                add(Calendar.DAY_OF_YEAR, 1)
-            }
-        }
-
-        alarmManager.setRepeating(
+        alarmManager.setWindow(
             AlarmManager.RTC_WAKEUP,
-            trigger.timeInMillis,
-            AlarmManager.INTERVAL_DAY,
+            nextTrigger(minutesOfDay, System.currentTimeMillis()),
+            WINDOW_LENGTH_MS,
             pi,
         )
     }
@@ -68,5 +61,23 @@ class BatchWindowScheduler @Inject constructor(
     companion object {
         private const val REQUEST_WINDOW_1 = 2001
         private const val REQUEST_WINDOW_2 = 2002
+
+        /** The platform minimum for setWindow on API 31+. */
+        private const val WINDOW_LENGTH_MS = 10 * 60_000L
+
+        /**
+         * Next occurrence of [minutesOfDay] strictly after [nowMs] (local
+         * time). Strictly after, so a window that just fired is re-armed for
+         * tomorrow instead of firing again.
+         */
+        internal fun nextTrigger(minutesOfDay: Int, nowMs: Long): Long =
+            Calendar.getInstance().apply {
+                timeInMillis = nowMs
+                set(Calendar.HOUR_OF_DAY, minutesOfDay / 60)
+                set(Calendar.MINUTE, minutesOfDay % 60)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+                if (timeInMillis <= nowMs) add(Calendar.DAY_OF_YEAR, 1)
+            }.timeInMillis
     }
 }

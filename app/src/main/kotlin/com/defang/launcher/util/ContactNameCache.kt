@@ -44,18 +44,20 @@ class ContactNameCache @Inject constructor(
         if (!loading.compareAndSet(false, true)) return
         scope.launch {
             try {
-                names = load()
-                loadedAtMs = System.currentTimeMillis()
+                // null = no permission yet: leave the timestamp so the next
+                // call retries instead of waiting out the refresh interval
+                load()?.let {
+                    names = it
+                    loadedAtMs = System.currentTimeMillis()
+                }
             } finally {
                 loading.set(false)
             }
         }
     }
 
-    private fun load(): Set<String> {
-        val granted = context.checkSelfPermission(Manifest.permission.READ_CONTACTS) ==
-            PackageManager.PERMISSION_GRANTED
-        if (!granted) return emptySet()
+    private fun load(): Set<String>? {
+        if (!hasPermission(context)) return null
 
         val result = mutableSetOf<String>()
         try {
@@ -71,12 +73,16 @@ class ContactNameCache @Inject constructor(
                 }
             }
         } catch (_: SecurityException) {
-            return emptySet()
+            return null
         }
         return result
     }
 
     companion object {
+        fun hasPermission(context: Context): Boolean =
+            context.checkSelfPermission(Manifest.permission.READ_CONTACTS) ==
+                PackageManager.PERMISSION_GRANTED
+
         private const val REFRESH_INTERVAL_MS = 6 * 60 * 60_000L
     }
 }

@@ -17,6 +17,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,18 +27,25 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.defang.launcher.R
+import com.defang.launcher.data.local.datastore.PreferencesDataStore
 import com.defang.launcher.domain.model.HomeScreenMode
 import com.defang.launcher.ui.onboarding.OnboardingActivity
 import com.defang.launcher.ui.settings.SettingsActivity
 import com.defang.launcher.ui.theme.DefangTheme
 import com.defang.launcher.util.AccessibilityServiceHelper
+import com.defang.launcher.util.NotificationListenerHelper
 import com.defang.launcher.util.UsageStatsHelper
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LauncherActivity : ComponentActivity() {
 
     private val viewModel: LauncherViewModel by viewModels()
+
+    @Inject lateinit var prefs: PreferencesDataStore
 
     // true = app drawer is visible, false = home screen is visible
     private var showDrawer by mutableStateOf(false)
@@ -268,6 +276,13 @@ class LauncherActivity : ComponentActivity() {
         // accessibility event entirely). No silent-enable path exists for this
         // permission — sends to settings once, then leaves it alone.
         UsageStatsHelper.ensureEnabled(this)
+        // Neutral notifications need the listener bound; rebind or self-enable
+        // without opening any screen (Settings shows the status).
+        lifecycleScope.launch {
+            if (prefs.notificationSanitizeEnabled.first()) {
+                NotificationListenerHelper.ensureRunningSilently(this@LauncherActivity)
+            }
+        }
         viewModel.refreshHomeTidbit()
         viewModel.refreshHomeUsage()
     }

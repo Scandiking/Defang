@@ -189,6 +189,12 @@
     <string name="settings_sanitize_why_body">Notifications are the platforms\' strongest tool for pulling you back: brand-red color, sound, vibration, and urgency language (\"X is waiting for you\") — often bulk sends dressed up as personal messages. Defang replaces them with one gray, silent summary per app, with no content preview. You know something is waiting — without the bait. Tapping the summary opens the app through its front door, not the deep link the notification wanted to send you to.</string>
     <string name="settings_notification_access">Notification access</string>
     <string name="settings_notification_access_desc">Required for neutral notifications — grant Defang access to notifications</string>
+    <string name="settings_sanitize_inactive">Not active: notification access is missing or not running. See \"Notification access\" below.</string>
+    <string name="settings_notification_access_running">Granted and running. Tap to open the system page.</string>
+    <string name="settings_notification_access_not_running">Granted, but not running. Tap to restart it.</string>
+    <string name="settings_contact_bypass">Let contacts through</string>
+    <string name="settings_contact_bypass_desc">Messages from people in your contacts arrive as normal</string>
+    <string name="settings_contact_bypass_no_permission">Needs access to contacts. Tap to grant.</string>
     <string name="settings_why">Why?</string>
 
     <!-- Awareness library page -->

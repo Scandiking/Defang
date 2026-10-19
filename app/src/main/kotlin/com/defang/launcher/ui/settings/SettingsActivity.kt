@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -63,6 +64,7 @@ import com.defang.launcher.ui.settings.apptier.AppTierScreen
 import com.defang.launcher.ui.settings.awareness.AwarenessLibraryScreen
 import com.defang.launcher.ui.theme.DefangTheme
 import com.defang.launcher.util.AccessibilityServiceHelper
+import com.defang.launcher.util.ContactNameCache
 import com.defang.launcher.util.NotificationListenerHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.roundToInt
@@ -73,6 +75,32 @@ private enum class SettingsPage { Menu, Timing, Apps, Sites, WorkProfile, AppDra
 class SettingsActivity : ComponentActivity() {
 
     private val globalVm: GlobalSettingsViewModel by viewModels()
+
+    // Refreshed on resume and shortly after a grant/rebind attempt
+    private var notifAccessStatus by mutableStateOf(NotificationListenerHelper.Status.RUNNING)
+
+    private var hasContactsPermission by mutableStateOf(false)
+
+    private val contactsPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            hasContactsPermission = granted
+        }
+
+    override fun onResume() {
+        super.onResume()
+        refreshNotifAccessStatus()
+        hasContactsPermission = ContactNameCache.hasPermission(this)
+    }
+
+    private fun refreshNotifAccessStatus() {
+        notifAccessStatus = NotificationListenerHelper.status(this)
+    }
+
+    /** Grant or rebind, then re-read the status once the binding had time to land. */
+    private fun requestNotificationAccess() {
+        NotificationListenerHelper.ensureEnabled(this)
+        window.decorView.postDelayed({ refreshNotifAccessStatus() }, 1_500)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,6 +122,8 @@ class SettingsActivity : ComponentActivity() {
                     SettingsPage.Menu -> {
                         val grayscaleOn by globalVm.grayscaleEnabled.collectAsStateWithLifecycle()
                         val sanitizeOn by globalVm.notificationSanitizeEnabled
+                            .collectAsStateWithLifecycle()
+                        val contactBypassOn by globalVm.notificationContactBypass
                             .collectAsStateWithLifecycle()
                         val grayscaleSetupNeeded = remember {
                             checkSelfPermission(
@@ -170,7 +200,27 @@ class SettingsActivity : ComponentActivity() {
                             onGrayscaleChange = globalVm::setGrayscaleEnabled,
                             grayscaleSetupNeeded = grayscaleSetupNeeded,
                             sanitizeOn = sanitizeOn,
-                            onSanitizeChange = globalVm::setNotificationSanitizeEnabled,
+                            onSanitizeChange = { on ->
+                                globalVm.setNotificationSanitizeEnabled(on)
+                                // Turning it on is pointless without the listener
+                                if (on) requestNotificationAccess()
+                            },
+                            contactBypassOn = contactBypassOn,
+                            onContactBypassChange = { on ->
+                                globalVm.setNotificationContactBypass(on)
+                                if (on && !hasContactsPermission) {
+                                    contactsPermissionLauncher.launch(
+                                        android.Manifest.permission.READ_CONTACTS
+                                    )
+                                }
+                            },
+                            contactsPermissionMissing = !hasContactsPermission,
+                            onGrantContacts = {
+                                contactsPermissionLauncher.launch(
+                                    android.Manifest.permission.READ_CONTACTS
+                                )
+                            },
+                            notifAccessStatus = notifAccessStatus,
                             batchWindow1 = batchWindow1,
                             batchWindow2 = batchWindow2,
                             onBatchWindow1Change = globalVm::setBatchWindow1,
@@ -211,7 +261,12 @@ class SettingsActivity : ComponentActivity() {
                                 }
                             },
                             onNotificationAccess = {
-                                NotificationListenerHelper.ensureEnabled(this)
+                                if (notifAccessStatus == NotificationListenerHelper.Status.RUNNING) {
+                                    // Already working: show the system page so it can be revoked
+                                    NotificationListenerHelper.openNotificationAccessSettings(this)
+                                } else {
+                                    requestNotificationAccess()
+                                }
                             },
                         )
                     }
@@ -341,6 +396,11 @@ private fun SettingsMenuScreen(
     grayscaleSetupNeeded: Boolean,
     sanitizeOn: Boolean,
     onSanitizeChange: (Boolean) -> Unit,
+    contactBypassOn: Boolean,
+    onContactBypassChange: (Boolean) -> Unit,
+    contactsPermissionMissing: Boolean,
+    onGrantContacts: () -> Unit,
+    notifAccessStatus: NotificationListenerHelper.Status,
     batchWindow1: Int,
     batchWindow2: Int,
     onBatchWindow1Change: (Int) -> Unit,
@@ -908,7 +968,20 @@ private fun SettingsMenuScreen(
             ListItem(
                 headlineContent = { Text(stringResource(R.string.settings_sanitize)) },
                 supportingContent = {
-                    Text(stringResource(R.string.settings_sanitize_desc))
+                    Text(
+                        if (sanitizeOn &&
+                            notifAccessStatus != NotificationListenerHelper.Status.RUNNING
+                        )
+                            stringResource(R.string.settings_sanitize_inactive)
+                        else
+                            stringResource(R.string.settings_sanitize_desc),
+                        color = if (sanitizeOn &&
+                            notifAccessStatus != NotificationListenerHelper.Status.RUNNING
+                        )
+                            MaterialTheme.colorScheme.error
+                        else
+                            androidx.compose.ui.graphics.Color.Unspecified,
+                    )
                 },
                 trailingContent = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -929,11 +1002,45 @@ private fun SettingsMenuScreen(
                     minutesOfDay = batchWindow2,
                     onChange = onBatchWindow2Change,
                 )
+                ListItem(
+                    headlineContent = { Text(stringResource(R.string.settings_contact_bypass)) },
+                    supportingContent = {
+                        Text(
+                            stringResource(
+                                if (contactBypassOn && contactsPermissionMissing)
+                                    R.string.settings_contact_bypass_no_permission
+                                else
+                                    R.string.settings_contact_bypass_desc
+                            )
+                        )
+                    },
+                    trailingContent = {
+                        Switch(checked = contactBypassOn, onCheckedChange = onContactBypassChange)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .then(
+                            if (contactBypassOn && contactsPermissionMissing)
+                                Modifier.clickable { onGrantContacts() }
+                            else Modifier
+                        ),
+                )
             }
             ListItem(
                 headlineContent = { Text(stringResource(R.string.settings_notification_access)) },
                 supportingContent = {
-                    Text(stringResource(R.string.settings_notification_access_desc))
+                    Text(
+                        stringResource(
+                            when (notifAccessStatus) {
+                                NotificationListenerHelper.Status.RUNNING ->
+                                    R.string.settings_notification_access_running
+                                NotificationListenerHelper.Status.NOT_RUNNING ->
+                                    R.string.settings_notification_access_not_running
+                                NotificationListenerHelper.Status.NOT_GRANTED ->
+                                    R.string.settings_notification_access_desc
+                            }
+                        )
+                    )
                 },
                 modifier = Modifier
                     .fillMaxWidth()

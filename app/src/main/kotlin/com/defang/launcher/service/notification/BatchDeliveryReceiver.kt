@@ -14,13 +14,15 @@ import javax.inject.Inject
 
 /**
  * Fires at each delivery window: posts one summary per app with the count of
- * notifications suppressed since the user last cleared that app's summary.
+ * notifications suppressed since the user last cleared that app's summary,
+ * then re-arms the one-shot window alarms for the next day.
  */
 @AndroidEntryPoint
 class BatchDeliveryReceiver : BroadcastReceiver() {
 
     @Inject lateinit var prefs: PreferencesDataStore
     @Inject lateinit var summaryPoster: NotificationSummaryPoster
+    @Inject lateinit var batchWindowScheduler: BatchWindowScheduler
 
     override fun onReceive(context: Context, intent: Intent) {
         val pending = goAsync()
@@ -30,7 +32,11 @@ class BatchDeliveryReceiver : BroadcastReceiver() {
                     summaryPoster.postSummary(pkg, count)
                 }
             } finally {
-                pending.finish()
+                try {
+                    batchWindowScheduler.rescheduleFromPrefs()
+                } finally {
+                    pending.finish()
+                }
             }
         }
     }
