@@ -340,6 +340,10 @@
     <string name="usage_up_vs_prev">Up %1$d%% from the previous period.</string>
     <string name="usage_hours_minutes">%1$d hours and %2$d minutes</string>
     <string name="usage_minutes">%1$d minutes</string>
+    <string name="usage_axis_minutes">%1$s m</string>
+    <string name="usage_axis_hours">%1$s h</string>
+    <string name="usage_chart_value">%1$s: %2$s</string>
+    <string name="usage_chart_hint">Tap a bar or point to see its exact value.</string>
     <string name="usage_footnote">Measured from Defang\'s own session log — gated sessions only. All data stays on this device.</string>
     <string name="usage_period_opens">%1$d opens this period</string>
 

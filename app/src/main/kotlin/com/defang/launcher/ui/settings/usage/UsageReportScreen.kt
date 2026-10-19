@@ -410,11 +410,3 @@ private fun periodComparison(current: Long, previous: Long): String = when {
         R.string.usage_up_vs_prev, (current - previous) * 100 / previous,
     )
 }
-
-@Composable
-private fun formatMinutes(minutes: Long): String =
-    if (minutes >= 60) {
-        stringResource(R.string.usage_hours_minutes, minutes / 60, minutes % 60)
-    } else {
-        stringResource(R.string.usage_minutes, minutes)
-    }
