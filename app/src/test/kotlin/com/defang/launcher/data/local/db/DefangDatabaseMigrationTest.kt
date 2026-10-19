@@ -51,6 +51,14 @@ class DefangDatabaseMigrationTest {
         migrated.close()
     }
 
+    @Test
+    fun migrate9To10_addsSessionsPausedMs() {
+        helper.createDatabase(TEST_DB, 9).close()
+
+        val migrated = helper.runMigrationsAndValidate(TEST_DB, 10, true, AppModule.MIGRATION_9_10)
+        migrated.close()
+    }
+
     companion object {
         private const val TEST_DB = "migration-test"
     }

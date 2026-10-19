@@ -1,5 +1,6 @@
 package com.defang.launcher.ui.widget
 
+import com.defang.launcher.domain.usecase.SessionCapResolver
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
@@ -37,6 +38,7 @@ class UsageWidgetProvider : AppWidgetProvider() {
 
     @Inject lateinit var sessionRepo: SessionRepository
     @Inject lateinit var appConfigRepo: AppConfigRepository
+    @Inject lateinit var capResolver: SessionCapResolver
 
     override fun onUpdate(
         context: Context,
@@ -60,14 +62,10 @@ class UsageWidgetProvider : AppWidgetProvider() {
         val now = System.currentTimeMillis()
 
         // Today's minutes per package, open sessions counted up to now
+        val counted = capResolver.counter(now)
         val minutesByPkg = sessionRepo.getSessionsSince(dayStart)
             .groupBy { it.packageName }
-            .mapValues { (_, sessions) ->
-                sessions.sumOf { s ->
-                    val end = if (s.endTime > s.startTime) s.endTime else now
-                    end - s.startTime
-                } / 60_000
-            }
+            .mapValues { (_, sessions) -> sessions.sumOf(counted) / 60_000 }
 
         val watched = appConfigRepo.observeAll().first()
             .filter { it.tier == AppTier.WATCHED.dbValue }

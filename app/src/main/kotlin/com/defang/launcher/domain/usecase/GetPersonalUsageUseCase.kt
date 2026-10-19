@@ -11,6 +11,7 @@ import javax.inject.Inject
  */
 class GetPersonalUsageUseCase @Inject constructor(
     private val repo: SessionRepository,
+    private val capResolver: SessionCapResolver,
 ) {
     suspend fun forKey(pkg: String, pattern: String?): PersonalUsage {
         val dayStart = Calendar.getInstance().apply {
@@ -29,6 +30,7 @@ class GetPersonalUsageUseCase @Inject constructor(
             pattern = pattern,
             now = System.currentTimeMillis(),
             dayStart = dayStart,
+            capMs = capResolver.load(),
         )
     }
 }

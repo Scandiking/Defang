@@ -25,7 +25,11 @@ class RecordSessionUseCase @Inject constructor(
         sessionId: Long,
         extensionUsed: Boolean = false,
         endTime: Long = System.currentTimeMillis(),
-    ) = repo.endSession(sessionId, extensionUsed, endTime)
+        pausedMs: Long? = null,
+    ) = repo.endSession(sessionId, extensionUsed, endTime, pausedMs)
+
+    /** Saves the paused total of a still-open session. */
+    suspend fun setPausedMs(sessionId: Long, pausedMs: Long) = repo.setPausedMs(sessionId, pausedMs)
 
     /** The most recent session left open by an unexpected process death, if any. */
     suspend fun getOpenSession(): SessionEntity? = repo.getOpenSession()

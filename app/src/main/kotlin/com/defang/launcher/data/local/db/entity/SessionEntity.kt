@@ -12,6 +12,8 @@ import androidx.room.PrimaryKey
  * watchedPattern: the browser watch-pattern/domain key for a watched-site
  *   session (null for a watched-app session) — needed to recover an
  *   in-progress session's cooldown target after an unexpected process death
+ * pausedMs: total time the session sat paused (screen off, Home, watched app
+ *   left within the resume grace) — not foreground use, so not counted (issue #60)
  */
 @Entity(tableName = "sessions")
 data class SessionEntity(
@@ -22,4 +24,5 @@ data class SessionEntity(
     val intentDeclared: String? = null,
     val extensionUsed: Boolean = false,
     val watchedPattern: String? = null,
+    val pausedMs: Long = 0L,
 )

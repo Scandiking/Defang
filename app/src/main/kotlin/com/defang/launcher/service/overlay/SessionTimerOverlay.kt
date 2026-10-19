@@ -42,9 +42,17 @@ class SessionTimerOverlay(
         return root
     }
 
-    private fun startTimer() {
-        countdownTimer = object : CountDownTimer(sessionLimitMs, 1000L) {
+    private fun startTimer() = startCountdown(sessionLimitMs)
+
+    // Time left on the HUD; kept current by onTick so pause() can freeze it.
+    private var remainingMs: Long = sessionLimitMs
+
+    private fun startCountdown(ms: Long) {
+        countdownTimer?.cancel()
+        remainingMs = ms
+        countdownTimer = object : CountDownTimer(ms, 1000L) {
             override fun onTick(millisUntilFinished: Long) {
+                remainingMs = millisUntilFinished
                 if (::tvTimer.isInitialized) {
                     tvTimer.text = formatMillis(millisUntilFinished)
                     // Turn subtle red in last 60 seconds
@@ -55,26 +63,25 @@ class SessionTimerOverlay(
             }
 
             override fun onFinish() {
+                remainingMs = 0L
                 onSessionExpired()
             }
         }.start()
     }
 
     /** Call when the user uses the extension to add 10 more minutes. */
-    fun addExtensionTime(extraMs: Long) {
-        countdownTimer?.cancel()
-        val remaining = extraMs
-        countdownTimer = object : CountDownTimer(remaining, 1000L) {
-            override fun onTick(millisUntilFinished: Long) {
-                if (::tvTimer.isInitialized) {
-                    tvTimer.text = formatMillis(millisUntilFinished)
-                }
-            }
+    fun addExtensionTime(extraMs: Long) = startCountdown(extraMs)
 
-            override fun onFinish() {
-                onSessionExpired()
-            }
-        }.start()
+    /** Freezes the countdown (screen off, Home): paused time isn't session time. */
+    fun pause() {
+        countdownTimer?.cancel()
+        countdownTimer = null
+    }
+
+    /** Restarts the countdown from where [pause] froze it. */
+    fun resume() {
+        if (countdownTimer != null || remainingMs <= 0L) return
+        startCountdown(remainingMs)
     }
 
     fun cancel() {

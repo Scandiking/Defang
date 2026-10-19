@@ -20,12 +20,21 @@ sealed interface RecoveryAction {
  */
 object SessionRecovery {
 
-    fun decide(startTime: Long, limitMs: Long, now: Long, appInForeground: Boolean): RecoveryAction {
-        if (!appInForeground) return RecoveryAction.Close(cappedEnd(startTime, limitMs, now))
-        val remaining = limitMs - (now - startTime)
+    /** [pausedMs] is time the row already spent paused (issue #60); it never
+     *  counts against the limit. */
+    fun decide(
+        startTime: Long,
+        limitMs: Long,
+        now: Long,
+        appInForeground: Boolean,
+        pausedMs: Long = 0L,
+    ): RecoveryAction {
+        if (!appInForeground) return RecoveryAction.Close(cappedEnd(startTime, limitMs, now, pausedMs))
+        val remaining = limitMs - (now - startTime - pausedMs)
         return if (remaining > 0L) RecoveryAction.Resume(remaining) else RecoveryAction.ExpireNow
     }
 
     /** A stale row never counts for more than its limit — the HUD would have ended it there. */
-    fun cappedEnd(startTime: Long, limitMs: Long, now: Long): Long = minOf(now, startTime + limitMs)
+    fun cappedEnd(startTime: Long, limitMs: Long, now: Long, pausedMs: Long = 0L): Long =
+        minOf(now, startTime + limitMs + pausedMs)
 }

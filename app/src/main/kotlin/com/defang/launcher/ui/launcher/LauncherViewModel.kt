@@ -1,5 +1,6 @@
 package com.defang.launcher.ui.launcher
 
+import com.defang.launcher.domain.usecase.SessionCapResolver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.LauncherApps
@@ -75,6 +76,7 @@ class LauncherViewModel @Inject constructor(
     private val folderRepo: AppFolderRepository,
     private val sessionRepo: SessionRepository,
     private val tidbitSelector: TidbitSelector,
+    private val capResolver: SessionCapResolver,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LauncherUiState())
@@ -248,14 +250,10 @@ class LauncherViewModel @Inject constructor(
                 .atStartOfDay(zone).toInstant().toEpochMilli()
             val now = System.currentTimeMillis()
 
+            val counted = capResolver.counter(now)
             val minutesByPkg = sessionRepo.getSessionsSince(dayStart)
                 .groupBy { it.packageName }
-                .mapValues { (_, sessions) ->
-                    sessions.sumOf { s ->
-                        val end = if (s.endTime > s.startTime) s.endTime else now
-                        end - s.startTime
-                    } / 60_000
-                }
+                .mapValues { (_, sessions) -> sessions.sumOf(counted) / 60_000 }
 
             _homeUsage.value = appConfigRepo.observeAll().first()
                 .filter { it.tier == AppTier.WATCHED.dbValue }

@@ -54,4 +54,22 @@ class SessionRecoveryTest {
 
         assertEquals(RecoveryAction.Close(start + limit), action)
     }
+
+    @Test
+    fun `paused time does not count against the remainder`() {
+        val action = SessionRecovery.decide(
+            start, limit, now = start + 20 * minute, appInForeground = true, pausedMs = 10 * minute,
+        )
+
+        assertEquals(RecoveryAction.Resume(5 * minute), action)
+    }
+
+    @Test
+    fun `not in front closes at limit plus paused time`() {
+        val action = SessionRecovery.decide(
+            start, limit, now = start + 60 * minute, appInForeground = false, pausedMs = 3 * minute,
+        )
+
+        assertEquals(RecoveryAction.Close(start + limit + 3 * minute), action)
+    }
 }
