@@ -34,4 +34,14 @@ Defang doesn't scold, cheer or coach. It states how the apps work and leaves the
 
 On the Weblate project page, pick **Start new translation**. Translations are merged as they come in, but a language only ships once it's reasonably complete (App fully, Awareness at least started). Then it shows up in Android 13+'s per-app language setting (Settings ▸ Apps ▸ Defang ▸ Language).
 
+### One translation per standard language
+
+Pick the plain language code (`nl`, `de`, `fr`), not a regional or historical variant.
+
+- **Regional variants share one translation.** Dutch in the Netherlands, Flanders and Suriname is mutually intelligible and written to one standard, set jointly by the Nederlandse Taalunie. One `nl` translation serves all of them. The same goes for German in Germany, Austria and Switzerland, French in France, Belgium and Canada, and so on.
+- **Historical languages are out.** Nobody runs a phone in Middle Dutch (`dum`), Old English or Latin. An app UI needs living readers.
+- **Why not split anyway?** Every variant is a full copy of ~300 strings to keep in sync. Split effort means two half-finished translations instead of one finished one, and neither ships.
+
+A variant gets its own translation only if speakers can't comfortably read the standard one. Open an issue first. Variants started on Weblate without that are removed.
+
 Questions or wording doubts: comment on the string in Weblate, or open an issue.
