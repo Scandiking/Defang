@@ -146,9 +146,12 @@ fun LauncherScreen(
     // Search-only modes never expand the SearchBar overlay: results filter the
     // regular list below instead of sitting in an overlay that's empty until
     // the first keystroke. With the list variant an empty query shows every
-    // app; without it nothing shows until the user types (no visual cue).
+    // app; without it nothing shows until the query is long enough
+    // ([NO_LIST_MIN_QUERY]) that browsing by single letters isn't possible.
     val searchExpanded = searchActive && !searchOnOpen
-    val listApps = if (hideListUntilTyping && query.isBlank()) emptyList() else tabApps
+    val minQuery = if (hideListUntilTyping) NO_LIST_MIN_QUERY else 1
+    val queryLongEnough = query.trim().length >= minQuery
+    val listApps = if (hideListUntilTyping && !queryLongEnough) emptyList() else tabApps
 
     // Folders (issue #41, opt-in) only shape the browsed personal list — a
     // search always spans every app, and search-only mode has no list to shape.
@@ -188,7 +191,7 @@ fun LauncherScreen(
     // for typing to pause (each keystroke restarts the timer) and says what
     // it's about to open, so trailing taps land on the keyboard instead of
     // inside the app that just opened.
-    val autoOpenTarget = if (searchOnOpen && query.isNotBlank()) tabApps.singleOrNull() else null
+    val autoOpenTarget = if (searchOnOpen && queryLongEnough) tabApps.singleOrNull() else null
     var clearQueryOnLeave by remember { mutableStateOf(false) }
     LaunchedEffect(query, autoOpenTarget) {
         if (autoOpenTarget != null) {
@@ -399,6 +402,14 @@ fun LauncherScreen(
 
 /** Pause after the last keystroke before a single search match opens. */
 private const val AUTO_OPEN_DELAY_MS = 700L
+
+/**
+ * Letters needed before the no-list search-only mode shows or auto-opens
+ * anything (issue #14). Fewer would let one or two letters act as a browsable
+ * index, or reveal an app name via the "Opening…" line: the cue that mode
+ * exists to remove.
+ */
+private const val NO_LIST_MIN_QUERY = 3
 
 /** One row of the browsed drawer list: an app, or (folders on) a folder. */
 private sealed interface DrawerEntry {
