@@ -199,8 +199,10 @@
     <string name="home_mode_tidbit_desc">Bare dagens faktabit</string>
     <string name="home_mode_clock">Klokke og faktabit</string>
     <string name="home_mode_clock_desc">Klokke, dato og dagens faktabit</string>
-    <string name="home_mode_search_only">Kun søk</string>
-    <string name="home_mode_search_only_desc">Blank skjerm. Sveip opp for å søke etter og åpne apper.</string>
+    <string name="home_mode_search_only">Kun søk uten liste</string>
+    <string name="home_mode_search_only_desc">Blank skjerm. Sveip opp for å søke. Apper vises først når du skriver, så listen ikke frister deg.</string>
+    <string name="home_mode_search_list">Kun søk med liste</string>
+    <string name="home_mode_search_list_desc">Blank skjerm. Sveip opp for å søke, med hele applisten under.</string>
 
     <!-- Custom tasks -->
     <string name="settings_tasks_title">Dine egne oppgaver</string>
