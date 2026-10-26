@@ -77,6 +77,7 @@ fun LauncherScreen(
     getInstallSource: suspend (String) -> String,
     onClose: () -> Unit,
     searchOnOpen: Boolean = false,
+    hideListUntilTyping: Boolean = false,
     letterRailScale: Float = 1f,
     letterRailXOffsetDp: Int = 4,
     foldersEnabled: Boolean = false,
@@ -142,10 +143,12 @@ fun LauncherScreen(
         else -> personalApps
     }
 
-    // Search-only mode never expands the SearchBar overlay: results filter the
-    // regular list below, so with an empty query the full list stays visible and
-    // scrollable instead of hidden behind an empty overlay.
+    // Search-only modes never expand the SearchBar overlay: results filter the
+    // regular list below instead of sitting in an overlay that's empty until
+    // the first keystroke. With the list variant an empty query shows every
+    // app; without it nothing shows until the user types (no visual cue).
     val searchExpanded = searchActive && !searchOnOpen
+    val listApps = if (hideListUntilTyping && query.isBlank()) emptyList() else tabApps
 
     // Folders (issue #41, opt-in) only shape the browsed personal list — a
     // search always spans every app, and search-only mode has no list to shape.
@@ -155,9 +158,9 @@ fun LauncherScreen(
     BackHandler(enabled = openFolder != null && !searchActive) { openFolderId = null }
     LaunchedEffect(openFolder?.id) { listState.scrollToItem(0) }
 
-    val entries: List<DrawerEntry> = remember(tabApps, folders, useFolders, openFolder) {
+    val entries: List<DrawerEntry> = remember(listApps, tabApps, folders, useFolders, openFolder) {
         when {
-            !useFolders -> tabApps.map { DrawerEntry.App(it) }
+            !useFolders -> listApps.map { DrawerEntry.App(it) }
             openFolder != null -> tabApps
                 .filter { it.folderId == openFolder.id }
                 .map { DrawerEntry.App(it) }

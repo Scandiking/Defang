@@ -212,8 +212,10 @@
     <string name="home_mode_tidbit_desc">Just the tidbit of the day</string>
     <string name="home_mode_clock">Clock and tidbit</string>
     <string name="home_mode_clock_desc">Clock, date, and the tidbit of the day</string>
-    <string name="home_mode_search_only">Search only</string>
-    <string name="home_mode_search_only_desc">Blank screen. Swipe up to search and open apps.</string>
+    <string name="home_mode_search_only">Search only, no list</string>
+    <string name="home_mode_search_only_desc">Blank screen. Swipe up to search. Apps only appear as you type, so the list can\'t tempt you.</string>
+    <string name="home_mode_search_list">Search only, with list</string>
+    <string name="home_mode_search_list_desc">Blank screen. Swipe up to search, with the full app list below.</string>
 
     <!-- Custom tasks -->
     <string name="settings_tasks_title">Your own tasks</string>

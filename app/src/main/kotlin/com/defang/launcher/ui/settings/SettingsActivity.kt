@@ -1309,6 +1309,9 @@ private fun homeModeStrings(mode: HomeScreenMode): Pair<String, String> = when (
     HomeScreenMode.SEARCH_ONLY ->
         stringResource(R.string.home_mode_search_only) to
             stringResource(R.string.home_mode_search_only_desc)
+    HomeScreenMode.SEARCH_ONLY_WITH_LIST ->
+        stringResource(R.string.home_mode_search_list) to
+            stringResource(R.string.home_mode_search_list_desc)
 }
 
 /** Human-readable name for a 1..5 math difficulty level. */
