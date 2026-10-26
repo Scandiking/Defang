@@ -11,6 +11,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -50,6 +51,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
@@ -139,9 +141,10 @@ fun LauncherScreen(
         else -> personalApps
     }
 
-    // In search-only mode: show nothing until the user has typed at least one character.
-    // Auto-open when the query narrows the list to exactly one app.
-    val displayedApps = if (searchOnOpen && query.isEmpty()) emptyList() else tabApps
+    // Search-only mode never expands the SearchBar overlay: results filter the
+    // regular list below, so with an empty query the full list stays visible and
+    // scrollable instead of hidden behind an empty overlay.
+    val searchExpanded = searchActive && !searchOnOpen
 
     // Folders (issue #41, opt-in) only shape the browsed personal list — a
     // search always spans every app, and search-only mode has no list to shape.
@@ -177,9 +180,22 @@ fun LauncherScreen(
             null
         }
     }
-    LaunchedEffect(displayedApps) {
-        if (searchOnOpen && query.isNotEmpty() && displayedApps.size == 1) {
-            onAppTap(displayedApps[0])
+    // Auto-open when the query narrows the list to exactly one app.
+    LaunchedEffect(tabApps) {
+        if (searchOnOpen && query.isNotEmpty() && tabApps.size == 1) {
+            onAppTap(tabApps[0])
+        }
+    }
+
+    // Scrolling the list in search-only mode means browsing, not typing:
+    // drop the keyboard so it doesn't cover half the list.
+    // Drags only, so programmatic scrolls never hide it.
+    val focusManager = LocalFocusManager.current
+    val listDragged by listState.interactionSource.collectIsDraggedAsState()
+    LaunchedEffect(listDragged) {
+        if (searchOnOpen && listDragged) {
+            keyboard?.hide()
+            focusManager.clearFocus()
         }
     }
 
@@ -237,7 +253,7 @@ fun LauncherScreen(
                             query = query,
                             onQueryChange = onQueryChange,
                             onSearch = {},
-                            expanded = searchActive,
+                            expanded = searchExpanded,
                             onExpandedChange = { searchActive = it },
                             placeholder = { Text(stringResource(R.string.launcher_search_hint)) },
                             modifier = Modifier
@@ -245,7 +261,7 @@ fun LauncherScreen(
                                 .focusRequester(searchFocus),
                         )
                     },
-                    expanded = searchActive,
+                    expanded = searchExpanded,
                     onExpandedChange = { searchActive = it },
                     // Scaffold padding already clears the status bar; the default
                     // SearchBar insets would add it a second time.
@@ -255,7 +271,7 @@ fun LauncherScreen(
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                 ) {
                     LazyColumn {
-                        items(displayedApps) { app ->
+                        items(tabApps) { app ->
                             AppRow(
                                 app = app,
                                 canUninstall = app.packageName != ownPackageName,
