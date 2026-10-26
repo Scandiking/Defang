@@ -60,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.defang.launcher.R
 import com.defang.launcher.data.local.db.entity.AppFolderEntity
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -180,10 +181,26 @@ fun LauncherScreen(
             null
         }
     }
-    // Auto-open when the query narrows the list to exactly one app.
-    LaunchedEffect(tabApps) {
-        if (searchOnOpen && query.isNotEmpty() && tabApps.size == 1) {
-            onAppTap(tabApps[0])
+    // Auto-open when the query narrows the list to exactly one app. It waits
+    // for typing to pause (each keystroke restarts the timer) and says what
+    // it's about to open, so trailing taps land on the keyboard instead of
+    // inside the app that just opened.
+    val autoOpenTarget = if (searchOnOpen && query.isNotBlank()) tabApps.singleOrNull() else null
+    var clearQueryOnLeave by remember { mutableStateOf(false) }
+    LaunchedEffect(query, autoOpenTarget) {
+        if (autoOpenTarget != null) {
+            delay(AUTO_OPEN_DELAY_MS)
+            onAppTap(autoOpenTarget)
+            clearQueryOnLeave = true
+        }
+    }
+    // Reset the search once the opened app has the window, so coming back
+    // shows a fresh search instead of a stale "Opening…" line. Waiting for
+    // focus loss avoids flashing the full list during the transition.
+    LaunchedEffect(windowFocused) {
+        if (!windowFocused && clearQueryOnLeave) {
+            clearQueryOnLeave = false
+            onQueryChange("")
         }
     }
 
@@ -286,6 +303,15 @@ fun LauncherScreen(
                     }
                 }
 
+                if (autoOpenTarget != null) {
+                    Text(
+                        text = stringResource(R.string.launcher_opening, autoOpenTarget.label),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(horizontal = 24.dp, vertical = 4.dp),
+                    )
+                }
+
                 if (!searchOnOpen && workApps.isNotEmpty()) {
                     TabRow(selectedTabIndex = if (showingWorkTab) 1 else 0) {
                         Tab(
@@ -367,6 +393,9 @@ fun LauncherScreen(
         )
     }
 }
+
+/** Pause after the last keystroke before a single search match opens. */
+private const val AUTO_OPEN_DELAY_MS = 700L
 
 /** One row of the browsed drawer list: an app, or (folders on) a folder. */
 private sealed interface DrawerEntry {
