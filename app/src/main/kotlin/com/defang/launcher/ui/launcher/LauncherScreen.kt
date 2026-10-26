@@ -28,6 +28,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -44,9 +45,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -80,6 +85,19 @@ fun LauncherScreen(
     onDeleteFolder: (Long) -> Unit = {},
 ) {
     var searchActive by remember { mutableStateOf(searchOnOpen) }
+
+    // Search-only mode promises an active keyboard on open, but SearchBar never
+    // requests focus by itself, only on tap. Ask explicitly once the window has
+    // focus; this also covers coming back from an app with the drawer still open.
+    val searchFocus = remember { FocusRequester() }
+    val keyboard = LocalSoftwareKeyboardController.current
+    val windowFocused = LocalWindowInfo.current.isWindowFocused
+    LaunchedEffect(searchOnOpen, windowFocused) {
+        if (searchOnOpen && windowFocused) {
+            searchFocus.requestFocus()
+            keyboard?.show()
+        }
+    }
 
     // In search-only mode back always closes the drawer; otherwise collapse search first.
     if (searchOnOpen) {
@@ -214,12 +232,21 @@ fun LauncherScreen(
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
                 SearchBar(
-                    query = query,
-                    onQueryChange = onQueryChange,
-                    onSearch = {},
-                    active = searchActive,
-                    onActiveChange = { searchActive = it },
-                    placeholder = { Text(stringResource(R.string.launcher_search_hint)) },
+                    inputField = {
+                        SearchBarDefaults.InputField(
+                            query = query,
+                            onQueryChange = onQueryChange,
+                            onSearch = {},
+                            expanded = searchActive,
+                            onExpandedChange = { searchActive = it },
+                            placeholder = { Text(stringResource(R.string.launcher_search_hint)) },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .focusRequester(searchFocus),
+                        )
+                    },
+                    expanded = searchActive,
+                    onExpandedChange = { searchActive = it },
                     // Scaffold padding already clears the status bar; the default
                     // SearchBar insets would add it a second time.
                     windowInsets = WindowInsets(0),
