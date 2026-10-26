@@ -63,6 +63,9 @@ interface SessionDao {
     )
     suspend fun getExtensionUsedToday(dayStartEpoch: Long): SessionEntity?
 
+    @Query("SELECT COUNT(*) FROM sessions WHERE startTime < :cutoff")
+    suspend fun countOlderThan(cutoff: Long): Int
+
     @Query("DELETE FROM sessions WHERE startTime < :cutoff")
     suspend fun deleteOlderThan(cutoff: Long)
 

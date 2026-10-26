@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -29,13 +30,19 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -208,10 +215,46 @@ fun UsageReportScreen(
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                 modifier = Modifier.padding(bottom = 8.dp),
             )
+            // Pruning is irreversible, so the slider only commits on release,
+            // and shortening the window asks first when it would delete rows.
+            var pendingLevel by remember { mutableStateOf<RetentionLevel?>(null) }
+            var pendingCount by remember { mutableIntStateOf(0) }
             RetentionSlider(
-                level = retentionLevel,
-                onLevelChange = viewModel::setRetentionLevel,
+                level = pendingLevel ?: retentionLevel,
+                onLevelCommit = { newLevel ->
+                    if (newLevel == retentionLevel) return@RetentionSlider
+                    if (newLevel.ordinal > retentionLevel.ordinal) {
+                        viewModel.setRetentionLevel(newLevel)
+                        return@RetentionSlider
+                    }
+                    pendingLevel = newLevel
+                    scope.launch {
+                        val count = viewModel.countPrunedBy(newLevel)
+                        if (count == 0) {
+                            viewModel.setRetentionLevel(newLevel)
+                            pendingLevel = null
+                        } else {
+                            pendingCount = count
+                        }
+                    }
+                },
             )
+            val confirmLevel = pendingLevel
+            if (confirmLevel != null && pendingCount > 0) {
+                RetentionConfirmDialog(
+                    level = confirmLevel,
+                    count = pendingCount,
+                    onConfirm = {
+                        viewModel.setRetentionLevel(confirmLevel)
+                        pendingLevel = null
+                        pendingCount = 0
+                    },
+                    onDismiss = {
+                        pendingLevel = null
+                        pendingCount = 0
+                    },
+                )
+            }
 
             Button(
                 onClick = { exportLauncher.launch(CSV_FILE_NAME) },
@@ -332,23 +375,60 @@ private fun retentionLabel(level: RetentionLevel): String = when (level) {
 }
 
 @Composable
-private fun RetentionSlider(level: RetentionLevel, onLevelChange: (RetentionLevel) -> Unit) {
-    val index = RETENTION_LEVELS.indexOf(level).coerceAtLeast(0)
+private fun RetentionSlider(level: RetentionLevel, onLevelCommit: (RetentionLevel) -> Unit) {
+    // Dragging only moves this draft; the level is committed on release.
+    var draft by remember(level) {
+        mutableStateOf(RETENTION_LEVELS.indexOf(level).coerceAtLeast(0).toFloat())
+    }
+    val draftLevel = RETENTION_LEVELS[draft.roundToInt().coerceIn(0, RETENTION_LEVELS.lastIndex)]
     Column {
         Text(
-            text = retentionLabel(level),
+            text = retentionLabel(draftLevel),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.primary,
         )
         Slider(
-            value = index.toFloat(),
-            onValueChange = {
-                onLevelChange(RETENTION_LEVELS[it.roundToInt().coerceIn(0, RETENTION_LEVELS.lastIndex)])
-            },
+            value = draft,
+            onValueChange = { draft = it },
+            onValueChangeFinished = { onLevelCommit(draftLevel) },
             valueRange = 0f..(RETENTION_LEVELS.size - 1).toFloat(),
             steps = RETENTION_LEVELS.size - 2,
         )
     }
+}
+
+@Composable
+private fun RetentionConfirmDialog(
+    level: RetentionLevel,
+    count: Int,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val body = if (level == RetentionLevel.DONT_TRACK) {
+        pluralStringResource(R.plurals.usage_retention_confirm_body_all, count, count)
+    } else {
+        val cutoff = level.cutoffMillis() ?: 0L
+        val date = remember(cutoff) {
+            SimpleDateFormat("d MMM yyyy", Locale.getDefault()).format(cutoff)
+        }
+        pluralStringResource(R.plurals.usage_retention_confirm_body, count, count, date)
+    }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.usage_retention_confirm_title)) },
+        text = { Text(body) },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(
+                    stringResource(R.string.usage_retention_confirm_delete),
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) }
+        },
+    )
 }
 
 @Composable

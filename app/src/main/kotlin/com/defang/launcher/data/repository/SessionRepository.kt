@@ -132,6 +132,12 @@ class SessionRepository @Inject constructor(
 
     suspend fun applyRetention() = applyRetention(prefs.retentionLevel.first())
 
+    /** How many sessions switching to [level] would delete right now. */
+    suspend fun countPrunedBy(level: RetentionLevel): Int {
+        val cutoff = level.cutoffMillis() ?: return 0
+        return dao.countOlderThan(cutoff)
+    }
+
     /** All session history as CSV, one row per session, with any extension
      *  reason (current or legacy) joined in. */
     suspend fun exportCsv(capMs: (SessionEntity) -> Long): String {

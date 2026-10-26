@@ -114,8 +114,12 @@ class UsageReportViewModel @Inject constructor(
         viewModelScope.launch {
             prefs.setRetentionLevel(level)
             sessionRepo.applyRetention(level)
+            reload()
         }
     }
+
+    /** Sessions that would be deleted by switching to [level]. */
+    suspend fun countPrunedBy(level: RetentionLevel): Int = sessionRepo.countPrunedBy(level)
 
     suspend fun exportCsv(): String = sessionRepo.exportCsv(capResolver.load())
 
