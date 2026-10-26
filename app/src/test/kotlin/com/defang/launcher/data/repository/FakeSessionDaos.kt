@@ -51,6 +51,9 @@ class FakeSessionDao : SessionDao {
     override suspend fun getExtensionUsedToday(dayStartEpoch: Long): SessionEntity? =
         rows.firstOrNull { it.extensionUsed && it.startTime >= dayStartEpoch }
 
+    override suspend fun countOlderThan(cutoff: Long): Int =
+        rows.count { it.startTime < cutoff }
+
     override suspend fun deleteOlderThan(cutoff: Long) {
         rows.removeAll { it.startTime < cutoff }
     }

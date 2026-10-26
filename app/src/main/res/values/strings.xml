@@ -364,6 +364,16 @@
     <string name="usage_retention_desc">How long Defang keeps your session log. Controls both the trend view above and what an export includes.</string>
     <string name="usage_retention_dont_track">Don\'t track</string>
     <string name="usage_retention_indefinite">Indefinitely</string>
+    <string name="usage_retention_confirm_title">Delete usage history?</string>
+    <plurals name="usage_retention_confirm_body">
+        <item quantity="one">%1$d session recorded before %2$s will be permanently deleted.</item>
+        <item quantity="other">%1$d sessions recorded before %2$s will be permanently deleted.</item>
+    </plurals>
+    <plurals name="usage_retention_confirm_body_all">
+        <item quantity="one">All %1$d recorded session will be permanently deleted, and new sessions won\'t be recorded.</item>
+        <item quantity="other">All %1$d recorded sessions will be permanently deleted, and new sessions won\'t be recorded.</item>
+    </plurals>
+    <string name="usage_retention_confirm_delete">Delete</string>
 
     <string name="usage_export_csv">Export as CSV</string>
     <string name="usage_export_success">Usage data exported</string>
