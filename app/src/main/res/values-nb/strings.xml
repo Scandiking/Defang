@@ -342,6 +342,16 @@
     <string name="usage_retention_desc">Hvor lenge Defang tar vare på øktloggen din. Styrer både trendvisningen over og hva en eksport inneholder.</string>
     <string name="usage_retention_dont_track">Ikke spor</string>
     <string name="usage_retention_indefinite">På ubestemt tid</string>
+    <string name="usage_retention_confirm_title">Slette brukshistorikk?</string>
+    <plurals name="usage_retention_confirm_body">
+        <item quantity="one">%1$d økt registrert før %2$s blir slettet for godt.</item>
+        <item quantity="other">%1$d økter registrert før %2$s blir slettet for godt.</item>
+    </plurals>
+    <plurals name="usage_retention_confirm_body_all">
+        <item quantity="one">%1$d registrert økt blir slettet for godt, og nye økter blir ikke registrert.</item>
+        <item quantity="other">Alle %1$d registrerte økter blir slettet for godt, og nye økter blir ikke registrert.</item>
+    </plurals>
+    <string name="usage_retention_confirm_delete">Slett</string>
     <string name="usage_export_csv">Eksporter som CSV</string>
     <string name="usage_export_success">Bruksdata eksportert</string>
 
