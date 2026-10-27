@@ -304,11 +304,17 @@ class LauncherActivity : ComponentActivity() {
         unregisterReceiver(packageChangeReceiver)
     }
 
-    /** Swipe shortcut target. Silently a no-op if the app was uninstalled;
-     *  watched apps still go through the gate like any other launch. */
+    /**
+     * Swipe shortcut target. Silently a no-op if the app was uninstalled;
+     * watched apps still go through the gate like any other launch.
+     *
+     * No animation (#72): Android always slides a launched app in from the
+     * right and ignores a launcher's custom animations, which looked backwards
+     * on a right swipe. Cutting straight to the app avoids that.
+     */
     private fun launchPackage(pkg: String) {
         val intent = packageManager.getLaunchIntentForPackage(pkg) ?: return
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_ANIMATION)
         startActivity(intent)
     }
 
