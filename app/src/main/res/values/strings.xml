@@ -149,6 +149,7 @@
     <string name="app_menu_info">App info</string>
     <string name="app_menu_rename">Rename</string>
     <string name="app_menu_uninstall">Uninstall</string>
+    <string name="app_menu_app_setup">Hide or watch…</string>
     <string name="app_menu_move_to_folder">Move to folder</string>
     <string name="folder_menu_rename">Rename folder</string>
     <string name="folder_menu_show_arrow">Show arrow</string>
