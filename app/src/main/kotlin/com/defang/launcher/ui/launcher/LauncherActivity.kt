@@ -194,6 +194,12 @@ class LauncherActivity : ComponentActivity() {
                         onRename = { pkg, newLabel -> viewModel.renameApp(pkg, newLabel) },
                         getInstallSource = { pkg -> viewModel.installSourceLabel(pkg) },
                         onClose = { showDrawer = false },
+                        onAppSetup = { app ->
+                            startActivity(
+                                Intent(this, SettingsActivity::class.java)
+                                    .putExtra(SettingsActivity.EXTRA_OPEN_APP_SETUP, app.packageName)
+                            )
+                        },
                         searchOnOpen = homeMode.isSearchOnly,
                         hideListUntilTyping = homeMode == HomeScreenMode.SEARCH_ONLY,
                         letterRailScale = letterRailScale,

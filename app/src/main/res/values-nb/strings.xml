@@ -148,6 +148,7 @@
     <string name="app_menu_info">Appinfo</string>
     <string name="app_menu_rename">Gi nytt navn</string>
     <string name="app_menu_uninstall">Avinstaller</string>
+    <string name="app_menu_app_setup">Skjul eller overvåk…</string>
     <string name="rename_dialog_title">Gi appen nytt navn</string>
     <string name="rename_dialog_save">Lagre</string>
     <string name="rename_dialog_cancel">Avbryt</string>

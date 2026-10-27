@@ -104,10 +104,11 @@ class SettingsActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val initialPage = if (intent.getBooleanExtra(EXTRA_OPEN_USAGE, false)) {
-            SettingsPage.Usage
-        } else {
-            SettingsPage.Menu
+        val focusPackage = intent.getStringExtra(EXTRA_OPEN_APP_SETUP)
+        val initialPage = when {
+            focusPackage != null -> SettingsPage.Apps
+            intent.getBooleanExtra(EXTRA_OPEN_USAGE, false) -> SettingsPage.Usage
+            else -> SettingsPage.Menu
         }
         setContent {
             DefangTheme {
@@ -287,9 +288,16 @@ class SettingsActivity : ComponentActivity() {
                         )
                     }
 
-                    SettingsPage.Apps -> AppTierSettingsScreen(
-                        onBack = { page = SettingsPage.Menu },
-                    )
+                    SettingsPage.Apps -> {
+                        // Opened from the drawer's long-press menu: back returns to
+                        // the drawer, not the settings menu the user never saw.
+                        val deepLinked = focusPackage != null
+                        BackHandler(enabled = deepLinked) { finish() }
+                        AppTierSettingsScreen(
+                            focusPackage = focusPackage,
+                            onBack = { if (deepLinked) finish() else page = SettingsPage.Menu },
+                        )
+                    }
 
                     SettingsPage.Sites ->
                         com.defang.launcher.ui.settings.sites.WatchedSitesScreen(
@@ -347,6 +355,9 @@ class SettingsActivity : ComponentActivity() {
     companion object {
         /** Intent extra: open directly on the usage report page (widget tap). */
         const val EXTRA_OPEN_USAGE = "open_usage"
+
+        /** Intent extra (package name): open App setup scrolled to that app. */
+        const val EXTRA_OPEN_APP_SETUP = "open_app_setup"
     }
 }
 
@@ -1183,7 +1194,7 @@ private fun AppDrawerSettingsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun AppTierSettingsScreen(onBack: () -> Unit) {
+private fun AppTierSettingsScreen(focusPackage: String? = null, onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -1198,7 +1209,7 @@ private fun AppTierSettingsScreen(onBack: () -> Unit) {
                 .fillMaxSize()
                 .padding(padding),
         ) {
-            AppTierScreen()
+            AppTierScreen(focusPackage = focusPackage)
         }
     }
 }

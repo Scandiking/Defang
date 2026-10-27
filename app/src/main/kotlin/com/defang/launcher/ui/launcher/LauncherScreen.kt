@@ -76,6 +76,8 @@ fun LauncherScreen(
     onRename: (String, String) -> Unit,
     getInstallSource: suspend (String) -> String,
     onClose: () -> Unit,
+    /** Opens App setup scrolled to this app. Null for apps it can't show (work profile). */
+    onAppSetup: ((AppInfo) -> Unit)? = null,
     searchOnOpen: Boolean = false,
     hideListUntilTyping: Boolean = false,
     letterRailScale: Float = 1f,
@@ -304,6 +306,7 @@ fun LauncherScreen(
                                 onRename = onRename,
                                 getInstallSource = getInstallSource,
                                 onMoveToFolder = moveToFolderFor(app),
+                                onAppSetup = onAppSetup,
                             )
                         }
                     }
@@ -360,6 +363,7 @@ fun LauncherScreen(
                                     onRename = onRename,
                                     getInstallSource = getInstallSource,
                                     onMoveToFolder = moveToFolderFor(entry.app),
+                                    onAppSetup = onAppSetup,
                                 )
                                 is DrawerEntry.Folder -> FolderRow(
                                     folder = entry.folder,
@@ -646,7 +650,7 @@ private fun LetterRail(
 
 /**
  * A drawer row. Tap launches; long-press opens a Pixel/One UI-style popup with
- * App info, Rename, and Uninstall. `canUninstall` is false for Defang's own entry.
+ * App info, Rename, Hide or watch, and Uninstall. `canUninstall` is false for Defang's own entry.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -660,6 +664,7 @@ fun AppRow(
     getInstallSource: suspend (String) -> String,
     /** Non-null only while folders are on and the app can carry one. */
     onMoveToFolder: (() -> Unit)? = null,
+    onAppSetup: ((AppInfo) -> Unit)? = null,
 ) {
     var menuOpen by remember { mutableStateOf(false) }
     var renameDialogOpen by remember { mutableStateOf(false) }
@@ -697,6 +702,17 @@ fun AppRow(
                     onClick = {
                         menuOpen = false
                         onMoveToFolder()
+                    },
+                )
+            }
+            if (onAppSetup != null && app.userHandle == android.os.Process.myUserHandle()) {
+                // Hide/watch live in App setup next to the other restrictions (#71);
+                // this jumps straight to the app's row instead of duplicating them here.
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.app_menu_app_setup)) },
+                    onClick = {
+                        menuOpen = false
+                        onAppSetup(app)
                     },
                 )
             }
