@@ -159,7 +159,7 @@ class BrowserUrlExtractor @Inject constructor() {
                     if (nodes.isNotEmpty()) {
                         val text = nodes[0].text?.toString()
                         nodes.forEach { it.recycle() }
-                        if (!text.isNullOrBlank() && looksLikeUrl(text)) return text
+                        urlFromBarText(text)?.let { return it }
                     }
                 }
             }
@@ -204,8 +204,6 @@ class BrowserUrlExtractor @Inject constructor() {
 
     // ── Private helpers ───────────────────────────────────────────────────────
 
-    private fun looksLikeUrl(text: String): Boolean =
-        text.contains('.') && !text.contains(' ') && text.length < 300
 
     /**
      * BFS through the accessibility tree looking for a text field that contains
@@ -219,11 +217,13 @@ class BrowserUrlExtractor @Inject constructor() {
             while (queue.isNotEmpty()) {
                 val node = queue.removeFirst()
                 visited.add(node)
-                val text = node.text?.toString()
-                if (!text.isNullOrBlank() &&
-                    node.className?.contains("EditText") == true &&
-                    looksLikeUrl(text)) {
-                    return text
+                if (node.className?.contains("EditText") == true) {
+                    urlFromBarText(node.text?.toString())?.let { return it }
+                }
+                // Newer Fenix builds (and forks) draw the address bar in
+                // Compose: no EditText, URL only in the box's content-desc
+                if (node.viewIdResourceName == COMPOSE_ADDRESS_BAR_TAG) {
+                    urlFromBarText(node.contentDescription?.toString())?.let { return it }
                 }
                 for (i in 0 until node.childCount) {
                     node.getChild(i)?.let { queue.add(it) }
@@ -235,5 +235,28 @@ class BrowserUrlExtractor @Inject constructor() {
             queue.forEach { it.recycle() }
         }
         return null
+    }
+
+    companion object {
+        /** Compose test tag Fenix exposes as the address bar's resource id. */
+        const val COMPOSE_ADDRESS_BAR_TAG = "ADDRESSBAR_URL_BOX"
+
+        // "<url>. <status or hint>" — Chrome on insecure or error pages
+        // ("example.com. Not secure") and Fenix's content-desc
+        // ("example.com. Search or enter address"), both localized.
+        private val URL_WITH_SUFFIX = Regex("""^(\S+\.\S+?)\.\s.*""", RegexOption.DOT_MATCHES_ALL)
+
+        /**
+         * Returns the URL from an address bar's text, or null if it doesn't
+         * hold one. Plain URLs pass through; a localized status suffix after
+         * ". " is dropped. Anything else with spaces (a search being typed)
+         * is not a URL.
+         */
+        fun urlFromBarText(raw: String?): String? {
+            val text = raw?.trim().orEmpty()
+            if (text.isEmpty() || text.length >= 300) return null
+            if (!text.contains(' ')) return text.takeIf { it.contains('.') }
+            return URL_WITH_SUFFIX.matchEntire(text)?.groupValues?.get(1)
+        }
     }
 }
