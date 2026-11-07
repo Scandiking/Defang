@@ -20,6 +20,9 @@ interface AppConfigDao {
     @Query("SELECT * FROM app_config WHERE tier = 1 ORDER BY appLabel ASC")
     fun observeWatched(): Flow<List<AppConfigEntity>>
 
+    @Query("SELECT EXISTS(SELECT 1 FROM app_config WHERE tier = 1)")
+    suspend fun hasWatched(): Boolean
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(config: AppConfigEntity)
 

@@ -15,6 +15,8 @@ class WatchedUrlRepository @Inject constructor(
     fun observeAll(): Flow<List<WatchedUrl>> =
         dao.observeAll().map { list -> list.map { it.toDomain() } }
 
+    suspend fun hasEnabled(): Boolean = dao.hasEnabled()
+
     suspend fun upsert(url: WatchedUrl) = dao.upsert(url.toEntity())
 
     suspend fun delete(pattern: String) = dao.delete(pattern)

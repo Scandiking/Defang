@@ -14,6 +14,8 @@ class AppConfigRepository @Inject constructor(
 
     fun observeWatched(): Flow<List<AppConfigEntity>> = dao.observeWatched()
 
+    suspend fun hasWatched(): Boolean = dao.hasWatched()
+
     suspend fun getConfig(packageName: String): AppConfigEntity? = dao.getByPackage(packageName)
 
     suspend fun upsert(config: AppConfigEntity) = dao.upsert(config)
