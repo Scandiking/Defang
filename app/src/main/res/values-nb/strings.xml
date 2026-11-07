@@ -91,6 +91,11 @@
     <string name="sites_adult">Voksen (1-min bånd)</string>
     <string name="sites_builtin_adult">Innebygd liste over voksennettsteder</string>
     <string name="sites_builtin_adult_desc">Setter port på kjente voksennettsteder i alle nettlesere, med ett minutts bånd, uten at du må legge dem til selv.</string>
+    <string name="sites_builtin_adult_off_title">Seriøst?</string>
+    <string name="sites_builtin_adult_off_body_november">Det er No Nut November. Du bestemmer selv, men er dette et sug, eller bare resultatet av en trigger?</string>
+    <string name="sites_builtin_adult_off_body">Du bestemmer selv, men er dette et sug, eller bare resultatet av en trigger?</string>
+    <string name="sites_builtin_adult_off_continue">Fortsett</string>
+    <string name="sites_builtin_adult_off_never_mind">Glem det</string>
     <string name="sites_enabled">På</string>
     <string name="sites_add">Legg til</string>
 
