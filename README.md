@@ -134,7 +134,8 @@ Defang/
 │       │   ├── kotlin/com/defang/launcher/   # see below
 │       │   └── res/
 │       │       ├── values/                   # Default (English) strings, tidbit/awareness arrays, theme
-│       │       ├── values-de|fr|nb/          # Translations, synced from Weblate
+│       │       ├── values-nb/                # Norwegian, kept in sync with English in each PR
+│       │       ├── values-de|fr|it|ja|…/     # Other translations, synced from Weblate
 │       │       └── xml/                      # Accessibility service + widget config
 │       └── test/                             # JVM/Robolectric tests (migrations, session recovery, usage report, …)
 ├── assets/                                   # Logo, README screenshots, Blender renders
@@ -165,18 +166,19 @@ app/src/main/kotlin/com/defang/launcher/
 │   ├── qr/                         # QR/barcode unlock
 │   └── notification/               # Notification listener, batching windows, summary delivery
 ├── ui/
-│   ├── launcher/                   # Home screen, app drawer, folders, swipe shortcuts
+│   ├── launcher/                   # Home screen, app drawer, folders, swipe shortcuts, search-only modes
 │   ├── onboarding/                 # 5-screen first-run flow (what it is/isn't, the loop, small tasks, setup)
 │   ├── settings/
 │   │   ├── apptier/                # Per-app tier and limits
 │   │   ├── awareness/              # Awareness library — every tidbit with its source, plus offline tasks
-│   │   ├── sites/                  # Watched browser domains/paths
+│   │   ├── sites/                  # Watched browser domains/paths, built-in adult list switch
 │   │   ├── usage/                  # Weekly report, long-range trends, CSV export
 │   │   └── workprofile/            # Work profile apps
 │   ├── theme/                      # Compose colours, typography, theme
 │   └── widget/                     # Home-screen usage widget
 └── util/                           # Tidbit/prompt selection, personal tidbits, math problems,
-                                    # browser URL extraction, grayscale, usage stats helpers
+                                    # browser URL extraction, grayscale, usage stats helpers,
+                                    # gate permission policy (which prompts are needed)
 ```
 
 ---
@@ -195,7 +197,7 @@ app/src/main/kotlin/com/defang/launcher/
 - Live app drawer — reflects installs and uninstalls instantly; long-press for App info or to uninstall
 - QR/barcode and math-problem unlock, combinable with NFC and/or slide
 - Work profile support — view and open apps from an Android work profile, with matching App info/Uninstall
-- Search-only home screen mode
+- Search-only home screen, in two modes: no list (apps appear after 3 letters) or with the full list under the search
 - Long-range usage trends (3/6/12 months), extension justifications, retention, CSV export
 - Adaptive gate threshold (opt-in) — delay rises on frequent reopens, decays over time, capped and user-tunable
 - Adjustable app drawer letter index size and x-offset
@@ -203,6 +205,11 @@ app/src/main/kotlin/com/defang/launcher/
 - Home-screen usage widget — today's time per watched app vs its limit, tap-through to the weekly report
 - Math unlock up to level 7 — three-digit numbers, division and operator precedence
 - Swipe shortcuts — swipe left/right on home to open an app you pick, with no on-screen hint
+- Watched sites — gate any domain or path in the browser (Chrome, Firefox and forks), with a 1-minute leash for adult sites
+- Built-in adult site list with its own switch, on by default; turning it off asks first
+- Plain launcher mode — no permission prompts when nothing is watched
+- App drawer folders (opt-in)
+- Long-press an app → "Hide or watch…" jumps straight to its row in App setup
 - Personal lines (opt-in) — the gate, end card and cooldown sometimes state your own numbers: "_This_ is what you spend 43 minutes a day on?", computed on-device from `Room` data
 
 ### Planned / exploring
