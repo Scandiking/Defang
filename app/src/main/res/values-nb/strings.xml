@@ -89,6 +89,8 @@
     <string name="sites_desc">Nettsteder du legger til får en port når de åpnes i en nettleser. Voksennettsteder får ett minutts bånd; andre får vanlig økt og nedkjøling.</string>
     <string name="sites_url_hint">eksempel.no eller eksempel.no/sti</string>
     <string name="sites_adult">Voksen (1-min bånd)</string>
+    <string name="sites_builtin_adult">Innebygd liste over voksennettsteder</string>
+    <string name="sites_builtin_adult_desc">Setter port på kjente voksennettsteder i alle nettlesere, med ett minutts bånd, uten at du må legge dem til selv.</string>
     <string name="sites_enabled">På</string>
     <string name="sites_add">Legg til</string>
 

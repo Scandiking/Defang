@@ -2,6 +2,7 @@ package com.defang.launcher.ui.settings.sites
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.defang.launcher.data.local.datastore.PreferencesDataStore
 import com.defang.launcher.data.repository.WatchedUrlRepository
 import com.defang.launcher.domain.model.WatchedUrl
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +15,15 @@ import javax.inject.Inject
 @HiltViewModel
 class WatchedSitesViewModel @Inject constructor(
     private val repo: WatchedUrlRepository,
+    private val prefs: PreferencesDataStore,
 ) : ViewModel() {
+
+    val builtinAdultListEnabled: StateFlow<Boolean> = prefs.builtinAdultListEnabled
+        .stateIn(viewModelScope, SharingStarted.Eagerly, true)
+
+    fun setBuiltinAdultListEnabled(on: Boolean) {
+        viewModelScope.launch { prefs.setBuiltinAdultListEnabled(on) }
+    }
 
     val sites: StateFlow<List<WatchedUrl>> = repo.observeAll()
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
