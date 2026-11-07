@@ -95,6 +95,7 @@ class DefangAccessibilityService : AccessibilityService() {
     // event thread for every browser URL, so kept off the DB — collected once
     // from Room and updated live when the user edits the list.
     @Volatile private var watchedUrls: List<WatchedUrl> = emptyList()
+    @Volatile private var builtinAdultListEnabled = true
 
     // Current session state
     private var currentWatchedPackage: String? = null
@@ -296,6 +297,9 @@ class DefangAccessibilityService : AccessibilityService() {
         // without restarting the service.
         serviceScope.launch {
             watchedUrlRepo.observeAll().collect { watchedUrls = it }
+        }
+        serviceScope.launch {
+            prefs.builtinAdultListEnabled.collect { builtinAdultListEnabled = it }
         }
     }
 
@@ -575,8 +579,8 @@ class DefangAccessibilityService : AccessibilityService() {
         val match = watchedUrls
             .filter { it.enabled && it.matches(host, path) }
             .maxWithOrNull(compareBy({ it.pathPrefix.length }, { it.isAdult }))
-        // 2. Built-in hardcoded adult domains — unchanged fallback.
-        val adultBuiltin = match == null &&
+        // 2. Built-in hardcoded adult domains — fallback, unless switched off (#90).
+        val adultBuiltin = match == null && builtinAdultListEnabled &&
             selectContentTrack.forDomain(host) == ContentTrack.ADULT
 
         if (match == null && !adultBuiltin) {
