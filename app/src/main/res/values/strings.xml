@@ -109,6 +109,11 @@
     <string name="sites_adult">Adult (1-min leash)</string>
     <string name="sites_builtin_adult">Built-in adult site list</string>
     <string name="sites_builtin_adult_desc">Gates well-known adult sites in any browser with a 1-minute leash, without adding them yourself.</string>
+    <string name="sites_builtin_adult_off_title">Really?</string>
+    <string name="sites_builtin_adult_off_body_november">It is No Nut November. You do you, but is this an urge, or just the result of a cue?</string>
+    <string name="sites_builtin_adult_off_body">You do you, but is this an urge, or just the result of a cue?</string>
+    <string name="sites_builtin_adult_off_continue">Continue</string>
+    <string name="sites_builtin_adult_off_never_mind">Never mind</string>
     <string name="sites_enabled">On</string>
     <string name="sites_add">Add</string>
     <string name="sites_empty">No sites added yet.</string>

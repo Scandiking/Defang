@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -38,6 +39,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.defang.launcher.R
 import com.defang.launcher.domain.model.WatchedUrl
+import java.time.LocalDate
+import java.time.Month
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,9 +51,20 @@ fun WatchedSitesScreen(
     val sites by viewModel.sites.collectAsStateWithLifecycle()
     val builtinAdult by viewModel.builtinAdultListEnabled.collectAsStateWithLifecycle()
 
+    var confirmAdultOff by remember { mutableStateOf(false) }
     var input by remember { mutableStateOf("") }
     var adult by remember { mutableStateOf(false) }
     var showError by remember { mutableStateOf(false) }
+
+    if (confirmAdultOff) {
+        AdultListOffDialog(
+            onConfirm = {
+                confirmAdultOff = false
+                viewModel.setBuiltinAdultListEnabled(false)
+            },
+            onDismiss = { confirmAdultOff = false },
+        )
+    }
 
     Scaffold(
         topBar = {
@@ -102,7 +116,10 @@ fun WatchedSitesScreen(
                 Spacer(modifier = Modifier.width(8.dp))
                 Switch(
                     checked = builtinAdult,
-                    onCheckedChange = viewModel::setBuiltinAdultListEnabled,
+                    onCheckedChange = { on ->
+                        // Turning the list off asks first; turning it on just switches
+                        if (on) viewModel.setBuiltinAdultListEnabled(true) else confirmAdultOff = true
+                    },
                 )
             }
             HorizontalDivider(
@@ -229,4 +246,29 @@ private fun WatchedSiteRow(
             )
         }
     }
+}
+
+@Composable
+private fun AdultListOffDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    // November gets the No Nut November version
+    val body = if (LocalDate.now().month == Month.NOVEMBER) {
+        R.string.sites_builtin_adult_off_body_november
+    } else {
+        R.string.sites_builtin_adult_off_body
+    }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.sites_builtin_adult_off_title)) },
+        text = { Text(stringResource(body)) },
+        confirmButton = {
+            TextButton(onClick = onConfirm) {
+                Text(stringResource(R.string.sites_builtin_adult_off_continue))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.sites_builtin_adult_off_never_mind))
+            }
+        },
+    )
 }
