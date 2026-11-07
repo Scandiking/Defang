@@ -145,6 +145,14 @@ class PreferencesDataStore @Inject constructor(
 
     suspend fun setHomeUsageEnabled(on: Boolean) = store.edit { it[KEY_HOME_USAGE] = on }
 
+    // Built-in adult domain list (#90). On by default, so installs that relied
+    // on it before it had a switch keep the same protection.
+    private val KEY_BUILTIN_ADULT = booleanPreferencesKey("builtin_adult_list_enabled")
+
+    val builtinAdultListEnabled: Flow<Boolean> = store.data.map { it[KEY_BUILTIN_ADULT] ?: true }
+
+    suspend fun setBuiltinAdultListEnabled(on: Boolean) = store.edit { it[KEY_BUILTIN_ADULT] = on }
+
     // ── Drawer folders (issue #41) ───────────────────────────────────────────
     // Off by default: grouping apps can tidy a drawer, but a folder is also a
     // place to stash feeds out of sight, so it's the user's call to turn on.

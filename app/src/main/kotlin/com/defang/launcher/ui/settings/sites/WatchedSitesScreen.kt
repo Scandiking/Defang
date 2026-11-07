@@ -46,6 +46,7 @@ fun WatchedSitesScreen(
     viewModel: WatchedSitesViewModel = hiltViewModel(),
 ) {
     val sites by viewModel.sites.collectAsStateWithLifecycle()
+    val builtinAdult by viewModel.builtinAdultListEnabled.collectAsStateWithLifecycle()
 
     var input by remember { mutableStateOf("") }
     var adult by remember { mutableStateOf(false) }
@@ -77,6 +78,36 @@ fun WatchedSitesScreen(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 12.dp),
+            )
+
+            // Built-in adult domain list (#90): gated by default, now visible
+            // and switchable instead of silently always on
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(R.string.sites_builtin_adult),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                    Text(
+                        text = stringResource(R.string.sites_builtin_adult_desc),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f),
+                    )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Switch(
+                    checked = builtinAdult,
+                    onCheckedChange = viewModel::setBuiltinAdultListEnabled,
+                )
+            }
+            HorizontalDivider(
+                color = MaterialTheme.colorScheme.surfaceVariant,
+                modifier = Modifier.padding(vertical = 12.dp),
             )
 
             OutlinedTextField(
