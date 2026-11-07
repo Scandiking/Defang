@@ -423,7 +423,7 @@ class LauncherViewModel @Inject constructor(
         // Default watched list — user can adjust in settings
         val defaultWatched = setOf(
             // Social media
-            "com.instagram.android","com.google.android.documentsui",
+            "com.instagram.android",
             "com.snapchat.android",
             "com.zhiliaoapp.musically",       // TikTok
             "com.ss.android.ugc.trill",       // TikTok (some regions)

@@ -13,6 +13,9 @@ interface WatchedUrlDao {
     @Query("SELECT * FROM watched_url ORDER BY label ASC")
     fun observeAll(): Flow<List<WatchedUrlEntity>>
 
+    @Query("SELECT EXISTS(SELECT 1 FROM watched_url WHERE enabled = 1)")
+    suspend fun hasEnabled(): Boolean
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(entity: WatchedUrlEntity)
 

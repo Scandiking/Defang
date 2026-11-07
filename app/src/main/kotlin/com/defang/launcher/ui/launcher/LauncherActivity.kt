@@ -35,6 +35,7 @@ import com.defang.launcher.ui.onboarding.OnboardingActivity
 import com.defang.launcher.ui.settings.SettingsActivity
 import com.defang.launcher.ui.theme.DefangTheme
 import com.defang.launcher.util.AccessibilityServiceHelper
+import com.defang.launcher.util.GatePermissionPolicy
 import com.defang.launcher.util.NotificationListenerHelper
 import com.defang.launcher.util.UsageStatsHelper
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,6 +49,9 @@ class LauncherActivity : ComponentActivity() {
     private val viewModel: LauncherViewModel by viewModels()
 
     @Inject lateinit var prefs: PreferencesDataStore
+    @Inject lateinit var gatePermissionPolicy: GatePermissionPolicy
+
+    private var overlayPrompted = false
 
     // true = app drawer is visible, false = home screen is visible
     private var showDrawer by mutableStateOf(false)
@@ -252,15 +256,6 @@ class LauncherActivity : ComponentActivity() {
             ContextCompat.RECEIVER_NOT_EXPORTED,
         )
 
-        if (!Settings.canDrawOverlays(this)) {
-            startActivity(
-                Intent(
-                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                    Uri.parse("package:$packageName"),
-                )
-            )
-        }
-
         // Needed to post the sanitized notification summaries on API 33+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) !=
@@ -281,13 +276,29 @@ class LauncherActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Self-enables silently if WRITE_SECURE_SETTINGS was granted via adb;
-        // otherwise opens accessibility settings with our row highlighted.
-        AccessibilityServiceHelper.ensureEnabled(this)
-        // Powers the usage-stats foreground poll fallback (apps that evade the
-        // accessibility event entirely). No silent-enable path exists for this
-        // permission — sends to settings once, then leaves it alone.
-        UsageStatsHelper.ensureEnabled(this)
+        lifecycleScope.launch {
+            // Nothing watched → plain launcher, so don't ask for permissions
+            // that only the gate uses (#89)
+            if (!gatePermissionPolicy.needsGatePermissions()) return@launch
+            // Once per activity instance, as before: the overlay screen has no
+            // "already granted" shortcut, so re-opening it every resume nags
+            if (!overlayPrompted && !Settings.canDrawOverlays(this@LauncherActivity)) {
+                overlayPrompted = true
+                startActivity(
+                    Intent(
+                        Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:$packageName"),
+                    )
+                )
+            }
+            // Self-enables silently if WRITE_SECURE_SETTINGS was granted via adb;
+            // otherwise opens accessibility settings with our row highlighted.
+            AccessibilityServiceHelper.ensureEnabled(this@LauncherActivity)
+            // Powers the usage-stats foreground poll fallback (apps that evade the
+            // accessibility event entirely). No silent-enable path exists for this
+            // permission — sends to settings once, then leaves it alone.
+            UsageStatsHelper.ensureEnabled(this@LauncherActivity)
+        }
         // Neutral notifications need the listener bound; rebind or self-enable
         // without opening any screen (Settings shows the status).
         lifecycleScope.launch {
