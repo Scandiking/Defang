@@ -12,7 +12,7 @@
 [![License: GPL v3](https://img.shields.io/github/license/Scandiking/Defang)](LICENSE)
 [![GitHub release](https://img.shields.io/github/v/release/Scandiking/Defang)](https://github.com/Scandiking/Defang/releases)
 [![F-Droid version](https://img.shields.io/f-droid/v/com.defang.launcher)](https://f-droid.org/packages/com.defang.launcher/)  
-![F-Droid downloads (all time)](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fgithub.com%2Fkitswas%2Ffdroid-metrics-dashboard%2Fraw%2Frefs%2Fheads%2Fmain%2Fprocessed%2Ftotal%2Fcom.defang.launcher.json&query=%24.total_downloads&logo=fdroid&label=F-Droid%20downloads%20%28all%20time%29)
+[![F-Droid downloads (all time)](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2FScandiking%2FDefang%2Fbadges%2Ffdroid-downloads.json)](https://github.com/Scandiking/Defang/blob/badges/fdroid-stats.json)
 
 </div>
 
