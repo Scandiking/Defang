@@ -25,6 +25,7 @@ Social media apps are engineered to pull you in without asking. Defang puts a sp
 
 </div>
 
+## Help translate Defang - no coding skills needed
 [![Oversettelsesstatus](https://hosted.weblate.org/widget/defang/open-graph.png)](https://hosted.weblate.org/engage/defang/)
 
 If you want to see Defang in your language, please help by translating. You don't need to know how to code, you only need the ability to read and to know the language you want to use Defang in
