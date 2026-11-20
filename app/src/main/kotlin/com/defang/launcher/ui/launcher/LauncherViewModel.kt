@@ -393,6 +393,8 @@ class LauncherViewModel @Inject constructor(
         }
         if (viaLauncherApps.isNotEmpty()) {
             return viaLauncherApps
+                // Framework-synthesized "app details" row for apps with no real launcher activity.
+                .filter { it.componentName.className != "android.app.AppDetailsActivity" }
                 .map { AppInfo(packageName = it.componentName.packageName, label = it.label.toString()) }
                 .filter { it.packageName != context.packageName }
                 .sortedBy { it.label.lowercase() }

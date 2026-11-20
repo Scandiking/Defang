@@ -167,6 +167,7 @@ class GlobalSettingsViewModel @Inject constructor(
             context.getSystemService(LauncherApps::class.java)
                 ?.getActivityList(null, Process.myUserHandle())
                 .orEmpty()
+                .filter { it.componentName.className != "android.app.AppDetailsActivity" }
                 .map { info ->
                     val pkg = info.componentName.packageName
                     pkg to (custom[pkg] ?: info.label.toString())
