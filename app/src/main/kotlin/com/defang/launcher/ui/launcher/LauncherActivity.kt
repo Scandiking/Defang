@@ -323,9 +323,31 @@ class LauncherActivity : ComponentActivity() {
      * right and ignores a launcher's custom animations, which looked backwards
      * on a right swipe. Cutting straight to the app avoids that.
      */
-    private fun launchPackage(pkg: String) {
+    private fun launchPackage(pkg: String, animate: Boolean = false) {
+        // PackageManager.getLaunchIntentForPackage returns null for apps whose
+        // launcher activity isn't exported (Dolby, Game Space — #99), so go
+        // through LauncherApps first and keep the PM intent as a fallback.
+        val launcherApps = getSystemService(LauncherApps::class.java)
+        val component = try {
+            launcherApps?.getActivityList(pkg, Process.myUserHandle())
+                ?.firstOrNull()?.componentName
+        } catch (e: SecurityException) {
+            null
+        }
+        if (component != null) {
+            val options = if (animate) null else
+                android.app.ActivityOptions.makeCustomAnimation(this, 0, 0).toBundle()
+            try {
+                launcherApps!!.startMainActivity(component, Process.myUserHandle(), null, options)
+                return
+            } catch (e: SecurityException) {
+                // fall through to the PackageManager intent
+            }
+        }
         val intent = packageManager.getLaunchIntentForPackage(pkg) ?: return
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_NO_ANIMATION)
+        intent.addFlags(
+            Intent.FLAG_ACTIVITY_NEW_TASK or if (animate) 0 else Intent.FLAG_ACTIVITY_NO_ANIMATION
+        )
         startActivity(intent)
     }
 
@@ -351,9 +373,7 @@ class LauncherActivity : ComponentActivity() {
             }
             return
         }
-        val intent = packageManager.getLaunchIntentForPackage(app.packageName) ?: return
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
+        launchPackage(app.packageName, animate = true)
     }
 
     /**

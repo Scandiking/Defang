@@ -380,6 +380,25 @@ class LauncherViewModel @Inject constructor(
     }
 
     private fun loadInstalledApps(): List<AppInfo> {
+        // LauncherApps first: it is the launcher API and, unlike
+        // PackageManager.queryIntentActivities, also lists privileged system
+        // apps whose launcher activity isn't exported (Dolby, Game Space, some
+        // ROM galleries — #99). PackageManager stays as a fallback.
+        val viaLauncherApps = try {
+            context.getSystemService(LauncherApps::class.java)
+                ?.getActivityList(null, Process.myUserHandle())
+                .orEmpty()
+        } catch (e: SecurityException) {
+            emptyList()
+        }
+        if (viaLauncherApps.isNotEmpty()) {
+            return viaLauncherApps
+                // Framework-synthesized "app details" row for apps with no real launcher activity.
+                .filter { it.componentName.className != "android.app.AppDetailsActivity" }
+                .map { AppInfo(packageName = it.componentName.packageName, label = it.label.toString()) }
+                .filter { it.packageName != context.packageName }
+                .sortedBy { it.label.lowercase() }
+        }
         val pm: PackageManager = context.packageManager
         val intent = Intent(Intent.ACTION_MAIN).apply { addCategory(Intent.CATEGORY_LAUNCHER) }
         val resolveInfos: List<ResolveInfo> = pm.queryIntentActivities(intent, 0)

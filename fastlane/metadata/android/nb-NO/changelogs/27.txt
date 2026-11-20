@@ -1,0 +1,1 @@
+Apper som manglet i appskuffen på enkelte tilpassede ROM-er (som Dolby, Game Space og galleri-apper) vises nå og kan åpnes. Applisten og oppstart går nå via systemets launcher-API i stedet for en pakkespørring som skjuler dem.
