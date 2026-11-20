@@ -161,11 +161,26 @@ class GlobalSettingsViewModel @Inject constructor(
         val pm = context.packageManager
         val custom = customLabels()
         val intent = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER)
-        pm.queryIntentActivities(intent, 0)
-            .map { ri ->
+        // Same source as the drawer (#99): LauncherApps also sees apps whose
+        // launcher activity isn't exported, which PackageManager hides.
+        val viaLauncherApps = try {
+            context.getSystemService(LauncherApps::class.java)
+                ?.getActivityList(null, Process.myUserHandle())
+                .orEmpty()
+                .map { info ->
+                    val pkg = info.componentName.packageName
+                    pkg to (custom[pkg] ?: info.label.toString())
+                }
+        } catch (e: SecurityException) {
+            emptyList()
+        }
+        val listed = viaLauncherApps.ifEmpty {
+            pm.queryIntentActivities(intent, 0).map { ri ->
                 val pkg = ri.activityInfo.packageName
                 pkg to (custom[pkg] ?: ri.loadLabel(pm).toString())
             }
+        }
+        listed
             .filter { it.first != context.packageName }
             .distinctBy { it.first }
             .sortedBy { it.second.lowercase() }
