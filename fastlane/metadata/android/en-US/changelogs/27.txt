@@ -1,0 +1,1 @@
+Apps that were missing from the drawer on some custom ROMs (such as Dolby, Game Space and gallery apps) are now listed and can be opened. The app list and launching now go through the system launcher API instead of a package query that hides them.
