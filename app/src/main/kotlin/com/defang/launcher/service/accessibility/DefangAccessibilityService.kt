@@ -452,9 +452,13 @@ class DefangAccessibilityService : AccessibilityService() {
                 // grayscale mid-use.
                 if (isTransientOverlay(pkg)) return
                 // The task switcher hovers over the session the same way — keep
-                // the session alive and render it colorless while it's open
+                // the session alive and render it colorless while it's open.
+                // Only when a session or gate exists — with nothing watched in
+                // front, Recents stays in color (issue #101).
                 if (event.className?.toString().orEmpty().contains("RecentsActivity")) {
-                    serviceScope.launch { grayscale.enable() }
+                    if (currentWatchedPackage != null || pendingGate.isNotEmpty()) {
+                        serviceScope.launch { grayscale.enable() }
+                    }
                     return
                 }
                 Log.d(TAG, "windowState pkg=$pkg")
